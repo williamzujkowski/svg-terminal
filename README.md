@@ -64,6 +64,15 @@ blocks:
 | `neofetch` | System-info display with configurable fields |
 | `fortune` | Random quote/fortune in ASCII box |
 | `custom` | Arbitrary text with `[[fg:color]]` markup |
+| `motd` | Welcome banner / message of the day |
+| `dad-joke` | Q&A joke in a fancy ASCII box (daily rotation) |
+| `htop` | Colorful process/resource monitor display |
+| `profile` | Developer profile info card |
+| `goodbye` | Farewell message with well-wishes |
+| `npm-install` | Humorous npm dependency tree |
+| `blog-post` | Blog post title in a box |
+| `national-day` | Fun national day celebration |
+| `systemctl` | Fake systemd service status |
 
 ### Custom Blocks
 
