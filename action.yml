@@ -1,0 +1,64 @@
+name: 'SVG Terminal Generator'
+description: 'Generate beautiful animated SVG terminals for GitHub READMEs'
+author: 'williamzujkowski'
+
+branding:
+  icon: 'terminal'
+  color: 'purple'
+
+inputs:
+  config:
+    description: 'Path to terminal.yml config file'
+    required: false
+    default: 'terminal.yml'
+  output:
+    description: 'Output SVG file path'
+    required: false
+    default: 'terminal.svg'
+  commit:
+    description: 'Auto-commit the generated SVG'
+    required: false
+    default: 'false'
+  commit-message:
+    description: 'Commit message when auto-committing'
+    required: false
+    default: 'chore: update terminal SVG [skip ci]'
+
+outputs:
+  svg-path:
+    description: 'Path to the generated SVG file'
+    value: ${{ inputs.output }}
+  svg-size:
+    description: 'Size of the generated SVG in bytes'
+    value: ${{ steps.generate.outputs.size }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install svg-terminal
+      shell: bash
+      run: npm install -g svg-terminal
+
+    - name: Generate SVG
+      id: generate
+      shell: bash
+      env:
+        TZ: ${{ env.TZ || 'UTC' }}
+      run: |
+        svg-terminal generate --config "${{ inputs.config }}" --output "${{ inputs.output }}"
+        echo "size=$(stat -c%s "${{ inputs.output }}" 2>/dev/null || stat -f%z "${{ inputs.output }}")" >> $GITHUB_OUTPUT
+
+    - name: Commit SVG
+      if: inputs.commit == 'true'
+      shell: bash
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add "${{ inputs.output }}"
+        git diff --staged --quiet || git commit -m "${{ inputs.commit-message }}"
+        git push
