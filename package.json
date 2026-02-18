@@ -1,0 +1,63 @@
+{
+  "name": "svg-terminal",
+  "version": "0.1.0",
+  "description": "Generate beautiful animated SVG terminals for GitHub READMEs and beyond. Declarative config, built-in themes, plugin blocks.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "svg-terminal": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "themes",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "generate": "tsx src/cli.ts generate",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "svg",
+    "terminal",
+    "github",
+    "readme",
+    "profile",
+    "animation",
+    "generator",
+    "ascii",
+    "cli"
+  ],
+  "author": "William Zujkowski <williamzujkowski@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williamzujkowski/svg-terminal.git"
+  },
+  "homepage": "https://github.com/williamzujkowski/svg-terminal",
+  "bugs": {
+    "url": "https://github.com/williamzujkowski/svg-terminal/issues"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.1"
+  }
+}
