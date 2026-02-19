@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { generateSvg, generateStaticSvg } from '../svg-generator.js';
 import { DEFAULT_CONFIG } from '../defaults.js';
 import type { Sequence, TerminalConfig } from '../../types.js';
@@ -120,6 +120,32 @@ describe('generateSvg', () => {
     });
     const svg = generateSvg(manyLines, config);
     expect(svg).toContain('height="500"');
+  });
+
+  // Empty sequence handling
+  it('handles empty output content without crashing', () => {
+    const sequences: Sequence[] = [
+      { type: 'command', content: 'echo', typingDuration: 100 },
+      { type: 'output', content: '' },
+    ];
+    const svg = generateSvg(sequences, makeConfig());
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('</svg>');
+  });
+
+  // maxDuration warning
+  it('warns when animation exceeds maxDuration', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const longSequences: Sequence[] = Array.from({ length: 10 }, (_, i) => ([
+      { type: 'command' as const, content: `cmd-${i}`, typingDuration: 5000 },
+      { type: 'output' as const, content: `output-${i}` },
+    ])).flat();
+    const config = makeConfig({ maxDuration: 1 }); // 1 second
+    generateSvg(longSequences, config);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('exceeds maxDuration'),
+    );
+    warnSpy.mockRestore();
   });
 });
 

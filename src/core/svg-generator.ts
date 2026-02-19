@@ -71,7 +71,12 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   const viewportHeight = window.height - titleBarHeight - topPadding - terminal.padding;
   const maxVisibleLines = Math.floor(viewportHeight / lineHeight);
 
-  const { frames } = createAnimationFrames(sequences, terminal, maxVisibleLines, config.scrollDuration, animation);
+  const maxDurationMs = config.maxDuration * 1000;
+  const { frames, totalDuration } = createAnimationFrames(sequences, terminal, maxVisibleLines, config.scrollDuration, animation);
+
+  if (totalDuration > maxDurationMs) {
+    console.warn(`[svg-terminal] Animation duration (${(totalDuration / 1000).toFixed(1)}s) exceeds maxDuration (${config.maxDuration}s)`);
+  }
 
   // Build accessibility label from block commands
   const accessibilityLabel = buildAccessibilityLabel(sequences);
@@ -145,6 +150,11 @@ interface FrameResult {
   totalDuration: number;
 }
 
+/** A line in the buffer — tracks type for scroll calculations. */
+interface BufferLine {
+  type: 'command' | 'output';
+}
+
 function createAnimationFrames(
   sequences: Sequence[],
   terminal: TerminalTextConfig,
@@ -154,7 +164,7 @@ function createAnimationFrames(
 ): FrameResult {
   let currentTime = 0;
   const frames: AnimationFrame[] = [];
-  const buffer: unknown[] = [];
+  const buffer: BufferLine[] = [];
   let bufferStart = 0;
 
   for (const seq of sequences) {
@@ -193,7 +203,11 @@ function createAnimationFrames(
 
       currentTime += typingDur;
     } else {
-      // output
+      // output — skip completely empty output sequences
+      if (!seq.content) {
+        currentTime += seq.pause ?? anim.defaultSequencePause;
+        continue;
+      }
       const lines = seq.content.split('\n');
       for (let i = 0; i < lines.length; i++) {
         const baseTime = currentTime + (i * anim.outputLineStagger);
