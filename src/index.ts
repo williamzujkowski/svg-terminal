@@ -109,4 +109,5 @@ export { createBox, createAutoBox, createDoubleBox, createRoundedBox, createTitl
 export { parseMarkup, hasMarkup, stripMarkup, buildColorMap } from './core/markup-parser.js';
 export { resolveTheme, themes, dracula, nord, monokai } from './themes/index.js';
 export { TYPING_PRESETS, PAUSE_PRESETS, resolveTyping, resolvePause } from './core/defaults.js';
+export { fetchWithTimeout, fetchJson, fetchText } from './core/http.js';
 export type * from './types.js';

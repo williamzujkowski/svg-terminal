@@ -68,6 +68,7 @@ export const DEFAULT_CONFIG: TerminalConfig = {
   chrome: DEFAULT_CHROME,
   maxDuration: 90,
   scrollDuration: 100,
+  fetchTimeout: 10000,
 };
 
 // ============================================================================

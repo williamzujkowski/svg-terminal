@@ -52,5 +52,6 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
     },
     maxDuration: userConfig.maxDuration ?? DEFAULT_CONFIG.maxDuration,
     scrollDuration: userConfig.scrollDuration ?? DEFAULT_CONFIG.scrollDuration,
+    fetchTimeout: userConfig.fetchTimeout ?? DEFAULT_CONFIG.fetchTimeout,
   };
 }

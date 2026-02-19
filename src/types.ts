@@ -168,6 +168,8 @@ export interface TerminalConfig {
   maxDuration: number;
   /** Scroll animation duration in ms (default: 100) */
   scrollDuration: number;
+  /** HTTP fetch timeout in ms for dynamic blocks (default: 10000) */
+  fetchTimeout: number;
 }
 
 // ============================================================================
@@ -288,6 +290,8 @@ export interface UserConfig {
   scrollDuration?: number;
   /** Custom accessibility label for the SVG */
   accessibilityLabel?: string;
+  /** HTTP fetch timeout in ms for dynamic blocks (default: 10000) */
+  fetchTimeout?: number;
 }
 
 // ============================================================================

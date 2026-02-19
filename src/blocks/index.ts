@@ -15,6 +15,10 @@ import { npmInstallBlock } from './npm-install.js';
 import { blogPostBlock } from './blog-post.js';
 import { nationalDayBlock } from './national-day.js';
 import { systemctlBlock } from './systemctl.js';
+import { weatherBlock } from './weather.js';
+import { githubStatsBlock } from './github-stats.js';
+import { quoteBlock } from './quote.js';
+import { funFactBlock } from './fun-fact.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -31,6 +35,10 @@ export function registerBuiltinBlocks(): void {
     blogPostBlock,
     nationalDayBlock,
     systemctlBlock,
+    weatherBlock,
+    githubStatsBlock,
+    quoteBlock,
+    funFactBlock,
   ]);
 }
 
@@ -47,3 +55,7 @@ export { npmInstallBlock } from './npm-install.js';
 export { blogPostBlock } from './blog-post.js';
 export { nationalDayBlock } from './national-day.js';
 export { systemctlBlock } from './systemctl.js';
+export { weatherBlock } from './weather.js';
+export { githubStatsBlock } from './github-stats.js';
+export { quoteBlock } from './quote.js';
+export { funFactBlock } from './fun-fact.js';

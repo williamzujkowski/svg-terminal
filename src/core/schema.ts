@@ -73,6 +73,7 @@ export const UserConfigSchema = z.object({
   maxDuration: z.number().positive().optional(),
   scrollDuration: z.number().positive().optional(),
   accessibilityLabel: z.string().optional(),
+  fetchTimeout: z.number().positive().optional(),
 });
 
 /** Validate a raw config object and return typed UserConfig or throw. */
