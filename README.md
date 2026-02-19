@@ -4,7 +4,7 @@ Generate beautiful animated SVG terminals for GitHub READMEs and beyond.
 
 - **Declarative config** — YAML/JSON, no code needed for basic use
 - **Built-in themes** — Dracula, Nord, Monokai (more coming)
-- **Plugin blocks** — Neofetch, fortune, custom text, and extensible
+- **Plugin blocks** — 16 built-in blocks including live API data (weather, GitHub stats, quotes)
 - **Zero-dependency SVG** — Self-contained output, works in GitHub's SVG sandbox
 - **CLI + Library** — Use from command line or import as a module
 
@@ -73,6 +73,45 @@ blocks:
 | `blog-post` | Blog post title in a box |
 | `national-day` | Fun national day celebration |
 | `systemctl` | Fake systemd service status |
+| `weather` | Live weather from wttr.in (also embeds in MOTD) |
+| `github-stats` | Live GitHub user stats (repos, followers) |
+| `quote` | Random quote from dummyjson.com |
+| `fun-fact` | Random fun fact from uselessfacts.jsph.pl |
+
+### Dynamic API Blocks
+
+Blocks marked with "Live" fetch data at build time from free, SFW APIs. They gracefully fall back to static content on failure.
+
+```yaml
+# Weather in MOTD banner
+- block: motd
+  config:
+    title: "MY TERMINAL"
+    weather:
+      location: NYC       # City name or coordinates
+      units: imperial     # imperial, metric, or both
+
+# Standalone weather block
+- block: weather
+  config:
+    location: "Los Angeles"
+    units: metric
+    compact: false
+
+# GitHub profile stats
+- block: github-stats
+  config:
+    username: your-github-username
+
+# Random fun fact
+- block: fun-fact
+```
+
+Set `fetchTimeout` at the top level to control API timeout (default: 10000ms):
+
+```yaml
+fetchTimeout: 15000  # 15 seconds — generous for slow APIs
+```
 
 ### Custom Blocks
 
