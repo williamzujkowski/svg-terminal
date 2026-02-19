@@ -18,6 +18,10 @@ export const DEFAULT_WINDOW: WindowConfig = {
   borderRadius: 12,
   titleBarHeight: 40,
   title: 'user@terminal:~',
+  style: 'macos',
+  autoHeight: false,
+  minHeight: 300,
+  maxHeight: 1200,
 };
 
 export const DEFAULT_TERMINAL: TerminalTextConfig = {
@@ -44,6 +48,7 @@ export const DEFAULT_ANIMATION: AnimationConfig = {
   outputEndPause: 200,
   defaultTypingDuration: 2000,
   defaultSequencePause: 1000,
+  loop: true,
 };
 
 export const DEFAULT_CHROME: ChromeConfig = {

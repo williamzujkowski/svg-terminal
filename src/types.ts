@@ -63,6 +63,9 @@ export interface Theme {
 // Terminal Configuration
 // ============================================================================
 
+/** Window style variant. */
+export type WindowStyle = 'macos' | 'floating' | 'minimal' | 'none';
+
 /** Window/SVG dimensions and chrome. */
 export interface WindowConfig {
   /** SVG width in pixels (default: 1000) */
@@ -75,6 +78,14 @@ export interface WindowConfig {
   titleBarHeight: number;
   /** Title text shown in title bar */
   title: string;
+  /** Window style variant (default: 'macos') */
+  style: WindowStyle;
+  /** Auto-calculate height from content (default: false) */
+  autoHeight: boolean;
+  /** Minimum height when autoHeight is true (default: 300) */
+  minHeight: number;
+  /** Maximum height when autoHeight is true (default: 1200) */
+  maxHeight: number;
 }
 
 /** Terminal text rendering config. */
@@ -127,6 +138,8 @@ export interface AnimationConfig {
   defaultTypingDuration: number;
   /** Default pause between sequences in ms (default: 1000) */
   defaultSequencePause: number;
+  /** Loop control: true = infinite, false = play once, number = N times (default: true) */
+  loop: boolean | number;
 }
 
 /** Window chrome appearance configuration. */

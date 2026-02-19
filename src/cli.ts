@@ -5,6 +5,7 @@
  *
  * Usage:
  *   svg-terminal generate --config terminal.yml --output terminal.svg
+ *   svg-terminal generate --config terminal.yml --output static.svg --static
  *   svg-terminal init
  *   svg-terminal themes
  *   svg-terminal blocks
@@ -12,7 +13,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { generate, listBlocks, loadConfig } from './index.js';
+import { generate, generateStatic, listBlocks, loadConfig } from './index.js';
 import { themes } from './themes/index.js';
 
 const args = process.argv.slice(2);
@@ -24,16 +25,24 @@ function getFlag(name: string): string | undefined {
   return args[idx + 1];
 }
 
+function hasFlag(name: string): boolean {
+  return args.includes(`--${name}`);
+}
+
 async function main(): Promise<void> {
   switch (command) {
     case 'generate': {
       const configPath = getFlag('config') ?? 'terminal.yml';
       const outputPath = getFlag('output') ?? 'terminal.svg';
+      const isStatic = hasFlag('static');
 
       const userConfig = loadConfig(resolve(configPath));
-      const svg = await generate(userConfig);
+      const svg = isStatic
+        ? await generateStatic(userConfig)
+        : await generate(userConfig);
       writeFileSync(resolve(outputPath), svg, 'utf-8');
-      console.log(`Generated ${outputPath} (${(svg.length / 1024).toFixed(1)} KB)`);
+      const mode = isStatic ? ' (static)' : '';
+      console.log(`Generated ${outputPath}${mode} (${(svg.length / 1024).toFixed(1)} KB)`);
       break;
     }
 
@@ -47,6 +56,10 @@ window:
   width: 1000
   height: 700
   title: "user@terminal:~"
+  # style: macos       # macos | floating | minimal | none
+  # autoHeight: false   # Auto-calculate height from content
+  # minHeight: 300      # Minimum height when autoHeight is true
+  # maxHeight: 1200     # Maximum height when autoHeight is true
 
 terminal:
   prompt: "user@host:~$ "
@@ -56,6 +69,18 @@ effects:
   textGlow: true
   shadow: true
   scanlines: true
+
+# Animation timing (all values in ms)
+# animation:
+#   cursorBlinkCycle: 1000
+#   outputLineStagger: 50
+#   commandOutputPause: 300
+#   loop: true          # true (infinite) | false (play once) | number (N times)
+
+# Window chrome appearance
+# chrome:
+#   titleFontSize: 13
+#   dimOpacity: 0.6
 
 blocks:
   - block: neofetch
@@ -115,10 +140,12 @@ Commands:
 Options:
   --config    Config file path (default: terminal.yml)
   --output    Output file path (default: terminal.svg)
+  --static    Generate non-animated SVG (final frame snapshot)
 
 Example:
   svg-terminal init
   svg-terminal generate --config terminal.yml --output terminal.svg
+  svg-terminal generate --config terminal.yml --output static.svg --static
 `);
     }
   }

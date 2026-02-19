@@ -85,6 +85,14 @@ describe('defaults', () => {
     expect(DEFAULT_ANIMATION.outputEndPause).toBe(200);
     expect(DEFAULT_ANIMATION.defaultTypingDuration).toBe(2000);
     expect(DEFAULT_ANIMATION.defaultSequencePause).toBe(1000);
+    expect(DEFAULT_ANIMATION.loop).toBe(true);
+  });
+
+  it('has window style and auto-height defaults', () => {
+    expect(DEFAULT_WINDOW.style).toBe('macos');
+    expect(DEFAULT_WINDOW.autoHeight).toBe(false);
+    expect(DEFAULT_WINDOW.minHeight).toBe(300);
+    expect(DEFAULT_WINDOW.maxHeight).toBe(1200);
   });
 
   it('has chrome defaults', () => {

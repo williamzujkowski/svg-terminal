@@ -85,4 +85,46 @@ describe('mergeConfig', () => {
     expect(config.chrome.dimOpacity).toBe(0.4);
     expect(config.chrome.buttonRadius).toBe(6); // default preserved
   });
+
+  it('defaults window style to macos', () => {
+    const config = mergeConfig(minimal);
+    expect(config.window.style).toBe('macos');
+  });
+
+  it('overrides window style', () => {
+    const config = mergeConfig({ ...minimal, window: { style: 'floating' } });
+    expect(config.window.style).toBe('floating');
+  });
+
+  it('defaults autoHeight to false', () => {
+    const config = mergeConfig(minimal);
+    expect(config.window.autoHeight).toBe(false);
+    expect(config.window.minHeight).toBe(300);
+    expect(config.window.maxHeight).toBe(1200);
+  });
+
+  it('enables autoHeight with min/max overrides', () => {
+    const config = mergeConfig({
+      ...minimal,
+      window: { autoHeight: true, minHeight: 400, maxHeight: 900 },
+    });
+    expect(config.window.autoHeight).toBe(true);
+    expect(config.window.minHeight).toBe(400);
+    expect(config.window.maxHeight).toBe(900);
+  });
+
+  it('defaults animation loop to true', () => {
+    const config = mergeConfig(minimal);
+    expect(config.animation.loop).toBe(true);
+  });
+
+  it('overrides animation loop to false', () => {
+    const config = mergeConfig({ ...minimal, animation: { loop: false } });
+    expect(config.animation.loop).toBe(false);
+  });
+
+  it('overrides animation loop to a number', () => {
+    const config = mergeConfig({ ...minimal, animation: { loop: 3 } });
+    expect(config.animation.loop).toBe(3);
+  });
 });

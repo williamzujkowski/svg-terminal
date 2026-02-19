@@ -15,11 +15,13 @@ import {
   DEFAULT_TERMINAL,
   DEFAULT_WINDOW,
 } from './defaults.js';
+import { validateConfig } from './schema.js';
 
-/** Load and parse a YAML config file. */
+/** Load, parse, and validate a YAML config file. */
 export function loadConfig(filePath: string): UserConfig {
   const raw = readFileSync(filePath, 'utf-8');
-  return yaml.load(raw) as UserConfig;
+  const parsed = yaml.load(raw);
+  return validateConfig(parsed);
 }
 
 /** Merge user config with defaults to produce a full TerminalConfig. */

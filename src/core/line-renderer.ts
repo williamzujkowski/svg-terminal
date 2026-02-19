@@ -3,7 +3,7 @@
  * Handles command lines (with typing animation) and output lines (with fade-in).
  */
 
-import type { AnimationFrame, ChromeConfig, StyledSpan, TerminalTextConfig, ThemeColors } from '../types.js';
+import type { AnimationConfig, AnimationFrame, ChromeConfig, StyledSpan, TerminalTextConfig, ThemeColors } from '../types.js';
 import { buildColorMap, hasMarkup, parseMarkup } from './markup-parser.js';
 import { escapeXml, getTextWidth, roundCoord } from './xml.js';
 import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHROME } from './defaults.js';
@@ -137,10 +137,10 @@ export function generateAllLines(
   colors: ThemeColors,
   textGlow: boolean,
   chrome?: ChromeConfig,
+  animation?: AnimationConfig,
 ): string {
   const chromeConfig = chrome ?? DEFAULT_CHROME;
-  const cursorBlinkCycle = DEFAULT_ANIMATION.cursorBlinkCycle;
-  const charAppearDuration = DEFAULT_ANIMATION.charAppearDuration;
+  const animConfig = animation ?? DEFAULT_ANIMATION;
   const processedLines = new Map<number, string>();
 
   for (const frame of frames) {
@@ -153,9 +153,9 @@ export function generateAllLines(
           frame.prompt ?? terminal.prompt,
           frame.command ?? '',
           frame.time,
-          frame.typingDuration ?? DEFAULT_ANIMATION.defaultTypingDuration,
+          frame.typingDuration ?? animConfig.defaultTypingDuration,
           terminal, colors.prompt, colors.cursor, textGlow,
-          cursorBlinkCycle, charAppearDuration,
+          animConfig.cursorBlinkCycle, animConfig.charAppearDuration,
         ),
       );
     } else if (frame.type === 'add-output' && frame.lineIndex !== undefined) {
@@ -168,7 +168,7 @@ export function generateAllLines(
           frame.color ?? colors.text,
           frame.time,
           terminal, colors, textGlow,
-          chromeConfig, charAppearDuration,
+          chromeConfig, animConfig.charAppearDuration,
         ),
       );
     }

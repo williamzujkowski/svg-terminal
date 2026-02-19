@@ -19,7 +19,7 @@
 import type { BlockContext, Sequence, UserConfig } from './types.js';
 import { mergeConfig } from './core/config.js';
 import { resolvePause, resolveTyping } from './core/defaults.js';
-import { generateSvg } from './core/svg-generator.js';
+import { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 import { getBlock, registerBuiltinBlocks } from './blocks/index.js';
 
 // Register built-in blocks on import
@@ -69,8 +69,40 @@ export async function generate(userConfig: UserConfig): Promise<string> {
   return generateSvg(sequences, config);
 }
 
+/**
+ * Generate a static (non-animated) SVG terminal.
+ * All content is visible at full opacity with no animations.
+ * Useful for accessibility fallbacks, print, and social media previews.
+ */
+export async function generateStatic(userConfig: UserConfig): Promise<string> {
+  const config = mergeConfig(userConfig);
+  const allLines: string[] = [];
+
+  const context: BlockContext = {
+    now: new Date(),
+    config,
+    variables: userConfig.variables ?? {},
+  };
+
+  for (const entry of userConfig.blocks) {
+    const block = getBlock(entry.block);
+    if (!block) {
+      throw new Error(
+        `Unknown block "${entry.block}". Register it with registerBlock() or use a built-in block.`,
+      );
+    }
+
+    const result = await block.render(context, entry.config ?? {});
+    const prompt = config.text.prompt;
+    allLines.push(`${prompt}${entry.command ?? result.command}`);
+    allLines.push(...result.lines);
+  }
+
+  return generateStaticSvg(allLines, config);
+}
+
 // Re-export public API
-export { generateSvg } from './core/svg-generator.js';
+export { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 export { loadConfig, mergeConfig } from './core/config.js';
 export { registerBlock, registerBlocks, getBlock, listBlocks, registerBuiltinBlocks } from './blocks/index.js';
 export { createBox, createAutoBox, createDoubleBox, createRoundedBox, createTitledBox } from './core/box-generator.js';
