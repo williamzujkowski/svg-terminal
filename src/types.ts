@@ -231,6 +231,8 @@ export interface UserConfig {
   variables?: Record<string, unknown>;
   /** Maximum animation duration in seconds */
   maxDuration?: number;
+  /** Scroll animation duration in ms */
+  scrollDuration?: number;
 }
 
 // ============================================================================
@@ -277,4 +279,6 @@ export interface BoxConfig {
   separatorAfter?: number[];
   /** Truncate lines that exceed width (default: true) */
   truncate?: boolean;
+  /** Wrap lines that exceed width instead of truncating (default: false) */
+  wrap?: boolean;
 }

@@ -5,6 +5,10 @@
  */
 
 import type { BoxChars, BoxConfig, BoxStyle } from '../types.js';
+import { stripMarkup } from './markup-parser.js';
+
+/** Border + padding overhead: 2 border chars + 2 padding spaces. */
+const BOX_OVERHEAD = 4;
 
 /** Character sets for each box style. */
 export const BOX_STYLES: Record<BoxStyle, BoxChars> = {
@@ -41,12 +45,14 @@ export const BOX_STYLES: Record<BoxStyle, BoxChars> = {
 };
 
 /**
- * Calculate display width of a string, accounting for emoji.
+ * Calculate display width of a string, accounting for emoji and markup.
+ * Strips both ANSI escape codes and [[markup]] tags before measuring.
  * Emoji display as 2 characters wide in monospace fonts.
  */
 export function getDisplayWidth(str: string): number {
   if (!str) return 0;
-  const cleaned = str.replace(/\x1b\[[0-9;]*m/g, '');
+  // Strip [[markup]] tags first, then ANSI escapes
+  const cleaned = stripMarkup(str).replace(/\x1b\[[0-9;]*m/g, '');
   let width = 0;
 
   for (const char of cleaned) {
@@ -87,25 +93,75 @@ export function truncateToWidth(str: string, maxWidth: number): string {
   return result;
 }
 
-/** Wrap text to fit within a max width, breaking at word boundaries. */
+/**
+ * Break a single word that exceeds maxWidth into character-level chunks.
+ * Returns array of chunks, each fitting within maxWidth.
+ */
+function breakLongWord(word: string, maxWidth: number): string[] {
+  const chunks: string[] = [];
+  let chunk = '';
+  let chunkWidth = 0;
+
+  for (const char of word) {
+    const charWidth = getDisplayWidth(char);
+    if (chunkWidth + charWidth > maxWidth && chunk !== '') {
+      chunks.push(chunk);
+      chunk = char;
+      chunkWidth = charWidth;
+    } else {
+      chunk += char;
+      chunkWidth += charWidth;
+    }
+  }
+  if (chunk) chunks.push(chunk);
+  return chunks;
+}
+
+/**
+ * Wrap text to fit within a max width, breaking at word boundaries.
+ * Falls back to character-level breaking for words exceeding maxWidth.
+ * Indent is prepended to continuation lines (not the first line).
+ */
 export function wrapText(text: string, maxWidth: number, indent = ''): string[] {
   if (!text || getDisplayWidth(text) <= maxWidth) return [text || ''];
 
   const words = text.split(/\s+/);
   const lines: string[] = [];
   let currentLine = '';
-  const indentWidth = getDisplayWidth(indent);
 
   for (const word of words) {
     const wordWidth = getDisplayWidth(word);
+
+    // Handle words longer than maxWidth — break character-by-character
+    if (wordWidth > maxWidth) {
+      // Push current partial line first
+      if (currentLine !== '') {
+        lines.push(currentLine);
+        currentLine = '';
+      }
+      const chunks = breakLongWord(word, maxWidth);
+      for (const chunk of chunks) {
+        if (lines.length === 0 && currentLine === '') {
+          // First line, no indent
+          currentLine = chunk;
+        } else {
+          if (currentLine !== '') lines.push(currentLine);
+          currentLine = indent + chunk;
+        }
+      }
+      continue;
+    }
+
     const lineWidth = getDisplayWidth(currentLine);
-    const effectiveMax = lines.length === 0 ? maxWidth : maxWidth - indentWidth;
 
     if (currentLine === '') {
+      // Starting a new line
       currentLine = lines.length > 0 ? indent + word : word;
-    } else if (lineWidth + 1 + wordWidth <= effectiveMax) {
+    } else if (lineWidth + 1 + wordWidth <= maxWidth) {
+      // Word fits on current line
       currentLine += ' ' + word;
     } else {
+      // Word doesn't fit — start new line
       lines.push(currentLine);
       currentLine = indent + word;
     }
@@ -116,28 +172,47 @@ export function wrapText(text: string, maxWidth: number, indent = ''): string[] 
 
 /** Create an ASCII box with automatic padding and alignment. */
 export function createBox(config: BoxConfig): string {
-  const { style = 'double', width = 56, lines = [], separatorAfter = [], truncate = true } = config;
+  const {
+    style = 'double',
+    width = 56,
+    lines = [],
+    separatorAfter = [],
+    truncate = true,
+    wrap = false,
+  } = config;
 
   const chars = BOX_STYLES[style];
-  const innerWidth = width - 4; // 2 borders + 2 padding spaces
+  const innerWidth = width - BOX_OVERHEAD;
   const result: string[] = [];
 
   // Top border
   result.push(chars.topLeft + chars.horizontal.repeat(width - 2) + chars.topRight);
 
-  // Content lines
+  // Content lines — optionally wrap or truncate
+  const expanded: { content: string; separateAfter: boolean }[] = [];
   lines.forEach((line, index) => {
-    let content = line;
-    if (truncate && getDisplayWidth(content) > innerWidth) {
-      content = truncateToWidth(content, innerWidth);
-    }
-    const padded = padToWidth(content, innerWidth);
-    result.push(chars.vertical + ' ' + padded + ' ' + chars.vertical);
-
-    if (separatorAfter?.includes(index)) {
-      result.push(chars.separatorLeft + chars.horizontal.repeat(width - 2) + chars.separatorRight);
+    const isSep = separatorAfter?.includes(index) ?? false;
+    if (wrap && getDisplayWidth(line) > innerWidth) {
+      const wrapped = wrapText(line, innerWidth);
+      wrapped.forEach((wl, wi) => {
+        expanded.push({ content: wl, separateAfter: wi === wrapped.length - 1 && isSep });
+      });
+    } else {
+      let content = line;
+      if (truncate && getDisplayWidth(content) > innerWidth) {
+        content = truncateToWidth(content, innerWidth);
+      }
+      expanded.push({ content, separateAfter: isSep });
     }
   });
+
+  for (const { content, separateAfter } of expanded) {
+    const padded = padToWidth(content, innerWidth);
+    result.push(chars.vertical + ' ' + padded + ' ' + chars.vertical);
+    if (separateAfter) {
+      result.push(chars.separatorLeft + chars.horizontal.repeat(width - 2) + chars.separatorRight);
+    }
+  }
 
   // Bottom border
   result.push(chars.bottomLeft + chars.horizontal.repeat(width - 2) + chars.bottomRight);
@@ -169,4 +244,36 @@ export function createTitledBox(opts: {
   const separatorIndex = lines.length - 1;
   lines.push(...content);
   return createBox({ style, width, lines, separatorAfter: [separatorIndex] });
+}
+
+/** Configuration for auto-sizing boxes. */
+export interface AutoBoxConfig {
+  lines: string[];
+  style?: BoxStyle;
+  minWidth?: number;
+  maxWidth?: number;
+  separatorAfter?: number[];
+}
+
+/** Create a box that auto-sizes to fit its content. */
+export function createAutoBox(config: AutoBoxConfig): string {
+  const { lines, style = 'double', minWidth = 0, maxWidth = 120, separatorAfter } = config;
+
+  // Find the longest line's display width
+  let longestLine = 0;
+  for (const line of lines) {
+    const w = getDisplayWidth(line);
+    if (w > longestLine) longestLine = w;
+  }
+
+  // Calculate box width: content width + borders/padding
+  let boxWidth = longestLine + BOX_OVERHEAD;
+  boxWidth = Math.max(boxWidth, minWidth);
+
+  // If content exceeds maxWidth, wrap it
+  if (boxWidth > maxWidth) {
+    return createBox({ style, width: maxWidth, lines, separatorAfter, wrap: true });
+  }
+
+  return createBox({ style, width: boxWidth, lines, separatorAfter });
 }

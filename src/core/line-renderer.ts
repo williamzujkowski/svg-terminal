@@ -7,6 +7,9 @@ import type { AnimationFrame, StyledSpan, TerminalTextConfig, ThemeColors } from
 import { buildColorMap, hasMarkup, parseMarkup } from './markup-parser.js';
 import { escapeXml, getTextWidth, roundCoord } from './xml.js';
 
+/** Monospace character width as a fraction of font size. */
+const CHAR_WIDTH_RATIO = 0.6;
+
 /** Generate SVG tspan elements from styled spans. */
 function generateStyledText(
   spans: StyledSpan[],
@@ -31,7 +34,7 @@ function generateCursor(
   cursorColor: string,
 ): string {
   const promptWidth = getTextWidth(prompt, terminal.fontSize);
-  const charWidth = roundCoord(terminal.fontSize * 0.6);
+  const charWidth = roundCoord(terminal.fontSize * CHAR_WIDTH_RATIO);
   const cursorY = roundCoord(-terminal.fontSize * 0.85);
   const charDuration = typingDuration / command.length;
   const typingEndTime = startTime + typingDuration;

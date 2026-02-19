@@ -42,13 +42,18 @@ export function buildColorMap(colors: ThemeColors): Record<string, string> {
   };
 }
 
+/** Valid hex color pattern: #RGB or #RRGGBB. */
+const HEX_COLOR_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+
 /** Resolve a color name to hex using the color map. */
 export function resolveColor(
   colorName: string,
   colorMap: Record<string, string>,
   fallback: string,
 ): string {
-  if (colorName.startsWith('#')) return colorName;
+  if (colorName.startsWith('#')) {
+    return HEX_COLOR_RE.test(colorName) ? colorName : fallback;
+  }
   return colorMap[colorName.toLowerCase()] ?? fallback;
 }
 

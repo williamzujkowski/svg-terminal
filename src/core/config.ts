@@ -39,6 +39,6 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
       ...userConfig.effects,
     },
     maxDuration: userConfig.maxDuration ?? DEFAULT_CONFIG.maxDuration,
-    scrollDuration: DEFAULT_CONFIG.scrollDuration,
+    scrollDuration: userConfig.scrollDuration ?? DEFAULT_CONFIG.scrollDuration,
   };
 }
