@@ -30,6 +30,11 @@ function hasFlag(name: string): boolean {
 }
 
 async function main(): Promise<void> {
+  if (hasFlag('version') || command === '--version') {
+    console.log('svg-terminal 0.4.0');
+    return;
+  }
+
   switch (command) {
     case 'generate': {
       const configPath = getFlag('config') ?? 'terminal.yml';
@@ -141,6 +146,7 @@ Options:
   --config    Config file path (default: terminal.yml)
   --output    Output file path (default: terminal.svg)
   --static    Generate non-animated SVG (final frame snapshot)
+  --version   Print version number
 
 Example:
   svg-terminal init
