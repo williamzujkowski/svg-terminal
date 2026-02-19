@@ -8,6 +8,8 @@ import yaml from 'js-yaml';
 import type { TerminalConfig, UserConfig } from '../types.js';
 import { resolveTheme } from '../themes/index.js';
 import {
+  DEFAULT_ANIMATION,
+  DEFAULT_CHROME,
   DEFAULT_CONFIG,
   DEFAULT_EFFECTS,
   DEFAULT_TERMINAL,
@@ -37,6 +39,14 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
     effects: {
       ...DEFAULT_EFFECTS,
       ...userConfig.effects,
+    },
+    animation: {
+      ...DEFAULT_ANIMATION,
+      ...userConfig.animation,
+    },
+    chrome: {
+      ...DEFAULT_CHROME,
+      ...userConfig.chrome,
     },
     maxDuration: userConfig.maxDuration ?? DEFAULT_CONFIG.maxDuration,
     scrollDuration: userConfig.scrollDuration ?? DEFAULT_CONFIG.scrollDuration,

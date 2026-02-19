@@ -14,8 +14,8 @@ import type { StyledSpan, ThemeColors } from '../types.js';
 /** Build a color lookup map from theme colors. */
 export function buildColorMap(colors: ThemeColors): Record<string, string> {
   return {
-    // Standard terminal colors
-    black: '#21222c',
+    // Standard terminal colors — black uses theme background
+    black: colors.background,
     red: colors.red,
     green: colors.green,
     yellow: colors.yellow,

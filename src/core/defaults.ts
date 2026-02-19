@@ -2,7 +2,14 @@
  * Default configuration values for svg-terminal.
  */
 
-import type { EffectsConfig, TerminalConfig, TerminalTextConfig, WindowConfig } from '../types.js';
+import type {
+  AnimationConfig,
+  ChromeConfig,
+  EffectsConfig,
+  TerminalConfig,
+  TerminalTextConfig,
+  WindowConfig,
+} from '../types.js';
 import { dracula } from '../themes/dracula.js';
 
 export const DEFAULT_WINDOW: WindowConfig = {
@@ -28,14 +35,61 @@ export const DEFAULT_EFFECTS: EffectsConfig = {
   scanlines: true,
 };
 
+export const DEFAULT_ANIMATION: AnimationConfig = {
+  cursorBlinkCycle: 1000,
+  charAppearDuration: 10,
+  outputLineStagger: 50,
+  commandOutputPause: 300,
+  scrollDelay: 10,
+  outputEndPause: 200,
+  defaultTypingDuration: 2000,
+  defaultSequencePause: 1000,
+};
+
+export const DEFAULT_CHROME: ChromeConfig = {
+  titleFontSize: 13,
+  buttonRadius: 6,
+  buttonSpacing: 20,
+  dimOpacity: 0.6,
+  buttonY: 16,
+};
+
 export const DEFAULT_CONFIG: TerminalConfig = {
   window: DEFAULT_WINDOW,
   text: DEFAULT_TERMINAL,
   theme: dracula,
   effects: DEFAULT_EFFECTS,
+  animation: DEFAULT_ANIMATION,
+  chrome: DEFAULT_CHROME,
   maxDuration: 90,
   scrollDuration: 100,
 };
+
+// ============================================================================
+// Internal constants (NOT user-facing config)
+// ============================================================================
+
+/** Monospace character width as a fraction of font size. */
+export const CHAR_WIDTH_RATIO = 0.6;
+
+/** Cursor vertical offset as a fraction of font size. */
+export const CURSOR_Y_OFFSET_RATIO = -0.85;
+
+/** Phosphor glow blur standard deviations [core, medium, outer]. */
+export const GLOW_BLUR_VALUES = [0.2, 1.5, 3.5] as const;
+
+/** Shadow filter parameters. */
+export const SHADOW_PARAMS = { dy: 15, blur: 15, opacity: 0.8 } as const;
+
+/** Scanline pattern dimensions. */
+export const SCANLINE_PARAMS = { height: 2, opacity: 0.02 } as const;
+
+/** Scroll animation duration in ms (for SVG animateTransform). */
+export const SCROLL_ANIM_DURATION = 100;
+
+// ============================================================================
+// Preset resolvers
+// ============================================================================
 
 /** Typing speed presets in milliseconds. */
 export const TYPING_PRESETS: Record<string, number> = {

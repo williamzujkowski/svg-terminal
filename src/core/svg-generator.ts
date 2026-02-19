@@ -4,7 +4,9 @@
  */
 
 import type {
+  AnimationConfig,
   AnimationFrame,
+  ChromeConfig,
   EffectsConfig,
   Sequence,
   TerminalConfig,
@@ -15,18 +17,32 @@ import type {
 import { generateDefs, generateFilters } from './effects.js';
 import { generateAllLines } from './line-renderer.js';
 import { escapeXml, roundCoord } from './xml.js';
+import { SCROLL_ANIM_DURATION } from './defaults.js';
 
 /** Generate an animated SVG terminal from a sequence of commands/outputs. */
 export function generateSvg(sequences: Sequence[], config: TerminalConfig): string {
-  const { window, text: terminal, theme, effects } = config;
+  const { window, text: terminal, theme, effects, animation, chrome } = config;
   const lineHeight = terminal.fontSize * terminal.lineHeight;
   const topPadding = terminal.paddingTop;
   const viewportHeight = window.height - window.titleBarHeight - topPadding - terminal.padding;
   const maxVisibleLines = Math.floor(viewportHeight / lineHeight);
 
-  const { frames } = createAnimationFrames(sequences, terminal, maxVisibleLines, config.scrollDuration);
+  const { frames } = createAnimationFrames(sequences, terminal, maxVisibleLines, config.scrollDuration, animation);
 
-  return `<svg width="${window.width}" height="${window.height}" xmlns="http://www.w3.org/2000/svg">
+  // Build accessibility label from block commands
+  const accessibilityLabel = buildAccessibilityLabel(sequences);
+
+  return `<svg width="${window.width}" height="${window.height}" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="${escapeXml(accessibilityLabel)}">
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
   <defs>
     ${generateDefs(effects)}
     ${generateFilters(effects)}
@@ -34,10 +50,20 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
 
   <g${effects.shadow ? ' filter="url(#shadow)"' : ''}>
     ${renderWindow(window, theme)}
-    ${renderTitleBar(window, terminal, theme)}
-    ${renderTerminalContent(window, terminal, theme, effects, frames, maxVisibleLines, lineHeight)}
+    ${renderTitleBar(window, terminal, theme, chrome)}
+    ${renderTerminalContent(window, terminal, theme, effects, chrome, frames, lineHeight)}
   </g>
 </svg>`;
+}
+
+/** Build an accessibility label from the sequence commands. */
+function buildAccessibilityLabel(sequences: Sequence[]): string {
+  const commands = sequences
+    .filter(s => s.type === 'command')
+    .map(s => s.content)
+    .slice(0, 5);
+  if (commands.length === 0) return 'Animated terminal';
+  return `Animated terminal showing: ${commands.join(', ')}`;
 }
 
 // ============================================================================
@@ -54,6 +80,7 @@ function createAnimationFrames(
   terminal: TerminalTextConfig,
   maxVisibleLines: number,
   scrollDuration: number,
+  anim: AnimationConfig,
 ): FrameResult {
   let currentTime = 0;
   const frames: AnimationFrame[] = [];
@@ -65,6 +92,7 @@ function createAnimationFrames(
 
     if (seq.type === 'command') {
       buffer.push({ type: 'command' });
+      const typingDur = seq.typingDuration ?? anim.defaultTypingDuration;
 
       if (buffer.length - bufferStart > maxVisibleLines) {
         frames.push({
@@ -74,14 +102,14 @@ function createAnimationFrames(
           bufferStart: ++bufferStart,
         });
         frames.push({
-          time: currentTime + scrollDuration + 10,
+          time: currentTime + scrollDuration + anim.scrollDelay,
           type: 'add-command',
           lineIndex: buffer.length - 1,
           prompt: seq.prompt ?? terminal.prompt,
           command: seq.content,
-          typingDuration: seq.typingDuration ?? 2000,
+          typingDuration: typingDur,
         });
-        currentTime += scrollDuration + 10;
+        currentTime += scrollDuration + anim.scrollDelay;
       } else {
         frames.push({
           time: currentTime,
@@ -89,16 +117,16 @@ function createAnimationFrames(
           lineIndex: buffer.length - 1,
           prompt: seq.prompt ?? terminal.prompt,
           command: seq.content,
-          typingDuration: seq.typingDuration ?? 2000,
+          typingDuration: typingDur,
         });
       }
 
-      currentTime += seq.typingDuration ?? 2000;
+      currentTime += typingDur;
     } else {
       // output
       const lines = seq.content.split('\n');
       for (let i = 0; i < lines.length; i++) {
-        const baseTime = currentTime + (i * 50);
+        const baseTime = currentTime + (i * anim.outputLineStagger);
         buffer.push({ type: 'output' });
 
         if (buffer.length - bufferStart > maxVisibleLines) {
@@ -109,7 +137,7 @@ function createAnimationFrames(
             bufferStart: ++bufferStart,
           });
           frames.push({
-            time: baseTime + scrollDuration + 10,
+            time: baseTime + scrollDuration + anim.scrollDelay,
             type: 'add-output',
             lineIndex: buffer.length - 1,
             content: lines[i],
@@ -125,10 +153,10 @@ function createAnimationFrames(
           });
         }
       }
-      currentTime += lines.length * 50 + 200;
+      currentTime += lines.length * anim.outputLineStagger + anim.outputEndPause;
     }
 
-    currentTime += seq.pause ?? 1000;
+    currentTime += seq.pause ?? anim.defaultSequencePause;
   }
 
   frames.push({ time: currentTime, type: 'final' });
@@ -146,20 +174,26 @@ function renderWindow(window: WindowConfig, theme: Theme): string {
           fill="${theme.colors.background}"/>`;
 }
 
-function renderTitleBar(window: WindowConfig, terminal: TerminalTextConfig, theme: Theme): string {
+function renderTitleBar(
+  window: WindowConfig,
+  terminal: TerminalTextConfig,
+  theme: Theme,
+  chrome: ChromeConfig,
+): string {
+  const { buttonRadius: r, buttonSpacing: s, buttonY: y, titleFontSize } = chrome;
   return `
     <rect x="0" y="0" width="${window.width}" height="${window.titleBarHeight}"
           rx="${window.borderRadius}" ry="${window.borderRadius}"
           fill="${theme.colors.titleBarBackground}"/>
-    <rect x="0" y="16" width="${window.width}" height="16"
+    <rect x="0" y="${y}" width="${window.width}" height="${y}"
           fill="${theme.colors.titleBarBackground}"/>
     <g id="window-controls">
-      <circle cx="${terminal.padding + 2}" cy="16" r="6" fill="${theme.buttons.close}"/>
-      <circle cx="${terminal.padding + 22}" cy="16" r="6" fill="${theme.buttons.minimize}"/>
-      <circle cx="${terminal.padding + 42}" cy="16" r="6" fill="${theme.buttons.maximize}"/>
+      <circle cx="${terminal.padding + 2}" cy="${y}" r="${r}" fill="${theme.buttons.close}"/>
+      <circle cx="${terminal.padding + 2 + s}" cy="${y}" r="${r}" fill="${theme.buttons.minimize}"/>
+      <circle cx="${terminal.padding + 2 + s * 2}" cy="${y}" r="${r}" fill="${theme.buttons.maximize}"/>
     </g>
-    <text x="${window.width / 2}" y="21"
-          font-family="${terminal.fontFamily}" font-size="13"
+    <text x="${window.width / 2}" y="${y + 5}"
+          font-family="${terminal.fontFamily}" font-size="${titleFontSize}"
           fill="${theme.colors.titleBarText}" text-anchor="middle">
       ${escapeXml(window.title)}
     </text>`;
@@ -170,15 +204,15 @@ function renderTerminalContent(
   terminal: TerminalTextConfig,
   theme: Theme,
   effects: EffectsConfig,
+  chrome: ChromeConfig,
   frames: AnimationFrame[],
-  _maxVisibleLines: number,
   lineHeight: number,
 ): string {
   const contentY = window.titleBarHeight + terminal.paddingTop;
   const viewportHeight = window.height - window.titleBarHeight;
 
   const scrollAnimations = renderScrollAnimations(frames, terminal, lineHeight);
-  const allLines = generateAllLines(frames, terminal, lineHeight, theme.colors, effects.textGlow);
+  const allLines = generateAllLines(frames, terminal, lineHeight, theme.colors, effects.textGlow, chrome);
 
   return `
     <defs>
@@ -215,6 +249,6 @@ function renderScrollAnimations(
         <animateTransform
           attributeName="transform" type="translate"
           from="${terminal.padding} ${fromY}" to="${terminal.padding} ${toY}"
-          begin="${frame.time}ms" dur="100ms" fill="freeze"/>`;
+          begin="${frame.time}ms" dur="${SCROLL_ANIM_DURATION}ms" fill="freeze"/>`;
   }).join('');
 }

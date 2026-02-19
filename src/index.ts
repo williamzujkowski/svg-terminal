@@ -49,12 +49,12 @@ export async function generate(userConfig: UserConfig): Promise<string> {
 
     const result = await block.render(context, entry.config ?? {});
 
-    // Command sequence — brief pause after typing before output appears
+    // Command sequence — pause after typing before output appears
     sequences.push({
       type: 'command',
       content: entry.command ?? result.command,
       typingDuration: resolveTyping(entry.typing ?? result.typing),
-      pause: resolvePause('minimal'),
+      pause: config.animation.commandOutputPause,
     });
 
     // Output sequence

@@ -109,12 +109,48 @@ export interface EffectsConfig {
   scanlines: boolean;
 }
 
+/** Animation timing configuration. */
+export interface AnimationConfig {
+  /** Cursor blink cycle duration in ms (default: 1000) */
+  cursorBlinkCycle: number;
+  /** Duration of character appear fade-in in ms (default: 10) */
+  charAppearDuration: number;
+  /** Delay between output lines in ms (default: 50) */
+  outputLineStagger: number;
+  /** Pause after typing command before output appears in ms (default: 300) */
+  commandOutputPause: number;
+  /** Extra delay added to scroll events in ms (default: 10) */
+  scrollDelay: number;
+  /** Pause at end of output block in ms (default: 200) */
+  outputEndPause: number;
+  /** Default typing duration for commands in ms (default: 2000) */
+  defaultTypingDuration: number;
+  /** Default pause between sequences in ms (default: 1000) */
+  defaultSequencePause: number;
+}
+
+/** Window chrome appearance configuration. */
+export interface ChromeConfig {
+  /** Title bar font size in px (default: 13) */
+  titleFontSize: number;
+  /** Window button radius in px (default: 6) */
+  buttonRadius: number;
+  /** Spacing between window buttons in px (default: 20) */
+  buttonSpacing: number;
+  /** Opacity for [[dim]] text (default: 0.6) */
+  dimOpacity: number;
+  /** Window button vertical center Y position (default: 16) */
+  buttonY: number;
+}
+
 /** Full terminal generator configuration. */
 export interface TerminalConfig {
   window: WindowConfig;
   text: TerminalTextConfig;
   theme: Theme;
   effects: EffectsConfig;
+  animation: AnimationConfig;
+  chrome: ChromeConfig;
   /** Maximum animation duration in seconds (default: 90) */
   maxDuration: number;
   /** Scroll animation duration in ms (default: 100) */
@@ -225,6 +261,10 @@ export interface UserConfig {
   terminal?: Partial<TerminalTextConfig>;
   /** Visual effects toggles */
   effects?: Partial<EffectsConfig>;
+  /** Animation timing overrides */
+  animation?: Partial<AnimationConfig>;
+  /** Window chrome appearance overrides */
+  chrome?: Partial<ChromeConfig>;
   /** Ordered list of blocks to render */
   blocks: BlockEntry[];
   /** User variables passed to blocks */
@@ -233,6 +273,8 @@ export interface UserConfig {
   maxDuration?: number;
   /** Scroll animation duration in ms */
   scrollDuration?: number;
+  /** Custom accessibility label for the SVG */
+  accessibilityLabel?: string;
 }
 
 // ============================================================================

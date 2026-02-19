@@ -49,4 +49,40 @@ describe('mergeConfig', () => {
     expect(config.effects.scanlines).toBe(false);
     expect(config.effects.textGlow).toBe(true); // default preserved
   });
+
+  it('includes animation config with defaults', () => {
+    const config = mergeConfig(minimal);
+    expect(config.animation.cursorBlinkCycle).toBe(1000);
+    expect(config.animation.charAppearDuration).toBe(10);
+    expect(config.animation.outputLineStagger).toBe(50);
+    expect(config.animation.commandOutputPause).toBe(300);
+    expect(config.animation.defaultTypingDuration).toBe(2000);
+  });
+
+  it('overrides animation config', () => {
+    const config = mergeConfig({
+      ...minimal,
+      animation: { cursorBlinkCycle: 500, outputLineStagger: 100 },
+    });
+    expect(config.animation.cursorBlinkCycle).toBe(500);
+    expect(config.animation.outputLineStagger).toBe(100);
+    expect(config.animation.charAppearDuration).toBe(10); // default preserved
+  });
+
+  it('includes chrome config with defaults', () => {
+    const config = mergeConfig(minimal);
+    expect(config.chrome.titleFontSize).toBe(13);
+    expect(config.chrome.buttonRadius).toBe(6);
+    expect(config.chrome.dimOpacity).toBe(0.6);
+  });
+
+  it('overrides chrome config', () => {
+    const config = mergeConfig({
+      ...minimal,
+      chrome: { titleFontSize: 16, dimOpacity: 0.4 },
+    });
+    expect(config.chrome.titleFontSize).toBe(16);
+    expect(config.chrome.dimOpacity).toBe(0.4);
+    expect(config.chrome.buttonRadius).toBe(6); // default preserved
+  });
 });

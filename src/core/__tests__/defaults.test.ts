@@ -7,7 +7,14 @@ import {
   DEFAULT_WINDOW,
   DEFAULT_TERMINAL,
   DEFAULT_EFFECTS,
+  DEFAULT_ANIMATION,
+  DEFAULT_CHROME,
   DEFAULT_CONFIG,
+  CHAR_WIDTH_RATIO,
+  CURSOR_Y_OFFSET_RATIO,
+  GLOW_BLUR_VALUES,
+  SHADOW_PARAMS,
+  SCANLINE_PARAMS,
 } from '../defaults.js';
 
 describe('resolveTyping', () => {
@@ -65,5 +72,34 @@ describe('defaults', () => {
   it('has complete config', () => {
     expect(DEFAULT_CONFIG.maxDuration).toBe(90);
     expect(DEFAULT_CONFIG.scrollDuration).toBe(100);
+    expect(DEFAULT_CONFIG.animation).toBeDefined();
+    expect(DEFAULT_CONFIG.chrome).toBeDefined();
+  });
+
+  it('has animation defaults', () => {
+    expect(DEFAULT_ANIMATION.cursorBlinkCycle).toBe(1000);
+    expect(DEFAULT_ANIMATION.charAppearDuration).toBe(10);
+    expect(DEFAULT_ANIMATION.outputLineStagger).toBe(50);
+    expect(DEFAULT_ANIMATION.commandOutputPause).toBe(300);
+    expect(DEFAULT_ANIMATION.scrollDelay).toBe(10);
+    expect(DEFAULT_ANIMATION.outputEndPause).toBe(200);
+    expect(DEFAULT_ANIMATION.defaultTypingDuration).toBe(2000);
+    expect(DEFAULT_ANIMATION.defaultSequencePause).toBe(1000);
+  });
+
+  it('has chrome defaults', () => {
+    expect(DEFAULT_CHROME.titleFontSize).toBe(13);
+    expect(DEFAULT_CHROME.buttonRadius).toBe(6);
+    expect(DEFAULT_CHROME.buttonSpacing).toBe(20);
+    expect(DEFAULT_CHROME.dimOpacity).toBe(0.6);
+    expect(DEFAULT_CHROME.buttonY).toBe(16);
+  });
+
+  it('has internal constants', () => {
+    expect(CHAR_WIDTH_RATIO).toBe(0.6);
+    expect(CURSOR_Y_OFFSET_RATIO).toBe(-0.85);
+    expect(GLOW_BLUR_VALUES).toEqual([0.2, 1.5, 3.5]);
+    expect(SHADOW_PARAMS.dy).toBe(15);
+    expect(SCANLINE_PARAMS.height).toBe(2);
   });
 });
