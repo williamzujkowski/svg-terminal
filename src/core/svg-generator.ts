@@ -82,7 +82,7 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   const accessibilityLabel = buildAccessibilityLabel(sequences);
   const showShadow = effects.shadow && window.style !== 'none';
 
-  return `<svg width="${window.width}" height="${window.height}" xmlns="http://www.w3.org/2000/svg"
+  return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
   <style>
     @media (prefers-reduced-motion: reduce) {
@@ -298,7 +298,7 @@ function renderTerminalContent(
   const contentY = titleBarHeight + terminal.paddingTop;
   const viewportHeight = window.height - titleBarHeight;
 
-  const scrollAnimations = renderScrollAnimations(frames, terminal, lineHeight);
+  const scrollAnimations = renderScrollAnimations(frames, terminal, window, lineHeight);
   const allLines = generateAllLines(frames, terminal, lineHeight, theme.colors, effects.textGlow, chrome, animation);
 
   return `
@@ -320,17 +320,20 @@ function renderTerminalContent(
 function renderScrollAnimations(
   frames: AnimationFrame[],
   terminal: TerminalTextConfig,
+  window: WindowConfig,
   lineHeight: number,
 ): string {
   const scrollFrames = frames.filter(f => f.type === 'scroll');
   const roundedLineHeight = roundCoord(lineHeight);
   let totalScroll = 0;
+  // Content Y offset: title bar contributes to the scroll origin
+  const scrollOriginY = terminal.padding + (window.titleBarHeight - terminal.paddingTop);
 
   return scrollFrames.map(frame => {
     const scrollAmount = (frame.scrollLines ?? 1) * roundedLineHeight;
-    const fromY = roundCoord(terminal.padding + 32 - totalScroll);
+    const fromY = roundCoord(scrollOriginY - totalScroll);
     totalScroll += scrollAmount;
-    const toY = roundCoord(terminal.padding + 32 - totalScroll);
+    const toY = roundCoord(scrollOriginY - totalScroll);
 
     return `
         <animateTransform
@@ -400,7 +403,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
       </text>`;
   }).join('');
 
-  return `<svg width="${window.width}" height="${window.height}" xmlns="http://www.w3.org/2000/svg"
+  return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
   <defs>
     ${generateDefs(effects)}

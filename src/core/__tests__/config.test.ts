@@ -10,7 +10,7 @@ describe('mergeConfig', () => {
   it('uses defaults when no overrides provided', () => {
     const config = mergeConfig(minimal);
     expect(config.window.width).toBe(1000);
-    expect(config.window.height).toBe(700);
+    expect(config.window.height).toBe(560);
     expect(config.text.fontSize).toBe(14);
     expect(config.maxDuration).toBe(90);
     expect(config.scrollDuration).toBe(100);

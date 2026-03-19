@@ -14,7 +14,7 @@ import { dracula } from '../themes/dracula.js';
 
 export const DEFAULT_WINDOW: WindowConfig = {
   width: 1000,
-  height: 700,
+  height: 560,
   borderRadius: 12,
   titleBarHeight: 40,
   title: 'user@terminal:~',

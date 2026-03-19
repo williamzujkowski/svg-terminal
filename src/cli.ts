@@ -59,7 +59,7 @@ theme: dracula
 
 window:
   width: 1000
-  height: 700
+  height: 560
   title: "user@terminal:~"
   # style: macos       # macos | floating | minimal | none
   # autoHeight: false   # Auto-calculate height from content

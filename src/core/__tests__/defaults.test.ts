@@ -55,7 +55,7 @@ describe('resolvePause', () => {
 describe('defaults', () => {
   it('has sensible window defaults', () => {
     expect(DEFAULT_WINDOW.width).toBe(1000);
-    expect(DEFAULT_WINDOW.height).toBe(700);
+    expect(DEFAULT_WINDOW.height).toBe(560);
   });
 
   it('has sensible terminal defaults', () => {

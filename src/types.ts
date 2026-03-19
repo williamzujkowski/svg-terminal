@@ -70,7 +70,7 @@ export type WindowStyle = 'macos' | 'floating' | 'minimal' | 'none';
 export interface WindowConfig {
   /** SVG width in pixels (default: 1000) */
   width: number;
-  /** SVG height in pixels (default: 700) */
+  /** SVG height in pixels (default: 560, ~16:9 terminal ratio) */
   height: number;
   /** Border radius for window corners (default: 12) */
   borderRadius: number;
