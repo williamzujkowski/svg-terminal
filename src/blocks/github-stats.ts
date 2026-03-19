@@ -5,6 +5,7 @@
 
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 import { fetchJson } from '../core/http.js';
 
 /** GitHub user API response (subset). */
@@ -31,7 +32,7 @@ export const githubStatsBlock: Block = {
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const username = (config['username'] as string) ?? '';
-    const width = (config['width'] as number) ?? 58;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
     const timeout = context.config.fetchTimeout;
 
     if (!username) {

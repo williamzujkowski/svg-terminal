@@ -4,13 +4,14 @@
 
 import type { Block, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** Goodbye farewell block. */
 export const goodbyeBlock: Block = {
   name: 'goodbye',
   description: 'Display a farewell message',
 
-  render(_context, config: Record<string, unknown>): BlockResult {
+  render(context, config: Record<string, unknown>): BlockResult {
     const lines = (config['lines'] as string[]) ?? [
       '',
       'Thanks for visiting!',
@@ -25,7 +26,7 @@ export const goodbyeBlock: Block = {
       'See you in the commits!',
       '',
     ];
-    const width = (config['width'] as number) ?? 56;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
 
     const box = createDoubleBox(lines, width);
     return {

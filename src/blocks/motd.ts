@@ -5,6 +5,7 @@
 
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 import { fetchWeatherSummary } from './weather.js';
 
 /** MOTD welcome banner block. */
@@ -15,7 +16,7 @@ export const motdBlock: Block = {
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const title = (config['title'] as string) ?? 'DEV TERMINAL';
     const subtitle = (config['subtitle'] as string) ?? 'Powered by coffee & late-night debugging';
-    const width = (config['width'] as number) ?? 58;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
     const timeout = context.config.fetchTimeout;
 
     const date = context.now;

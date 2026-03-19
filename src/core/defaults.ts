@@ -78,6 +78,21 @@ export const DEFAULT_CONFIG: TerminalConfig = {
 /** Monospace character width as a fraction of font size. */
 export const CHAR_WIDTH_RATIO = 0.6;
 
+/**
+ * Calculate the maximum number of characters that fit in the terminal content area.
+ * Accounts for window width, padding, and font metrics.
+ */
+export function getMaxColumns(windowWidth: number, fontSize: number, padding: number): number {
+  const contentWidth = windowWidth - padding * 2;
+  const charWidth = fontSize * CHAR_WIDTH_RATIO;
+  return Math.floor(contentWidth / charWidth);
+}
+
+/** Default box width as a function of terminal columns. Leaves some margin. */
+export function getDefaultBoxWidth(maxCols: number): number {
+  return Math.min(maxCols - 4, 90);
+}
+
 /** Cursor vertical offset as a fraction of font size. */
 export const CURSOR_Y_OFFSET_RATIO = -0.85;
 
@@ -132,4 +147,18 @@ export function resolvePause(value: string | number | undefined): number {
   if (typeof value === 'number') return value;
   if (typeof value === 'string') return PAUSE_PRESETS[value] ?? 1000;
   return 1000;
+}
+
+/**
+ * Resolve box width: use explicit config value, or compute from terminal dimensions.
+ * This replaces hardcoded fallback widths (56, 58, etc.) in block definitions.
+ */
+export function resolveBoxWidth(
+  configWidth: number | undefined,
+  context: { config: { window: { width: number }; text: { fontSize: number; padding: number } } },
+): number {
+  if (configWidth !== undefined) return configWidth;
+  const { width } = context.config.window;
+  const { fontSize, padding } = context.config.text;
+  return getDefaultBoxWidth(getMaxColumns(width, fontSize, padding));
 }

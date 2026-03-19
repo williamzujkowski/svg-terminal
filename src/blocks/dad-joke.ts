@@ -4,6 +4,7 @@
 
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 interface Joke {
   q: string;
@@ -20,7 +21,7 @@ export const dadJokeBlock: Block = {
     const jokes = (config['jokes'] as Joke[]) ?? [
       { q: 'Why do programmers prefer dark mode?', a: 'Because light attracts bugs!', category: 'classic' },
     ];
-    const width = (config['width'] as number) ?? 56;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
 
     // Rotate based on day
     const dayOfYear = Math.floor(
