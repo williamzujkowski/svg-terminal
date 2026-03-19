@@ -85,6 +85,22 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
   <style>
+    @keyframes scanlineScroll {
+      from { transform: translateY(0); }
+      to { transform: translateY(4px); }
+    }
+    @keyframes cursorPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    @keyframes subtleFlicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 0.98; }
+      94% { opacity: 0.95; }
+      96% { opacity: 0.98; }
+    }
+    .scanline-overlay { animation: scanlineScroll 0.3s linear infinite; }
+    .terminal-screen { animation: subtleFlicker 4s ease-in-out infinite; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -95,13 +111,14 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   </style>
   <defs>
     ${generateDefs(effects)}
-    ${generateFilters(effects)}
+    ${generateFilters(effects, theme.colors.cursor)}
   </defs>
 
-  <g${showShadow ? ' filter="url(#shadow)"' : ''}>
+  <g${showShadow ? ' filter="url(#shadow)"' : ''} class="terminal-screen">
     ${renderWindow(window, theme)}
     ${renderTitleBarForStyle(window, terminal, theme, chrome)}
     ${renderTerminalContent(window, terminal, theme, effects, chrome, animation, frames, lineHeight)}
+    ${effects.scanlines ? `<rect x="0" y="0" width="${window.width}" height="${window.height}" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>` : ''}
   </g>
 </svg>`;
 }
@@ -407,10 +424,10 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
   <defs>
     ${generateDefs(effects)}
-    ${generateFilters(effects)}
+    ${generateFilters(effects, theme.colors.cursor)}
   </defs>
 
-  <g${showShadow ? ' filter="url(#shadow)"' : ''}>
+  <g${showShadow ? ' filter="url(#shadow)"' : ''} class="terminal-screen">
     ${renderWindow(window, theme)}
     ${renderTitleBarForStyle(window, terminal, theme, chrome)}
     <defs>
@@ -425,6 +442,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
         ${lineElements}
       </g>
     </g>
+    ${effects.scanlines ? `<rect x="0" y="0" width="${window.width}" height="${window.height}" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>` : ''}
   </g>
 </svg>`;
 }
