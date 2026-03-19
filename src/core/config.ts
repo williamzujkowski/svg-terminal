@@ -28,10 +28,18 @@ export function loadConfig(filePath: string): UserConfig {
 export function mergeConfig(userConfig: UserConfig): TerminalConfig {
   const theme = resolveTheme(userConfig.theme ?? 'dracula');
 
+  // Auto-apply matching window style and effects for themes with dedicated chrome
+  const isWin95 = theme.name === 'win95';
+  const autoStyle = isWin95 && !userConfig.window?.style ? 'win95' : undefined;
+  const autoEffects = isWin95 && !userConfig.effects
+    ? { textGlow: false, scanlines: false, shadow: true }
+    : undefined;
+
   return {
     window: {
       ...DEFAULT_WINDOW,
       ...userConfig.window,
+      ...(autoStyle ? { style: autoStyle } : {}),
     },
     text: {
       ...DEFAULT_TERMINAL,
@@ -40,6 +48,7 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
     theme,
     effects: {
       ...DEFAULT_EFFECTS,
+      ...(autoEffects ?? {}),
       ...userConfig.effects,
     },
     animation: {
