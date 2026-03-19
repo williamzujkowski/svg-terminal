@@ -6,6 +6,7 @@ import { amber } from './amber.js';
 import { greenPhosphor } from './green-phosphor.js';
 import { cyberpunk } from './cyberpunk.js';
 import { solarizedDark } from './solarized-dark.js';
+import { win95 } from './win95.js';
 
 /** Built-in theme registry. */
 export const themes: Record<string, Theme> = {
@@ -16,6 +17,7 @@ export const themes: Record<string, Theme> = {
   'green-phosphor': greenPhosphor,
   cyberpunk,
   'solarized-dark': solarizedDark,
+  win95,
 };
 
 /** All theme names available for rotation. */
@@ -46,4 +48,4 @@ export function resolveTheme(nameOrTheme: string | Theme): Theme {
   return theme;
 }
 
-export { dracula, nord, monokai, amber, greenPhosphor, cyberpunk, solarizedDark };
+export { dracula, nord, monokai, amber, greenPhosphor, cyberpunk, solarizedDark, win95 };

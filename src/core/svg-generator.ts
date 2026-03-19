@@ -146,6 +146,52 @@ function getTitleBarHeight(window: WindowConfig): number {
 }
 
 /** Render the title bar based on window style. */
+function renderWin95TitleBar(
+  window: WindowConfig,
+  terminal: TerminalTextConfig,
+): string {
+  const h = window.titleBarHeight;
+  const w = window.width;
+  // Win95 colors — classic silver/blue
+  const silver = '#c0c0c0';
+  const darkGray = '#808080';
+  const white = '#ffffff';
+  const black = '#000000';
+  const titleBlue = '#000080';
+  const btnSize = 16;
+  const btnY = (h - btnSize) / 2;
+
+  return `
+    <!-- Win95 title bar -->
+    <rect x="0" y="0" width="${w}" height="${h}" fill="${silver}"/>
+    <!-- 3D border: top/left white, bottom/right dark -->
+    <line x1="0" y1="0" x2="${w}" y2="0" stroke="${white}" stroke-width="2"/>
+    <line x1="0" y1="0" x2="0" y2="${h}" stroke="${white}" stroke-width="2"/>
+    <line x1="${w}" y1="0" x2="${w}" y2="${h}" stroke="${black}" stroke-width="1"/>
+    <line x1="0" y1="${h}" x2="${w}" y2="${h}" stroke="${darkGray}" stroke-width="1"/>
+    <!-- Blue title gradient -->
+    <rect x="3" y="3" width="${w - 6}" height="${h - 6}" fill="${titleBlue}"/>
+    <!-- Title text -->
+    <text x="8" y="${h / 2 + 5}"
+          font-family="Tahoma, ${terminal.fontFamily}" font-size="12" font-weight="bold"
+          fill="${white}">
+      ${escapeXml(window.title)}
+    </text>
+    <!-- Win95 buttons: minimize, maximize, close -->
+    <g transform="translate(${w - 56}, ${btnY})">
+      <!-- Minimize -->
+      <rect x="0" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${darkGray}"/>
+      <line x1="3" y1="12" x2="13" y2="12" stroke="${black}" stroke-width="2"/>
+      <!-- Maximize -->
+      <rect x="18" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${darkGray}"/>
+      <rect x="21" y="3" width="10" height="10" fill="none" stroke="${black}" stroke-width="1.5"/>
+      <!-- Close -->
+      <rect x="36" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${darkGray}"/>
+      <line x1="40" y1="4" x2="48" y2="12" stroke="${black}" stroke-width="1.5"/>
+      <line x1="48" y1="4" x2="40" y2="12" stroke="${black}" stroke-width="1.5"/>
+    </g>`;
+}
+
 function renderTitleBarForStyle(
   window: WindowConfig,
   terminal: TerminalTextConfig,
@@ -154,6 +200,9 @@ function renderTitleBarForStyle(
 ): string {
   if (window.style === 'none' || window.style === 'floating' || window.style === 'minimal') {
     return '';
+  }
+  if (window.style === 'win95') {
+    return renderWin95TitleBar(window, terminal);
   }
   return renderTitleBar(window, terminal, theme, chrome);
 }
@@ -269,11 +318,27 @@ function createAnimationFrames(
 // ============================================================================
 
 function renderWindow(window: WindowConfig, theme: Theme): string {
-  const radius = window.style === 'none' ? 0 : window.borderRadius;
-  return `
+  const isSquare = window.style === 'none' || window.style === 'win95';
+  const radius = isSquare ? 0 : window.borderRadius;
+  const bg = `
     <rect x="0" y="0" width="${window.width}" height="${window.height}"
           rx="${radius}" ry="${radius}"
           fill="${theme.colors.background}"/>`;
+
+  if (window.style === 'win95') {
+    // Win95 3D raised border
+    const w = window.width;
+    const h = window.height;
+    return `${bg}
+    <line x1="0" y1="0" x2="${w}" y2="0" stroke="#ffffff" stroke-width="2"/>
+    <line x1="0" y1="0" x2="0" y2="${h}" stroke="#ffffff" stroke-width="2"/>
+    <line x1="${w - 1}" y1="0" x2="${w - 1}" y2="${h}" stroke="#000000" stroke-width="2"/>
+    <line x1="0" y1="${h - 1}" x2="${w}" y2="${h - 1}" stroke="#000000" stroke-width="2"/>
+    <line x1="1" y1="${h - 2}" x2="${w - 1}" y2="${h - 2}" stroke="#808080" stroke-width="1"/>
+    <line x1="${w - 2}" y1="1" x2="${w - 2}" y2="${h - 1}" stroke="#808080" stroke-width="1"/>`;
+  }
+
+  return bg;
 }
 
 function renderTitleBar(

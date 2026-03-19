@@ -20,7 +20,7 @@ const WindowSchema = z.object({
   borderRadius: z.number().min(0).optional(),
   titleBarHeight: z.number().positive().optional(),
   title: z.string().optional(),
-  style: z.enum(['macos', 'floating', 'minimal', 'none']).optional(),
+  style: z.enum(['macos', 'win95', 'floating', 'minimal', 'none']).optional(),
   autoHeight: z.boolean().optional(),
   minHeight: z.number().positive().optional(),
   maxHeight: z.number().positive().optional(),

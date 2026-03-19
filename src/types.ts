@@ -64,7 +64,7 @@ export interface Theme {
 // ============================================================================
 
 /** Window style variant. */
-export type WindowStyle = 'macos' | 'floating' | 'minimal' | 'none';
+export type WindowStyle = 'macos' | 'win95' | 'floating' | 'minimal' | 'none';
 
 /** Window/SVG dimensions and chrome. */
 export interface WindowConfig {
