@@ -19,6 +19,12 @@ import { weatherBlock } from './weather.js';
 import { githubStatsBlock } from './github-stats.js';
 import { quoteBlock } from './quote.js';
 import { funFactBlock } from './fun-fact.js';
+import { vimExitBlock } from './vim-exit.js';
+import { sudoSandwichBlock } from './sudo-sandwich.js';
+import { rmRfBlock } from './rm-rf.js';
+import { forkBombBlock } from './fork-bomb.js';
+import { kernelPanicBlock } from './kernel-panic.js';
+import { segfaultBlock } from './segfault.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -39,6 +45,12 @@ export function registerBuiltinBlocks(): void {
     githubStatsBlock,
     quoteBlock,
     funFactBlock,
+    vimExitBlock,
+    sudoSandwichBlock,
+    rmRfBlock,
+    forkBombBlock,
+    kernelPanicBlock,
+    segfaultBlock,
   ]);
 }
 
@@ -59,3 +71,9 @@ export { weatherBlock } from './weather.js';
 export { githubStatsBlock } from './github-stats.js';
 export { quoteBlock } from './quote.js';
 export { funFactBlock } from './fun-fact.js';
+export { vimExitBlock } from './vim-exit.js';
+export { sudoSandwichBlock } from './sudo-sandwich.js';
+export { rmRfBlock } from './rm-rf.js';
+export { forkBombBlock } from './fork-bomb.js';
+export { kernelPanicBlock } from './kernel-panic.js';
+export { segfaultBlock } from './segfault.js';

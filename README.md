@@ -77,6 +77,12 @@ blocks:
 | `github-stats` | Live GitHub user stats (repos, followers) |
 | `quote` | Random quote from dummyjson.com |
 | `fun-fact` | Random fun fact from uselessfacts.jsph.pl |
+| `vim-exit` | The eternal "how do I quit vim?" meme |
+| `sudo-sandwich` | xkcd 149 callback |
+| `rm-rf` | Dramatic fake `rm -rf /` with commentary |
+| `fork-bomb` | Mock fork-bomb warning ("turn your laptop fan into a leaf blower") |
+| `kernel-panic` | Friendly BSOD spoof in terminal text |
+| `segfault` | Fake core dump with corrupted backtrace |
 
 ### Dynamic API Blocks
 

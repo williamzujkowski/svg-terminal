@@ -109,3 +109,29 @@ describe('goodbye block', () => {
     expect(result.lines.length).toBeGreaterThan(0);
   });
 });
+
+describe('classic easter-egg blocks', () => {
+  const eggs = ['vim-exit', 'sudo-sandwich', 'rm-rf', 'fork-bomb', 'kernel-panic', 'segfault'];
+
+  for (const name of eggs) {
+    it(`${name} renders default command + non-empty output`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.command).toBeTruthy();
+      expect(result.lines.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('sudo-sandwich respects user override', async () => {
+    const block = getBlock('sudo-sandwich')!;
+    const result = await block.render(context, { user: 'alice' });
+    expect(result.lines.some(l => l.includes('alice'))).toBe(true);
+  });
+
+  it('segfault respects program override', async () => {
+    const block = getBlock('segfault')!;
+    const result = await block.render(context, { program: 'rocket.out' });
+    expect(result.lines.some(l => l.includes('rocket.out'))).toBe(true);
+  });
+});
