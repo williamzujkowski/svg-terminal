@@ -25,6 +25,11 @@ import { rmRfBlock } from './rm-rf.js';
 import { forkBombBlock } from './fork-bomb.js';
 import { kernelPanicBlock } from './kernel-panic.js';
 import { segfaultBlock } from './segfault.js';
+import { whoamiBlock } from './whoami.js';
+import { lastLoginBlock } from './last-login.js';
+import { fingerBlock } from './finger.js';
+import { whoBlock } from './who.js';
+import { uptimeBlock } from './uptime.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -51,6 +56,11 @@ export function registerBuiltinBlocks(): void {
     forkBombBlock,
     kernelPanicBlock,
     segfaultBlock,
+    whoamiBlock,
+    lastLoginBlock,
+    fingerBlock,
+    whoBlock,
+    uptimeBlock,
   ]);
 }
 
@@ -77,3 +87,8 @@ export { rmRfBlock } from './rm-rf.js';
 export { forkBombBlock } from './fork-bomb.js';
 export { kernelPanicBlock } from './kernel-panic.js';
 export { segfaultBlock } from './segfault.js';
+export { whoamiBlock } from './whoami.js';
+export { lastLoginBlock } from './last-login.js';
+export { fingerBlock } from './finger.js';
+export { whoBlock } from './who.js';
+export { uptimeBlock } from './uptime.js';

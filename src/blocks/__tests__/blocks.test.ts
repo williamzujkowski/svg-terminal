@@ -135,3 +135,35 @@ describe('classic easter-egg blocks', () => {
     expect(result.lines.some(l => l.includes('rocket.out'))).toBe(true);
   });
 });
+
+describe('persona blocks', () => {
+  const persona = ['whoami', 'last-login', 'finger', 'who', 'uptime'];
+
+  for (const name of persona) {
+    it(`${name} renders default command + non-empty output`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.command).toBeTruthy();
+      expect(result.lines.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('whoami emits the username on the first line', async () => {
+    const block = getBlock('whoami')!;
+    const result = await block.render(context, { user: 'alice' });
+    expect(result.lines[0]).toBe('alice');
+  });
+
+  it('uptime reflects custom days in output', async () => {
+    const block = getBlock('uptime')!;
+    const result = await block.render(context, { days: 1234 });
+    expect(result.lines[0]).toContain('1234');
+  });
+
+  it('finger respects custom mail count', async () => {
+    const block = getBlock('finger')!;
+    const result = await block.render(context, { mail: 7 });
+    expect(result.lines.some(l => l.includes('7'))).toBe(true);
+  });
+});

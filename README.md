@@ -83,6 +83,11 @@ blocks:
 | `fork-bomb` | Mock fork-bomb warning ("turn your laptop fan into a leaf blower") |
 | `kernel-panic` | Friendly BSOD spoof in terminal text |
 | `segfault` | Fake core dump with corrupted backtrace |
+| `whoami` | Username + existential identity bullets |
+| `last-login` | `last` output with awkward 3am login timestamps |
+| `finger` | Faux finger(1) card with snarky plan lines |
+| `who` | `who` listing with ghost users (debugger, coffee, sanity) |
+| `uptime` | Ridiculous uptime ("up 632 days, that one incident") |
 
 ### Dynamic API Blocks
 
