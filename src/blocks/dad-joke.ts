@@ -2,6 +2,7 @@
  * Dad joke block — displays a Q&A joke in a fancy box.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
@@ -12,11 +13,23 @@ interface Joke {
   category?: string;
 }
 
+const jokeSchema = z.object({
+  q: z.string(),
+  a: z.string(),
+  category: z.string().optional(),
+}).strict();
+
+const dadJokeSchema = z.object({
+  jokes: z.array(jokeSchema).optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
+
 /** Dad joke block. */
 export const dadJokeBlock: Block = {
   name: 'dad-joke',
   description: 'Display a dad joke in a fancy ASCII box',
-  allowedKeys: ['jokes', 'width'] as const,
+  configSchema: dadJokeSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const jokes = (config['jokes'] as Joke[]) ?? [

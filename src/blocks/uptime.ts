@@ -2,12 +2,21 @@
  * uptime block — ridiculous fake uptime with parenthetical commentary.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const uptimeSchema = z.object({
+  days: z.number().int().min(0).optional(),
+  users: z.number().int().min(0).optional(),
+  load: z.tuple([z.number(), z.number(), z.number()]).optional(),
+  lastIncident: z.string().optional(),
+  command: z.string().optional(),
+}).strict();
 
 export const uptimeBlock: Block = {
   name: 'uptime',
   description: 'Fake uptime with absurd numbers and SRE commentary',
-  allowedKeys: ['days', 'lastIncident', 'load', 'users'] as const,
+  configSchema: uptimeSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const days = (config['days'] as number) ?? 632;

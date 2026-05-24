@@ -3,11 +3,20 @@
  * Displays current conditions in a styled terminal box.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
 import { resolveBoxWidth } from '../core/defaults.js';
 import { hashConfig } from '../core/cache.js';
+
+const weatherSchema = z.object({
+  location: z.string().optional(),
+  units: z.enum(['imperial', 'metric', 'both']).optional(),
+  compact: z.boolean().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** wttr.in JSON response shape (subset). */
 interface WttrResponse {
@@ -83,7 +92,7 @@ function formatWeather(
 export const weatherBlock: Block = {
   name: 'weather',
   description: 'Display current weather conditions from wttr.in',
-  allowedKeys: ['compact', 'location', 'units', 'width'] as const,
+  configSchema: weatherSchema,
   cacheable: true,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {

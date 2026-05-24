@@ -2,17 +2,24 @@
  * Goodbye block — farewell message.
  */
 
-import type { Block, BlockResult } from '../types.js';
+import { z } from 'zod';
+import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+
+const goodbyeSchema = z.object({
+  lines: z.array(z.string()).optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** Goodbye farewell block. */
 export const goodbyeBlock: Block = {
   name: 'goodbye',
   description: 'Display a farewell message',
-  allowedKeys: ['lines', 'width'] as const,
+  configSchema: goodbyeSchema,
 
-  render(context, config: Record<string, unknown>): BlockResult {
+  render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const lines = (config['lines'] as string[]) ?? [
       '',
       'Thanks for visiting!',

@@ -2,15 +2,23 @@
  * Blog post block — show latest blog post title.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+
+const blogPostSchema = z.object({
+  title: z.string().optional(),
+  url: z.string().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** Blog post display block. */
 export const blogPostBlock: Block = {
   name: 'blog-post',
   description: 'Display a blog post title in a box',
-  allowedKeys: ['title', 'url', 'width'] as const,
+  configSchema: blogPostSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const title = (config['title'] as string) ?? 'My Latest Post';

@@ -2,12 +2,18 @@
  * segfault block — fake core dump for low-level humor.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const segfaultSchema = z.object({
+  program: z.string().optional(),
+  command: z.string().optional(),
+}).strict();
 
 export const segfaultBlock: Block = {
   name: 'segfault',
   description: 'Fake segmentation fault with a corrupted backtrace',
-  allowedKeys: ['program'] as const,
+  configSchema: segfaultSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? './a.out';

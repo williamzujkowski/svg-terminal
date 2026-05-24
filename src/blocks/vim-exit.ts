@@ -2,11 +2,17 @@
  * vim-exit block — the eternal "how do I quit vim?" meme.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const vimExitSchema = z.object({
+  command: z.string().optional(),
+}).strict();
 
 export const vimExitBlock: Block = {
   name: 'vim-exit',
   description: 'The classic "how do I exit vim?" message',
+  configSchema: vimExitSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? 'vim';

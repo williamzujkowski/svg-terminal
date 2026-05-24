@@ -2,11 +2,17 @@
  * fork-bomb block — pretends to detect a fork bomb and reasons with the user.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const forkBombSchema = z.object({
+  command: z.string().optional(),
+}).strict();
 
 export const forkBombBlock: Block = {
   name: 'fork-bomb',
   description: 'Mock fork-bomb warning with practical consequences',
+  configSchema: forkBombSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? ':(){ :|:& };:';

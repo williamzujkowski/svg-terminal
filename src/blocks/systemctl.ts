@@ -2,13 +2,23 @@
  * systemctl block — fake systemd service status.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const systemctlSchema = z.object({
+  service: z.string().optional(),
+  description: z.string().optional(),
+  pid: z.string().optional(),
+  memory: z.string().optional(),
+  logs: z.array(z.string()).optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** systemctl status display block. */
 export const systemctlBlock: Block = {
   name: 'systemctl',
   description: 'Display a systemd-style service status',
-  allowedKeys: ['description', 'logs', 'memory', 'pid', 'service'] as const,
+  configSchema: systemctlSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const service = (config['service'] as string) ?? 'dev-mode.service';

@@ -3,11 +3,19 @@
  * No rate limit, no API key required, 1318 quotes in the database.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
 import { resolveBoxWidth } from '../core/defaults.js';
 import { hashConfig } from '../core/cache.js';
+
+const quoteSchema = z.object({
+  fallback: z.string().optional(),
+  fallbackAuthor: z.string().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** DummyJSON quote response. */
 interface QuoteResponse {
@@ -20,7 +28,7 @@ interface QuoteResponse {
 export const quoteBlock: Block = {
   name: 'quote',
   description: 'Display a random inspirational quote',
-  allowedKeys: ['fallback', 'fallbackAuthor', 'width'] as const,
+  configSchema: quoteSchema,
   cacheable: true,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {

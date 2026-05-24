@@ -2,15 +2,21 @@
  * npm-install block — web dev humor about dependency hell.
  */
 
-import type { Block, BlockResult } from '../types.js';
+import { z } from 'zod';
+import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const npmInstallSchema = z.object({
+  package: z.string().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** npm install joke block. */
 export const npmInstallBlock: Block = {
   name: 'npm-install',
   description: 'Display a humorous npm install dependency tree',
-  allowedKeys: ['package'] as const,
+  configSchema: npmInstallSchema,
 
-  render(_context, config: Record<string, unknown>): BlockResult {
+  render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const pkg = (config['package'] as string) ?? 'left-pad';
 
     const lines = [

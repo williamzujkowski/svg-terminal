@@ -2,6 +2,7 @@
  * National day block — displays today's national/fun day.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
@@ -12,11 +13,23 @@ interface DayEntry {
   emoji: string;
 }
 
+const dayEntrySchema = z.object({
+  name: z.string(),
+  desc: z.string(),
+  emoji: z.string(),
+}).strict();
+
+const nationalDaySchema = z.object({
+  days: z.array(dayEntrySchema).optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
+
 /** National day display block. */
 export const nationalDayBlock: Block = {
   name: 'national-day',
   description: 'Display a fun national day celebration',
-  allowedKeys: ['days', 'width'] as const,
+  configSchema: nationalDaySchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const days = (config['days'] as DayEntry[]) ?? [];

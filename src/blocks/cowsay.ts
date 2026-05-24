@@ -2,7 +2,14 @@
  * cowsay block — speech bubble + the iconic ASCII cow.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const cowsaySchema = z.object({
+  say: z.string().optional(),
+  width: z.number().int().min(8).max(200).optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** Word-wrap a string to a max width, breaking on spaces. Long words are sliced. */
 function wrap(text: string, width: number): string[] {
@@ -62,7 +69,7 @@ const COW = [
 export const cowsayBlock: Block = {
   name: 'cowsay',
   description: 'A cow says something. The cow is always right.',
-  allowedKeys: ['say', 'width'] as const,
+  configSchema: cowsaySchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? 'cowsay';

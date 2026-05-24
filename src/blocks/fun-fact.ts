@@ -3,11 +3,19 @@
  * Always SFW, no API key required.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
 import { resolveBoxWidth } from '../core/defaults.js';
 import { hashConfig } from '../core/cache.js';
+
+const funFactSchema = z.object({
+  language: z.string().optional(),
+  fallback: z.string().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** Useless Facts API response. */
 interface FactResponse {
@@ -22,7 +30,7 @@ interface FactResponse {
 export const funFactBlock: Block = {
   name: 'fun-fact',
   description: 'Display a random fun fact',
-  allowedKeys: ['fallback', 'language', 'width'] as const,
+  configSchema: funFactSchema,
   cacheable: true,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {

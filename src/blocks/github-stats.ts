@@ -3,11 +3,18 @@
  * No authentication required (60 requests/hour per IP).
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
 import { fetchJson } from '../core/http.js';
 import { hashConfig } from '../core/cache.js';
+
+const githubStatsSchema = z.object({
+  username: z.string().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** GitHub user API response (subset). */
 interface GitHubUser {
@@ -30,7 +37,7 @@ function formatCount(n: number): string {
 export const githubStatsBlock: Block = {
   name: 'github-stats',
   description: 'Display live GitHub user statistics',
-  allowedKeys: ['username', 'width'] as const,
+  configSchema: githubStatsSchema,
   cacheable: true,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {

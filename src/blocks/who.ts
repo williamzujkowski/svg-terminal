@@ -2,6 +2,7 @@
  * who block — `who` output with ghost processes/abstractions personified.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 
 interface WhoEntry {
@@ -11,10 +12,23 @@ interface WhoEntry {
   note?: string;
 }
 
+const whoEntrySchema = z.object({
+  user: z.string(),
+  tty: z.string().optional(),
+  when: z.string(),
+  note: z.string().optional(),
+}).strict();
+
+const whoSchema = z.object({
+  user: z.string().optional(),
+  entries: z.array(whoEntrySchema).optional(),
+  command: z.string().optional(),
+}).strict();
+
 export const whoBlock: Block = {
   name: 'who',
   description: '`who` output with ghost users (debugger, coffee, sanity)',
-  allowedKeys: ['entries', 'user'] as const,
+  configSchema: whoSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

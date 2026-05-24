@@ -2,12 +2,23 @@
  * finger block — faux user metadata in classic finger(1) layout.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const fingerSchema = z.object({
+  user: z.string().optional(),
+  shell: z.string().optional(),
+  directory: z.string().optional(),
+  lastLogin: z.string().optional(),
+  mail: z.number().int().min(0).optional(),
+  plan: z.array(z.string()).optional(),
+  command: z.string().optional(),
+}).strict();
 
 export const fingerBlock: Block = {
   name: 'finger',
   description: 'Faux finger(1) user info card',
-  allowedKeys: ['directory', 'lastLogin', 'mail', 'plan', 'shell', 'user'] as const,
+  configSchema: fingerSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

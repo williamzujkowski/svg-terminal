@@ -3,7 +3,15 @@
  * The typing/scroll animation already provides cascade-in; no per-frame work needed.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const matrixRainSchema = z.object({
+  rows: z.number().int().min(1).max(40).optional(),
+  cols: z.number().int().min(1).max(200).optional(),
+  message: z.string().optional(),
+  command: z.string().optional(),
+}).strict();
 
 const KATAKANA = 'ヲアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン';
 const DIGITS = '0123456789';
@@ -25,7 +33,7 @@ function mulberry32(seed: number): () => number {
 export const matrixRainBlock: Block = {
   name: 'matrix-rain',
   description: 'Single-frame Matrix rain screen with ACCESS GRANTED footer',
-  allowedKeys: ['cols', 'message', 'rows'] as const,
+  configSchema: matrixRainSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? './neo.sh';

@@ -2,12 +2,19 @@
  * whoami block — returns username + existential bullets.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const whoamiSchema = z.object({
+  user: z.string().optional(),
+  bullets: z.array(z.string()).optional(),
+  command: z.string().optional(),
+}).strict();
 
 export const whoamiBlock: Block = {
   name: 'whoami',
   description: 'Username + lightly existential identity bullets',
-  allowedKeys: ['bullets', 'user'] as const,
+  configSchema: whoamiSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

@@ -2,11 +2,17 @@
  * rm-rf block — dramatic fake `rm -rf /` with self-aware commentary.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const rmRfSchema = z.object({
+  command: z.string().optional(),
+}).strict();
 
 export const rmRfBlock: Block = {
   name: 'rm-rf',
   description: 'Fake `rm -rf /` with dramatic narration',
+  configSchema: rmRfSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? 'sudo rm -rf / --no-preserve-root';

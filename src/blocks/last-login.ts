@@ -2,6 +2,7 @@
  * last-login block — `last` output with awkward timestamps.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 
 interface LoginEntry {
@@ -11,10 +12,23 @@ interface LoginEntry {
   note?: string;
 }
 
+const loginEntrySchema = z.object({
+  user: z.string().optional(),
+  tty: z.string().optional(),
+  when: z.string(),
+  note: z.string().optional(),
+}).strict();
+
+const lastLoginSchema = z.object({
+  user: z.string().optional(),
+  entries: z.array(loginEntrySchema).optional(),
+  command: z.string().optional(),
+}).strict();
+
 export const lastLoginBlock: Block = {
   name: 'last-login',
   description: '`last` output with embarrassing timestamps and parentheticals',
-  allowedKeys: ['entries', 'user'] as const,
+  configSchema: lastLoginSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';
