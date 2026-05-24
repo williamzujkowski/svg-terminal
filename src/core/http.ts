@@ -7,6 +7,10 @@
 /** Default fetch timeout in milliseconds. */
 export const DEFAULT_FETCH_TIMEOUT = 10000;
 
+// Injected by tsup `define`; falls back to a dev tag under `tsx`.
+declare const __PKG_VERSION__: string;
+const USER_AGENT = `svg-terminal/${typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev'}`;
+
 /**
  * Fetch a URL with a timeout. Returns the Response or null on failure.
  * Never throws — all errors are caught and logged.
@@ -21,7 +25,7 @@ export async function fetchWithTimeout(
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: { 'User-Agent': 'svg-terminal/0.5.0' },
+      headers: { 'User-Agent': USER_AGENT },
     });
     if (!response.ok) {
       console.warn(`[svg-terminal] HTTP ${response.status} from ${url}`);
