@@ -1,6 +1,15 @@
-import { describe, it, expect } from 'vitest';
-import { mergeConfig } from '../config.js';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { writeFileSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { loadConfig, mergeConfig } from '../config.js';
+import { ConfigError } from '../errors.js';
+import { registerBuiltinBlocks } from '../../blocks/index.js';
 import type { UserConfig } from '../../types.js';
+
+beforeAll(() => {
+  registerBuiltinBlocks();
+});
 
 describe('mergeConfig', () => {
   const minimal: UserConfig = {
@@ -126,5 +135,71 @@ describe('mergeConfig', () => {
   it('overrides animation loop to a number', () => {
     const config = mergeConfig({ ...minimal, animation: { loop: 3 } });
     expect(config.animation.loop).toBe(3);
+  });
+});
+
+describe('loadConfig error paths', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'svg-terminal-test-'));
+  const write = (name: string, body: string): string => {
+    const p = join(dir, name);
+    writeFileSync(p, body, 'utf-8');
+    return p;
+  };
+
+  it('raises ConfigError when the file is missing', () => {
+    expect(() => loadConfig(join(dir, 'does-not-exist.yml'))).toThrow(ConfigError);
+  });
+
+  it('formats YAML parse errors with file + line', () => {
+    const file = write('bad-yaml.yml', 'theme: dracula\nblocks:\n  - block: custom\n  : oops\n');
+    try {
+      loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('YAML parse error');
+      expect((e as ConfigError).formatted).toContain(file);
+    }
+  });
+
+  it('formats zod errors as a per-issue list', () => {
+    const file = write('no-blocks.yml', 'theme: dracula\nblocks: []\n');
+    try {
+      loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('Invalid config');
+      expect((e as ConfigError).formatted).toContain('At least one block');
+    }
+  });
+
+  it('rejects unknown theme names with the available list', () => {
+    const file = write('bad-theme.yml', 'theme: solarizedDark\nblocks:\n  - block: custom\n');
+    try {
+      loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('Unknown theme');
+      expect((e as ConfigError).formatted).toContain('solarized-dark');
+    }
+  });
+
+  it('accepts the special "random" theme name', () => {
+    const file = write('random-theme.yml', 'theme: random\nblocks:\n  - block: custom\n');
+    expect(() => loadConfig(file)).not.toThrow();
+  });
+
+  it('rejects unknown block names with the index that failed', () => {
+    const file = write('bad-block.yml', 'blocks:\n  - block: custom\n  - block: cowsayy\n');
+    try {
+      loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('Unknown block "cowsayy"');
+      expect((e as ConfigError).formatted).toContain('blocks[1]');
+    }
   });
 });

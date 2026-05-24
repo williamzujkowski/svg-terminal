@@ -15,6 +15,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { generate, generateStatic, listBlocks, loadConfig } from './index.js';
 import { themes } from './themes/index.js';
+import { ConfigError } from './core/errors.js';
 
 // Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
 declare const __PKG_VERSION__: string;
@@ -162,6 +163,10 @@ Example:
 }
 
 main().catch((err: unknown) => {
-  console.error('Error:', err instanceof Error ? err.message : err);
+  if (err instanceof ConfigError) {
+    console.error(err.formatted);
+  } else {
+    console.error('Error:', err instanceof Error ? err.message : err);
+  }
   process.exit(1);
 });

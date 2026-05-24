@@ -5,8 +5,10 @@
 
 import { readFileSync } from 'node:fs';
 import yaml from 'js-yaml';
+import { z } from 'zod';
 import type { TerminalConfig, UserConfig } from '../types.js';
-import { resolveTheme } from '../themes/index.js';
+import { resolveTheme, themes } from '../themes/index.js';
+import { getBlock } from '../blocks/registry.js';
 import {
   DEFAULT_ANIMATION,
   DEFAULT_CHROME,
@@ -16,12 +18,65 @@ import {
   DEFAULT_WINDOW,
 } from './defaults.js';
 import { validateConfig } from './schema.js';
+import { ConfigError } from './errors.js';
 
-/** Load, parse, and validate a YAML config file. */
+/** Load, parse, and validate a YAML config file. Throws ConfigError on any failure. */
 export function loadConfig(filePath: string): UserConfig {
-  const raw = readFileSync(filePath, 'utf-8');
-  const parsed = yaml.load(raw);
-  return validateConfig(parsed);
+  let raw: string;
+  try {
+    raw = readFileSync(filePath, 'utf-8');
+  } catch (err) {
+    throw new ConfigError(`Cannot read config file: ${filePath}\n  ${(err as Error).message}`);
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = yaml.load(raw);
+  } catch (err) {
+    // js-yaml YAMLException carries mark.line / mark.column for the source location.
+    const e = err as { message: string; mark?: { line: number; column: number } };
+    const where = e.mark ? `:${e.mark.line + 1}:${e.mark.column + 1}` : '';
+    throw new ConfigError(`YAML parse error in ${filePath}${where}\n  ${e.message}`);
+  }
+
+  let config: UserConfig;
+  try {
+    config = validateConfig(parsed);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const issues = err.issues.map(i => {
+        const path = i.path.length ? i.path.join('.') : '<root>';
+        return `  ${path}: ${i.message}`;
+      }).join('\n');
+      throw new ConfigError(`Invalid config in ${filePath}:\n${issues}`);
+    }
+    throw err;
+  }
+
+  validateNames(config, filePath);
+  return config;
+}
+
+/** Validate theme + block names against the live registries with actionable lists. */
+function validateNames(config: UserConfig, filePath: string): void {
+  if (typeof config.theme === 'string') {
+    const available = Object.keys(themes);
+    if (config.theme !== 'random' && !available.includes(config.theme)) {
+      throw new ConfigError(
+        `Unknown theme "${config.theme}" in ${filePath}\n  Available: ${available.join(', ')}, random`,
+      );
+    }
+  }
+
+  for (let i = 0; i < config.blocks.length; i++) {
+    const entry = config.blocks[i];
+    if (!entry) continue;
+    if (!getBlock(entry.block)) {
+      throw new ConfigError(
+        `Unknown block "${entry.block}" at blocks[${i}] in ${filePath}\n  Run "svg-terminal blocks" to list available block types.`,
+      );
+    }
+  }
 }
 
 /** Merge user config with defaults to produce a full TerminalConfig. */

@@ -104,6 +104,7 @@ export async function generateStatic(userConfig: UserConfig): Promise<string> {
 // Re-export public API
 export { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 export { loadConfig, mergeConfig } from './core/config.js';
+export { ConfigError } from './core/errors.js';
 export { registerBlock, registerBlocks, getBlock, listBlocks, registerBuiltinBlocks } from './blocks/index.js';
 export { createBox, createAutoBox, createDoubleBox, createRoundedBox, createTitledBox } from './core/box-generator.js';
 export { parseMarkup, hasMarkup, stripMarkup, buildColorMap } from './core/markup-parser.js';
