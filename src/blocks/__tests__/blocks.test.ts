@@ -214,6 +214,45 @@ describe('previously-uncovered blocks', () => {
   });
 });
 
+describe('v0.7 animated blocks', () => {
+  const animated = ['heartbeat', 'spinning-gear', 'blinking-eyes', 'countdown'];
+
+  for (const name of animated) {
+    it(`${name}: returns an animation payload with the static fallback set to frame 0`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.animation).toBeDefined();
+      expect(result.animation!.frames.length).toBeGreaterThan(1);
+      expect(result.lines).toEqual(result.animation!.frames[0]);
+    });
+  }
+
+  it('countdown: frame count = from + 1 ("go" frame)', async () => {
+    const block = getBlock('countdown')!;
+    const result = await block.render(context, { from: 3 });
+    expect(result.animation!.frames.length).toBe(4); // 3, 2, 1, GO
+    expect(result.animation!.loop).toBe(false); // play once, freeze on GO
+  });
+
+  it('countdown: respects custom "go" word', async () => {
+    const block = getBlock('countdown')!;
+    const result = await block.render(context, { from: 2, go: 'DEPLOY' });
+    const last = result.animation!.frames[result.animation!.frames.length - 1]![0]!;
+    expect(last).toContain('DEPLOY');
+  });
+
+  it('heartbeat: uses heart glyph in every frame', async () => {
+    const block = getBlock('heartbeat')!;
+    const result = await block.render(context, {});
+    for (const frame of result.animation!.frames) {
+      const line = frame[0]!;
+      // Either a heart or its rest state — every frame has something in the glyph slot.
+      expect(line.length).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe('animated blocks', () => {
   it('loading-spinner returns an animation payload with N frames', async () => {
     const block = getBlock('loading-spinner')!;

@@ -33,6 +33,10 @@ import { uptimeBlock } from './uptime.js';
 import { matrixRainBlock } from './matrix-rain.js';
 import { cowsayBlock } from './cowsay.js';
 import { loadingSpinnerBlock } from './loading-spinner.js';
+import { heartbeatBlock } from './heartbeat.js';
+import { spinningGearBlock } from './spinning-gear.js';
+import { blinkingEyesBlock } from './blinking-eyes.js';
+import { countdownBlock } from './countdown.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -67,6 +71,10 @@ export function registerBuiltinBlocks(): void {
     matrixRainBlock,
     cowsayBlock,
     loadingSpinnerBlock,
+    heartbeatBlock,
+    spinningGearBlock,
+    blinkingEyesBlock,
+    countdownBlock,
   ]);
 }
 
@@ -101,3 +109,7 @@ export { uptimeBlock } from './uptime.js';
 export { matrixRainBlock } from './matrix-rain.js';
 export { cowsayBlock } from './cowsay.js';
 export { loadingSpinnerBlock } from './loading-spinner.js';
+export { heartbeatBlock } from './heartbeat.js';
+export { spinningGearBlock } from './spinning-gear.js';
+export { blinkingEyesBlock } from './blinking-eyes.js';
+export { countdownBlock } from './countdown.js';

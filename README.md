@@ -99,6 +99,10 @@ Special value: `theme: random` rotates through all themes deterministically by d
 | `matrix-rain` | Single-frame Matrix rain screen with ACCESS GRANTED footer |
 | `cowsay` | Speech bubble + iconic ASCII cow (with word-wrap) |
 | `loading-spinner` | Braille spinner cycling at configurable fps |
+| `heartbeat` | Pulsing heart — emotional hook for a project you love |
+| `spinning-gear` | Rotating `\|/-\\` gear for DevOps/infra vibes |
+| `blinking-eyes` | Kaomoji mascot that blinks every few seconds |
+| `countdown` | T-minus N..0..GO! launch stinger (plays once, freezes on GO) |
 
 ### Dynamic API Blocks
 
