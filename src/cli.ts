@@ -11,7 +11,7 @@
  *   svg-terminal blocks
  */
 
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, watch as fsWatch } from 'node:fs';
 import { resolve } from 'node:path';
 import { generate, generateStatic, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
@@ -32,6 +32,25 @@ function getFlag(name: string): string | undefined {
 
 function hasFlag(name: string): boolean {
   return args.includes(`--${name}`);
+}
+
+/** Format the "(static, minified, cache:frozen)" suffix on the generate log line. */
+function formatModeTag(opts: { isStatic: boolean; minify: boolean; cacheMode: string }): string {
+  const parts = [
+    opts.isStatic && 'static',
+    opts.minify && 'minified',
+    opts.cacheMode !== 'normal' && `cache:${opts.cacheMode}`,
+  ].filter(Boolean);
+  return parts.length ? ` (${parts.join(', ')})` : '';
+}
+
+/** Pretty-print an error inside the watch loop without crashing the watcher. */
+function formatWatchError(err: unknown): void {
+  if (err instanceof ConfigError || err instanceof BlockConfigError) {
+    console.error(`\x1b[31m${err.formatted}\x1b[0m`);
+  } else {
+    console.error('\x1b[31mError:\x1b[0m', err instanceof Error ? err.message : err);
+  }
 }
 
 /** Human-readable age string for the cache check output. */
@@ -75,25 +94,77 @@ async function main(): Promise<void> {
       const isStatic = hasFlag('static');
       const minify = hasFlag('minify');
       const strict = hasFlag('strict');
+      const watch = hasFlag('watch');
       const cacheMode = resolveCacheMode();
 
       setStrictBlockConfig(strict);
       const resolvedConfigPath = resolve(configPath);
-      const userConfig = loadConfig(resolvedConfigPath);
+      const resolvedOutputPath = resolve(outputPath);
       const genOpts = { configPath: resolvedConfigPath, cacheMode };
-      let svg = isStatic
-        ? await generateStatic(userConfig, genOpts)
-        : await generate(userConfig, genOpts);
-      if (minify) svg = minifySvg(svg);
-      writeFileSync(resolve(outputPath), svg, 'utf-8');
-      const mode = [
-        isStatic && 'static',
-        minify && 'minified',
-        cacheMode !== 'normal' && `cache:${cacheMode}`,
-      ].filter(Boolean).join(', ');
-      const tag = mode ? ` (${mode})` : '';
-      console.log(`Generated ${outputPath}${tag} (${(svg.length / 1024).toFixed(1)} KB)`);
-      break;
+      const modeTag = formatModeTag({ isStatic, minify, cacheMode });
+
+      const runOnce = async (): Promise<void> => {
+        const userConfig = loadConfig(resolvedConfigPath);
+        let svg = isStatic
+          ? await generateStatic(userConfig, genOpts)
+          : await generate(userConfig, genOpts);
+        if (minify) svg = minifySvg(svg);
+        writeFileSync(resolvedOutputPath, svg, 'utf-8');
+        console.log(`Generated ${outputPath}${modeTag} (${(svg.length / 1024).toFixed(1)} KB)`);
+      };
+
+      if (!watch) {
+        await runOnce();
+        break;
+      }
+
+      // Initial generate happens synchronously before installing the watcher so
+      // the first error surfaces immediately and the watch banner isn't a lie.
+      try {
+        await runOnce();
+      } catch (e) {
+        formatWatchError(e);
+      }
+
+      console.log(`\x1b[2m[svg-terminal] watching ${configPath}... (Ctrl-C to exit)\x1b[0m`);
+      const DEBOUNCE_MS = 100;
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      let running = false;
+      let queued = false;
+
+      const trigger = (): void => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(async () => {
+          timer = null;
+          if (running) { queued = true; return; }
+          running = true;
+          try {
+            await runOnce();
+          } catch (e) {
+            formatWatchError(e);
+          } finally {
+            running = false;
+            if (queued) { queued = false; trigger(); }
+          }
+        }, DEBOUNCE_MS);
+      };
+
+      const watcher = fsWatch(resolvedConfigPath, { persistent: true }, () => trigger());
+
+      // Editors that rename-on-save can detach fs.watch from the inode on
+      // Linux. Re-arm if the file disappears and reappears.
+      watcher.on('error', () => {
+        // best-effort: fall through; user will notice if changes stop firing
+      });
+
+      process.on('SIGINT', () => {
+        watcher.close();
+        console.log('\n\x1b[2m[svg-terminal] stopped\x1b[0m');
+        process.exit(0);
+      });
+
+      // Keep process alive until SIGINT.
+      return;
     }
 
     case 'init': {
@@ -226,6 +297,7 @@ Options:
   --static    Generate non-animated SVG (final frame snapshot)
   --minify          Strip inter-element whitespace for smaller output
   --strict          Promote unknown-block-config-key warnings to hard errors
+  --watch           Re-generate on config file change (Ctrl-C to exit)
   --no-cache        Don't read or write the dynamic-block fetch cache
   --refresh-cache   Force refresh: ignore existing cache entries, re-fetch all
   --frozen-cache    Use cached values only; never fetch (CI offline mode)

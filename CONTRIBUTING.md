@@ -18,6 +18,13 @@ Run the built CLI against a sample config:
 ```bash
 node dist/cli.js init                                # writes terminal.yml
 node dist/cli.js generate --config terminal.yml      # writes terminal.svg
+node dist/cli.js generate --config terminal.yml --watch    # rebuild on save
+```
+
+If you prefer your own file watcher, the built-in `--watch` is optional — `watchexec`, `entr`, or `nodemon` work just as well:
+
+```bash
+watchexec -w terminal.yml -- node dist/cli.js generate --config terminal.yml
 ```
 
 CI runs typecheck + lint + test + build + a smoke generate on every PR (`.github/workflows/ci.yml`).

@@ -11,8 +11,9 @@ Generate beautiful animated SVG terminals for GitHub READMEs and beyond.
 ## Quick Start
 
 ```bash
-npx svg-terminal init          # Creates terminal.yml
-npx svg-terminal generate      # Generates terminal.svg
+npx svg-terminal init                       # Creates terminal.yml
+npx svg-terminal generate                   # Generates terminal.svg
+npx svg-terminal generate --watch           # Rebuild on every save
 ```
 
 ## Configuration
