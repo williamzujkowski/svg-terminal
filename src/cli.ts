@@ -104,7 +104,7 @@ async function main(): Promise<void> {
       const modeTag = formatModeTag({ isStatic, minify, cacheMode });
 
       const runOnce = async (): Promise<void> => {
-        const userConfig = loadConfig(resolvedConfigPath);
+        const userConfig = await loadConfig(resolvedConfigPath);
         let svg = isStatic
           ? await generateStatic(userConfig, genOpts)
           : await generate(userConfig, genOpts);
@@ -257,7 +257,7 @@ blocks:
       }
       const configPath = getFlag('config') ?? 'terminal.yml';
       const resolved = resolve(configPath);
-      const userConfig = loadConfig(resolved);
+      const userConfig = await loadConfig(resolved);
       const { filePath, results } = inspectCache(userConfig, resolved);
       const w = Math.max(0, ...results.map(r => r.key.length));
       console.log(`Checking cache at ${filePath}...`);

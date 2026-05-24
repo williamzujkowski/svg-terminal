@@ -154,14 +154,14 @@ describe('loadConfig error paths', () => {
     return p;
   };
 
-  it('raises ConfigError when the file is missing', () => {
-    expect(() => loadConfig(join(dir, 'does-not-exist.yml'))).toThrow(ConfigError);
+  it('raises ConfigError when the file is missing', async () => {
+    await expect(loadConfig(join(dir, 'does-not-exist.yml'))).rejects.toBeInstanceOf(ConfigError);
   });
 
-  it('formats YAML parse errors with file + line', () => {
+  it('formats YAML parse errors with file + line', async () => {
     const file = write('bad-yaml.yml', 'theme: dracula\nblocks:\n  - block: custom\n  : oops\n');
     try {
-      loadConfig(file);
+      await loadConfig(file);
       throw new Error('expected throw');
     } catch (e) {
       expect(e).toBeInstanceOf(ConfigError);
@@ -170,10 +170,10 @@ describe('loadConfig error paths', () => {
     }
   });
 
-  it('formats zod errors as a per-issue list', () => {
+  it('formats zod errors as a per-issue list', async () => {
     const file = write('no-blocks.yml', 'theme: dracula\nblocks: []\n');
     try {
-      loadConfig(file);
+      await loadConfig(file);
       throw new Error('expected throw');
     } catch (e) {
       expect(e).toBeInstanceOf(ConfigError);
@@ -182,10 +182,10 @@ describe('loadConfig error paths', () => {
     }
   });
 
-  it('rejects unknown theme names with the available list', () => {
+  it('rejects unknown theme names with the available list', async () => {
     const file = write('bad-theme.yml', 'theme: solarizedDark\nblocks:\n  - block: custom\n');
     try {
-      loadConfig(file);
+      await loadConfig(file);
       throw new Error('expected throw');
     } catch (e) {
       expect(e).toBeInstanceOf(ConfigError);
@@ -194,15 +194,15 @@ describe('loadConfig error paths', () => {
     }
   });
 
-  it('accepts the special "random" theme name', () => {
+  it('accepts the special "random" theme name', async () => {
     const file = write('random-theme.yml', 'theme: random\nblocks:\n  - block: custom\n');
-    expect(() => loadConfig(file)).not.toThrow();
+    await expect(loadConfig(file)).resolves.toBeDefined();
   });
 
-  it('rejects unknown block names with the index that failed', () => {
+  it('rejects unknown block names with the index that failed', async () => {
     const file = write('bad-block.yml', 'blocks:\n  - block: custom\n  - block: cowsayy\n');
     try {
-      loadConfig(file);
+      await loadConfig(file);
       throw new Error('expected throw');
     } catch (e) {
       expect(e).toBeInstanceOf(ConfigError);

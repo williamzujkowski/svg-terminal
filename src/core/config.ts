@@ -4,7 +4,6 @@
  */
 
 import { readFileSync } from 'node:fs';
-import yaml from 'js-yaml';
 import { z } from 'zod';
 import type { TerminalConfig, UserConfig } from '../types.js';
 import { resolveTheme, listThemes, getTheme } from '../themes/index.js';
@@ -21,8 +20,12 @@ import {
 import { validateConfig } from './schema.js';
 import { ConfigError } from './errors.js';
 
-/** Load, parse, and validate a YAML config file. Throws ConfigError on any failure. */
-export function loadConfig(filePath: string): UserConfig {
+/**
+ * Load, parse, and validate a YAML config file. Throws ConfigError on any failure.
+ * js-yaml is loaded lazily so library consumers who only call `generate(parsedConfig)`
+ * don't pay for the parser in their bundle.
+ */
+export async function loadConfig(filePath: string): Promise<UserConfig> {
   let raw: string;
   try {
     raw = readFileSync(filePath, 'utf-8');
@@ -30,6 +33,7 @@ export function loadConfig(filePath: string): UserConfig {
     throw new ConfigError(`Cannot read config file: ${filePath}\n  ${(err as Error).message}`);
   }
 
+  const { default: yaml } = await import('js-yaml');
   let parsed: unknown;
   try {
     parsed = yaml.load(raw);
