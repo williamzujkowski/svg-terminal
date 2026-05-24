@@ -3,6 +3,7 @@
  */
 
 import type {
+  AccessibilityConfig,
   AnimationConfig,
   ChromeConfig,
   EffectsConfig,
@@ -51,6 +52,10 @@ export const DEFAULT_ANIMATION: AnimationConfig = {
   loop: true,
 };
 
+export const DEFAULT_ACCESSIBILITY: AccessibilityConfig = {
+  describe: true,
+};
+
 export const DEFAULT_CHROME: ChromeConfig = {
   titleFontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
   titleFontSize: 13,
@@ -67,6 +72,7 @@ export const DEFAULT_CONFIG: TerminalConfig = {
   effects: DEFAULT_EFFECTS,
   animation: DEFAULT_ANIMATION,
   chrome: DEFAULT_CHROME,
+  accessibility: DEFAULT_ACCESSIBILITY,
   maxDuration: 90,
   scrollDuration: 100,
   fetchTimeout: 10000,

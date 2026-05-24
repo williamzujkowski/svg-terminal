@@ -54,6 +54,10 @@ const AnimationSchema = z.object({
   loop: z.union([z.boolean(), z.number().int().positive()]).optional(),
 }).optional();
 
+const AccessibilitySchema = z.object({
+  describe: z.boolean().optional(),
+}).optional();
+
 const ChromeSchema = z.object({
   titleFontSize: z.number().positive('titleFontSize must be positive').optional(),
   buttonRadius: z.number().min(0).optional(),
@@ -69,6 +73,7 @@ export const UserConfigSchema = z.object({
   effects: EffectsSchema,
   animation: AnimationSchema,
   chrome: ChromeSchema,
+  accessibility: AccessibilitySchema,
   blocks: z.array(BlockEntrySchema).min(1, 'At least one block is required'),
   variables: z.record(z.string(), z.unknown()).optional(),
   maxDuration: z.number().positive().optional(),

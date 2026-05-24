@@ -10,6 +10,7 @@ import type { TerminalConfig, UserConfig } from '../types.js';
 import { resolveTheme, listThemes, getTheme } from '../themes/index.js';
 import { getBlock } from '../blocks/registry.js';
 import {
+  DEFAULT_ACCESSIBILITY,
   DEFAULT_ANIMATION,
   DEFAULT_CHROME,
   DEFAULT_CONFIG,
@@ -116,6 +117,10 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
     chrome: {
       ...DEFAULT_CHROME,
       ...userConfig.chrome,
+    },
+    accessibility: {
+      ...DEFAULT_ACCESSIBILITY,
+      ...userConfig.accessibility,
     },
     maxDuration: userConfig.maxDuration ?? DEFAULT_CONFIG.maxDuration,
     scrollDuration: userConfig.scrollDuration ?? DEFAULT_CONFIG.scrollDuration,

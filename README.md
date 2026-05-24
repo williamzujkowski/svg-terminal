@@ -133,6 +133,17 @@ Set `fetchTimeout` at the top level to control API timeout (default: 10000ms):
 fetchTimeout: 15000  # 15 seconds — generous for slow APIs
 ```
 
+### Accessibility
+
+Every generated SVG carries `role="img"`, an `aria-label` summary of the first commands, plus a `<title>` and `<desc>` as its first children. The `<desc>` contains the full final-frame content (every command prefixed with the prompt, every output line with color markup stripped) so screen-reader users can read more than the 5-command summary.
+
+Opt out if your terminal output is sensitive and you don't want it duplicated as plain text inside the SVG payload:
+
+```yaml
+accessibility:
+  describe: false   # default true — emit <desc> with full content
+```
+
 ### Caching API responses
 
 Dynamic blocks cache their responses in `.svg-terminal-cache.json` next to your config file (24h TTL by default). Commit that file alongside the YAML and CI builds become deterministic — no upstream hits, no diff churn from quote-of-the-minute drift.

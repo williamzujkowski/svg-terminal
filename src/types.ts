@@ -110,6 +110,17 @@ export interface TimingPresets {
   pause: Record<string, number>;
 }
 
+/** Accessibility-related output toggles. */
+export interface AccessibilityConfig {
+  /**
+   * Emit a `<desc>` child carrying the full final-frame content as plain
+   * text so screen readers can read more than the aria-label summary.
+   * Default: true. Set to false to skip duplicating output content into the
+   * SVG payload (e.g. if the output is sensitive).
+   */
+  describe: boolean;
+}
+
 /** SVG visual effects toggles. */
 export interface EffectsConfig {
   /** Enable phosphor text glow (default: true) */
@@ -166,6 +177,7 @@ export interface TerminalConfig {
   effects: EffectsConfig;
   animation: AnimationConfig;
   chrome: ChromeConfig;
+  accessibility: AccessibilityConfig;
   /** Maximum animation duration in seconds (default: 90) */
   maxDuration: number;
   /** Scroll animation duration in ms (default: 100) */
@@ -316,6 +328,8 @@ export interface UserConfig {
   animation?: Partial<AnimationConfig>;
   /** Window chrome appearance overrides */
   chrome?: Partial<ChromeConfig>;
+  /** Accessibility overrides */
+  accessibility?: Partial<AccessibilityConfig>;
   /** Ordered list of blocks to render */
   blocks: BlockEntry[];
   /** User variables passed to blocks */

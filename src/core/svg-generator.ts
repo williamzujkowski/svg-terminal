@@ -4,6 +4,7 @@
  */
 
 import type {
+  AccessibilityConfig,
   AnimationConfig,
   AnimationFrame,
   ChromeConfig,
@@ -16,7 +17,7 @@ import type {
 } from '../types.js';
 import { generateDefs, generateFilters } from './effects.js';
 import { generateAllLines } from './line-renderer.js';
-import { buildColorMap, parseMarkup } from './markup-parser.js';
+import { buildColorMap, parseMarkup, stripMarkup } from './markup-parser.js';
 import { escapeXml, roundCoord } from './xml.js';
 import { SCROLL_ANIM_DURATION } from './defaults.js';
 
@@ -81,9 +82,10 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   // Build accessibility label from block commands
   const accessibilityLabel = buildAccessibilityLabel(sequences);
   const showShadow = effects.shadow && window.style !== 'none';
+  const a11yChildren = renderAccessibilityChildren(accessibilityLabel, sequences, terminal.prompt, config.accessibility);
 
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
-  role="img" aria-label="${escapeXml(accessibilityLabel)}">
+  role="img" aria-label="${escapeXml(accessibilityLabel)}">${a11yChildren}
   <style>
     .tt { font-family: ${terminal.fontFamily}; font-size: ${terminal.fontSize}px; white-space: pre; }
     @keyframes scanlineScroll {
@@ -129,6 +131,50 @@ function buildAccessibilityLabel(sequences: Sequence[]): string {
     .slice(0, 5);
   if (commands.length === 0) return 'Animated terminal';
   return `Animated terminal showing: ${commands.join(', ')}`;
+}
+
+/**
+ * Render <title> + <desc> as the first children of the SVG.
+ * <title> matches the aria-label (short summary).
+ * <desc> carries the full final-frame content — commands prefixed with the
+ * prompt, output lines as-is, color markup stripped — so screen readers can
+ * read the terminal's content beyond the 5-command summary.
+ *
+ * Returns "" if accessibility.describe is false; still emits <title> in that case.
+ */
+function renderAccessibilityChildren(
+  label: string,
+  sequences: Sequence[],
+  prompt: string,
+  a11y: AccessibilityConfig,
+): string {
+  const title = `\n  <title>${escapeXml(label)}</title>`;
+  if (!a11y.describe) return title;
+
+  const lines: string[] = [];
+  for (const seq of sequences) {
+    if (seq.type === 'command') {
+      lines.push(`${prompt}${seq.content}`);
+    } else if (seq.content) {
+      for (const line of seq.content.split('\n')) {
+        lines.push(stripMarkup(line));
+      }
+    }
+  }
+  if (lines.length === 0) return title;
+  return `${title}\n  <desc>${escapeXml(lines.join('\n'))}</desc>`;
+}
+
+/** Render <title> + <desc> for the static SVG path from pre-flattened lines. */
+function renderStaticAccessibilityChildren(
+  label: string,
+  lines: string[],
+  a11y: AccessibilityConfig,
+): string {
+  const title = `\n  <title>${escapeXml(label)}</title>`;
+  if (!a11y.describe || lines.length === 0) return title;
+  const stripped = lines.map(stripMarkup).join('\n');
+  return `${title}\n  <desc>${escapeXml(stripped)}</desc>`;
 }
 
 // ============================================================================
@@ -465,6 +511,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   const contentY = titleBarHeight + terminal.paddingTop;
   const viewportHeight = window.height - titleBarHeight;
   const accessibilityLabel = `Static terminal showing ${lines.length} lines`;
+  const a11yChildren = renderStaticAccessibilityChildren(accessibilityLabel, lines, config.accessibility);
   const colorMap = buildColorMap(theme.colors);
   const glow = effects.textGlow ? ' filter="url(#textGlow)"' : '';
   const showShadow = effects.shadow && window.style !== 'none';
@@ -484,7 +531,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   }).join('');
 
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
-  role="img" aria-label="${escapeXml(accessibilityLabel)}">
+  role="img" aria-label="${escapeXml(accessibilityLabel)}">${a11yChildren}
   <style>.tt { font-family: ${terminal.fontFamily}; font-size: ${terminal.fontSize}px; white-space: pre; }</style>
   <defs>
     ${generateDefs(effects, window.style)}

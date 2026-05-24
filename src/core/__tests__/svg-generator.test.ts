@@ -177,6 +177,64 @@ describe('generateStaticSvg', () => {
   });
 });
 
+describe('accessibility', () => {
+  const a11ySeq: Sequence[] = [
+    { type: 'command', content: 'whoami', typingDuration: 200 },
+    { type: 'output', content: 'dev' },
+    { type: 'output', content: '[[fg:green]]hi[[/fg]]' },
+  ];
+
+  it('emits <title> + <desc> as first children of the SVG', () => {
+    const svg = generateSvg(a11ySeq, makeConfig());
+    const titleIdx = svg.indexOf('<title>');
+    const descIdx = svg.indexOf('<desc>');
+    const defsIdx = svg.indexOf('<defs>');
+    expect(titleIdx).toBeGreaterThan(0);
+    expect(descIdx).toBeGreaterThan(titleIdx);
+    expect(defsIdx).toBeGreaterThan(descIdx);
+  });
+
+  it('<desc> includes commands with prompt prefix and strips markup from output', () => {
+    const svg = generateSvg(a11ySeq, makeConfig());
+    const descMatch = /<desc>([\s\S]*?)<\/desc>/.exec(svg);
+    expect(descMatch).not.toBeNull();
+    const desc = descMatch![1]!;
+    expect(desc).toContain('whoami');
+    expect(desc).toContain('dev');
+    expect(desc).toContain('hi');
+    expect(desc).not.toContain('[[fg:');
+  });
+
+  it('omits <desc> when accessibility.describe is false (keeps <title>)', () => {
+    const config = makeConfig({ accessibility: { describe: false } });
+    const svg = generateSvg(a11ySeq, config);
+    expect(svg).toContain('<title>');
+    expect(svg).not.toContain('<desc>');
+  });
+
+  it('XML-escapes special characters in <desc> content', () => {
+    const seq: Sequence[] = [
+      { type: 'command', content: 'echo "<script>"', typingDuration: 100 },
+      { type: 'output', content: 'a & b < c > d' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    const desc = /<desc>([\s\S]*?)<\/desc>/.exec(svg)![1]!;
+    expect(desc).toContain('&amp;');
+    expect(desc).toContain('&lt;');
+    expect(desc).not.toContain('<script>');
+  });
+
+  it('static SVG also emits <title> + <desc>', () => {
+    const svg = generateStaticSvg(['hello', '[[fg:cyan]]world[[/fg]]'], makeConfig());
+    expect(svg).toContain('<title>');
+    expect(svg).toContain('<desc>');
+    const desc = /<desc>([\s\S]*?)<\/desc>/.exec(svg)![1]!;
+    expect(desc).toContain('hello');
+    expect(desc).toContain('world');
+    expect(desc).not.toContain('[[fg:');
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Snapshot tests — guard against accidental visual regressions in CI.
 // If output changes intentionally: `npm test -- -u` to refresh.

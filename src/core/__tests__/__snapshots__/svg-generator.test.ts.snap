@@ -3,6 +3,11 @@
 exports[`SVG snapshots > floating window (no chrome) 1`] = `
 "<svg width="1000" height="560" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="Animated terminal showing: whoami, echo hi">
+  <title>Animated terminal showing: whoami, echo hi</title>
+  <desc>user@host:~$ whoami
+dev
+user@host:~$ echo hi
+hi</desc>
   <style>
     .tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }
     @keyframes scanlineScroll {
@@ -114,6 +119,11 @@ exports[`SVG snapshots > floating window (no chrome) 1`] = `
 exports[`SVG snapshots > macOS chrome + default effects 1`] = `
 "<svg width="1000" height="560" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="Animated terminal showing: whoami, echo hi">
+  <title>Animated terminal showing: whoami, echo hi</title>
+  <desc>user@host:~$ whoami
+dev
+user@host:~$ echo hi
+hi</desc>
   <style>
     .tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }
     @keyframes scanlineScroll {
@@ -240,6 +250,11 @@ exports[`SVG snapshots > macOS chrome + default effects 1`] = `
 exports[`SVG snapshots > scanlines off + glow on 1`] = `
 "<svg width="1000" height="560" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="Animated terminal showing: whoami, echo hi">
+  <title>Animated terminal showing: whoami, echo hi</title>
+  <desc>user@host:~$ whoami
+dev
+user@host:~$ echo hi
+hi</desc>
   <style>
     .tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }
     @keyframes scanlineScroll {
@@ -372,6 +387,9 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
 exports[`SVG snapshots > static SVG with markup 1`] = `
 "<svg width="1000" height="560" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="Static terminal showing 2 lines">
+  <title>Static terminal showing 2 lines</title>
+  <desc>hello
+world</desc>
   <style>.tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }</style>
   <defs>
     
