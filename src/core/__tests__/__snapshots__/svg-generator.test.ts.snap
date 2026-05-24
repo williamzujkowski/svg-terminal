@@ -25,10 +25,10 @@ exports[`SVG snapshots > floating window (no chrome) 1`] = `
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="15"/>
-      <feOffset dx="0" dy="15" result="offsetblur"/>
-      <feFlood flood-color="#000000" flood-opacity="0.8"/>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
       <feComposite in2="offsetblur" operator="in"/>
       <feMerge>
         <feMergeNode/>
@@ -136,10 +136,10 @@ exports[`SVG snapshots > macOS chrome + default effects 1`] = `
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="15"/>
-      <feOffset dx="0" dy="15" result="offsetblur"/>
-      <feFlood flood-color="#000000" flood-opacity="0.8"/>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
       <feComposite in2="offsetblur" operator="in"/>
       <feMerge>
         <feMergeNode/>
@@ -165,7 +165,7 @@ exports[`SVG snapshots > macOS chrome + default effects 1`] = `
       <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
     <text x="500" y="24.55"
-          font-family="JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace" font-size="13"
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"
           fill="#e0e6ed" text-anchor="middle">
       user@terminal:~
     </text>
@@ -268,10 +268,10 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
       </feMerge>
     </filter>
 
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="15"/>
-      <feOffset dx="0" dy="15" result="offsetblur"/>
-      <feFlood flood-color="#000000" flood-opacity="0.8"/>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
       <feComposite in2="offsetblur" operator="in"/>
       <feMerge>
         <feMergeNode/>
@@ -297,7 +297,7 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
       <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
     <text x="500" y="24.55"
-          font-family="JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace" font-size="13"
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"
           fill="#e0e6ed" text-anchor="middle">
       user@terminal:~
     </text>
@@ -380,10 +380,10 @@ exports[`SVG snapshots > static SVG with markup 1`] = `
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="15"/>
-      <feOffset dx="0" dy="15" result="offsetblur"/>
-      <feFlood flood-color="#000000" flood-opacity="0.8"/>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
       <feComposite in2="offsetblur" operator="in"/>
       <feMerge>
         <feMergeNode/>
@@ -412,7 +412,7 @@ exports[`SVG snapshots > static SVG with markup 1`] = `
       <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
     <text x="500" y="24.55"
-          font-family="JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace" font-size="13"
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"
           fill="#e0e6ed" text-anchor="middle">
       user@terminal:~
     </text>

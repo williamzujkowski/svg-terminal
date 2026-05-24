@@ -96,6 +96,7 @@ describe('defaults', () => {
 
   it('has chrome defaults', () => {
     expect(DEFAULT_CHROME.titleFontSize).toBe(13);
+    expect(DEFAULT_CHROME.titleFontFamily).toContain('sans-serif');
     expect(DEFAULT_CHROME.buttonRadius).toBe(6);
     expect(DEFAULT_CHROME.buttonSpacing).toBe(20);
     expect(DEFAULT_CHROME.dimOpacity).toBe(0.6);
@@ -105,7 +106,7 @@ describe('defaults', () => {
   it('has internal constants', () => {
     expect(CHAR_WIDTH_RATIO).toBe(0.6);
     expect(CURSOR_Y_OFFSET_RATIO).toBe(-0.85);
-    expect(SHADOW_PARAMS.dy).toBe(15);
+    expect(SHADOW_PARAMS.dy).toBe(6);
     expect(SCANLINE_PARAMS.height).toBe(2);
   });
 });

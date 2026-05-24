@@ -52,6 +52,7 @@ export const DEFAULT_ANIMATION: AnimationConfig = {
 };
 
 export const DEFAULT_CHROME: ChromeConfig = {
+  titleFontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
   titleFontSize: 13,
   buttonRadius: 6,
   buttonSpacing: 20,
@@ -96,8 +97,13 @@ export function getDefaultBoxWidth(maxCols: number): number {
 /** Cursor vertical offset as a fraction of font size. */
 export const CURSOR_Y_OFFSET_RATIO = -0.85;
 
-/** Shadow filter parameters. */
-export const SHADOW_PARAMS = { dy: 15, blur: 15, opacity: 0.8 } as const;
+/**
+ * Drop-shadow filter parameters.
+ * Sized to fit inside the SVG viewport so the soft falloff doesn't get clipped
+ * at the bottom/right edges. Was dy=15 blur=15 opacity=0.8 — that visibly cut
+ * off at the viewBox boundary.
+ */
+export const SHADOW_PARAMS = { dy: 6, blur: 8, opacity: 0.55 } as const;
 
 /** Scanline pattern dimensions. */
 export const SCANLINE_PARAMS = { height: 2, opacity: 0.02 } as const;

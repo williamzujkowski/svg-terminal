@@ -343,7 +343,7 @@ function renderTitleBar(
   theme: Theme,
   chrome: ChromeConfig,
 ): string {
-  const { buttonRadius: r, buttonSpacing: s, buttonY: y, titleFontSize } = chrome;
+  const { buttonRadius: r, buttonSpacing: s, buttonY: y, titleFontSize, titleFontFamily } = chrome;
   return `
     <rect x="0" y="0" width="${window.width}" height="${window.titleBarHeight}"
           rx="${window.borderRadius}" ry="${window.borderRadius}"
@@ -356,7 +356,7 @@ function renderTitleBar(
       <circle cx="${terminal.padding + 2 + s * 2}" cy="${y}" r="${r}" fill="${theme.buttons.maximize}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
     <text x="${window.width / 2}" y="${(window.titleBarHeight + titleFontSize * 0.7) / 2}"
-          font-family="${terminal.fontFamily}" font-size="${titleFontSize}"
+          font-family="${titleFontFamily}" font-size="${titleFontSize}"
           fill="${theme.colors.titleBarText}" text-anchor="middle">
       ${escapeXml(window.title)}
     </text>`;

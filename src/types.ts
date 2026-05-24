@@ -144,6 +144,8 @@ export interface AnimationConfig {
 
 /** Window chrome appearance configuration. */
 export interface ChromeConfig {
+  /** Title bar font family — system UI stack by default, separate from terminal monospace */
+  titleFontFamily: string;
   /** Title bar font size in px (default: 13) */
   titleFontSize: number;
   /** Window button radius in px (default: 6) */
