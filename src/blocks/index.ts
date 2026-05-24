@@ -37,6 +37,10 @@ import { heartbeatBlock } from './heartbeat.js';
 import { spinningGearBlock } from './spinning-gear.js';
 import { blinkingEyesBlock } from './blinking-eyes.js';
 import { countdownBlock } from './countdown.js';
+import { sparklineBlock } from './sparkline.js';
+import { bbsLoginBlock } from './bbs-login.js';
+import { buildBadgeBlock } from './build-badge.js';
+import { licenseCardBlock } from './license-card.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -75,6 +79,10 @@ export function registerBuiltinBlocks(): void {
     spinningGearBlock,
     blinkingEyesBlock,
     countdownBlock,
+    sparklineBlock,
+    bbsLoginBlock,
+    buildBadgeBlock,
+    licenseCardBlock,
   ]);
 }
 
@@ -113,3 +121,7 @@ export { heartbeatBlock } from './heartbeat.js';
 export { spinningGearBlock } from './spinning-gear.js';
 export { blinkingEyesBlock } from './blinking-eyes.js';
 export { countdownBlock } from './countdown.js';
+export { sparklineBlock } from './sparkline.js';
+export { bbsLoginBlock } from './bbs-login.js';
+export { buildBadgeBlock } from './build-badge.js';
+export { licenseCardBlock } from './license-card.js';

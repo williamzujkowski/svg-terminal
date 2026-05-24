@@ -214,6 +214,66 @@ describe('previously-uncovered blocks', () => {
   });
 });
 
+describe('v0.7 practical blocks', () => {
+  const practical = ['sparkline', 'bbs-login', 'build-badge', 'license-card'];
+
+  for (const name of practical) {
+    it(`${name}: renders default + non-empty output`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.command).toBeTruthy();
+      expect(result.lines.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('sparkline: encodes a custom series into block-element glyphs', async () => {
+    const block = getBlock('sparkline')!;
+    const result = await block.render(context, { values: [1, 2, 4, 8, 4, 2, 1], label: 'cpu' });
+    const line = result.lines[0]!;
+    expect(line).toContain('cpu:');
+    // All 8 glyphs should appear somewhere across multiple series, but at least
+    // the lowest and highest are exercised by this fixture.
+    expect(line).toMatch(/▁/);
+    expect(line).toMatch(/█/);
+  });
+
+  it('sparkline: rejects empty values array via schema', async () => {
+    const block = getBlock('sparkline')!;
+    expect(() => block.configSchema!.parse({ values: [] })).toThrow();
+  });
+
+  it('build-badge: emits the configured status glyph for each badge', async () => {
+    const block = getBlock('build-badge')!;
+    const result = await block.render(context, {
+      badges: [
+        { label: 'a', status: 'ok' },
+        { label: 'b', status: 'fail' },
+      ],
+    });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('✓');
+    expect(joined).toContain('✗');
+  });
+
+  it('license-card: respects custom license + holder', async () => {
+    const block = getBlock('license-card')!;
+    const result = await block.render(context, { license: 'Apache-2.0', holder: 'Acme Corp', year: 2030 });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('Apache-2.0');
+    expect(joined).toContain('Acme Corp');
+    expect(joined).toContain('2030');
+  });
+
+  it('bbs-login: includes the configured BBS name + baud rate', async () => {
+    const block = getBlock('bbs-login')!;
+    const result = await block.render(context, { name: 'COOL-BBS', baud: 2400 });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('COOL-BBS');
+    expect(joined).toContain('2400');
+  });
+});
+
 describe('v0.7 animated blocks', () => {
   const animated = ['heartbeat', 'spinning-gear', 'blinking-eyes', 'countdown'];
 

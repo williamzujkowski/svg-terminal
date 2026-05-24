@@ -103,6 +103,10 @@ Special value: `theme: random` rotates through all themes deterministically by d
 | `spinning-gear` | Rotating `\|/-\\` gear for DevOps/infra vibes |
 | `blinking-eyes` | Kaomoji mascot that blinks every few seconds |
 | `countdown` | T-minus N..0..GO! launch stinger (plays once, freezes on GO) |
+| `sparkline` | ASCII sparkline (`▁▂▄▇▆▅▃▂`) from a numeric series |
+| `bbs-login` | Retro 1980s BBS welcome banner — pairs with `amber` / `green-phosphor` |
+| `build-badge` | Terminal-style project status card (tests / lint / coverage) |
+| `license-card` | Boxed License / Copyright card |
 
 ### Dynamic API Blocks
 
