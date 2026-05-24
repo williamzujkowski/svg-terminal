@@ -4,6 +4,7 @@
 
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 interface DayEntry {
   name: string;
@@ -18,7 +19,7 @@ export const nationalDayBlock: Block = {
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const days = (config['days'] as DayEntry[]) ?? [];
-    const width = (config['width'] as number) ?? 56;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
 
     // Pick day based on day of year
     const dayOfYear = Math.floor(

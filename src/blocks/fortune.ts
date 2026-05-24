@@ -4,6 +4,7 @@
 
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** Fortune/quote block. */
 export const fortuneBlock: Block = {
@@ -17,7 +18,7 @@ export const fortuneBlock: Block = {
       'First, solve the problem. Then, write the code.',
     ];
     const command = (config['command'] as string) ?? 'fortune';
-    const width = (config['width'] as number) ?? 48;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
 
     // Daily rotation — keeps CI output stable for a 24h window.
     const index = Math.floor(context.now.getTime() / 86400000) % fortunes.length;

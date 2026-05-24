@@ -2,18 +2,19 @@
  * Blog post block — show latest blog post title.
  */
 
-import type { Block, BlockResult } from '../types.js';
+import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** Blog post display block. */
 export const blogPostBlock: Block = {
   name: 'blog-post',
   description: 'Display a blog post title in a box',
 
-  render(_context, config: Record<string, unknown>): BlockResult {
+  render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const title = (config['title'] as string) ?? 'My Latest Post';
     const url = (config['url'] as string) ?? '';
-    const width = (config['width'] as number) ?? 56;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
 
     const lines: string[] = ['', '📝 LATEST FROM THE BLOG', '', title];
     if (url) lines.push('', `🔗 ${url}`);

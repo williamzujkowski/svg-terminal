@@ -2,21 +2,22 @@
  * Profile block — developer/user profile info card.
  */
 
-import type { Block, BlockResult } from '../types.js';
+import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** Profile info card block. */
 export const profileBlock: Block = {
   name: 'profile',
   description: 'Display a developer profile info card',
 
-  render(_context, config: Record<string, unknown>): BlockResult {
+  render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const name = (config['name'] as string) ?? 'Developer';
     const github = config['github'] as string | undefined;
     const web = config['web'] as string | undefined;
     const focus = config['focus'] as string | undefined;
     const motto = config['motto'] as string | undefined;
-    const width = (config['width'] as number) ?? 56;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
 
     const lines: string[] = ['', `👤 ${name.toUpperCase()}`, ''];
     if (github) lines.push(`GitHub:  ${github}`);

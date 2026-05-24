@@ -6,6 +6,7 @@
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** wttr.in JSON response shape (subset). */
 interface WttrResponse {
@@ -86,7 +87,7 @@ export const weatherBlock: Block = {
     const location = (config['location'] as string) ?? '';
     const units = (config['units'] as string) ?? 'both';
     const compact = (config['compact'] as boolean) ?? false;
-    const width = (config['width'] as number) ?? 58;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
     const timeout = context.config.fetchTimeout;
 
     if (!location) {

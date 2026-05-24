@@ -6,6 +6,7 @@
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** DummyJSON quote response. */
 interface QuoteResponse {
@@ -20,7 +21,7 @@ export const quoteBlock: Block = {
   description: 'Display a random inspirational quote',
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
-    const width = (config['width'] as number) ?? 58;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
     const fallbackQuote = (config['fallback'] as string) ?? 'The only way to do great work is to love what you do.';
     const fallbackAuthor = (config['fallbackAuthor'] as string) ?? 'Steve Jobs';
     const timeout = context.config.fetchTimeout;

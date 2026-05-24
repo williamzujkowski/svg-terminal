@@ -6,6 +6,7 @@
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
+import { resolveBoxWidth } from '../core/defaults.js';
 
 /** Useless Facts API response. */
 interface FactResponse {
@@ -22,7 +23,7 @@ export const funFactBlock: Block = {
   description: 'Display a random fun fact',
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
-    const width = (config['width'] as number) ?? 58;
+    const width = resolveBoxWidth(config['width'] as number | undefined, context);
     const language = (config['language'] as string) ?? 'en';
     const fallback = (config['fallback'] as string)
       ?? 'Honey never spoils. Archaeologists have found 3000-year-old honey that was still edible.';
