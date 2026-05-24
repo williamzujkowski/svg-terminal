@@ -63,8 +63,8 @@ describe('defaults', () => {
     expect(DEFAULT_TERMINAL.lineHeight).toBe(1.8);
   });
 
-  it('has all effects enabled by default', () => {
-    expect(DEFAULT_EFFECTS.textGlow).toBe(true);
+  it('has the chrome effects enabled by default, textGlow opt-in', () => {
+    expect(DEFAULT_EFFECTS.textGlow).toBe(false);
     expect(DEFAULT_EFFECTS.shadow).toBe(true);
     expect(DEFAULT_EFFECTS.scanlines).toBe(true);
   });

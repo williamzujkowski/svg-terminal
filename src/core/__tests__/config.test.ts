@@ -45,9 +45,9 @@ describe('mergeConfig', () => {
   });
 
   it('overrides effects', () => {
-    const config = mergeConfig({ ...minimal, effects: { scanlines: false } });
+    const config = mergeConfig({ ...minimal, effects: { textGlow: true, scanlines: false } });
     expect(config.effects.scanlines).toBe(false);
-    expect(config.effects.textGlow).toBe(true); // default preserved
+    expect(config.effects.textGlow).toBe(true);
   });
 
   it('includes animation config with defaults', () => {

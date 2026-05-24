@@ -34,7 +34,7 @@ export const DEFAULT_TERMINAL: TerminalTextConfig = {
 };
 
 export const DEFAULT_EFFECTS: EffectsConfig = {
-  textGlow: true,
+  textGlow: false,
   shadow: true,
   scanlines: true,
 };

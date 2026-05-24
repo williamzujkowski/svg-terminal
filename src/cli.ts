@@ -71,7 +71,7 @@ terminal:
   fontSize: 14
 
 effects:
-  textGlow: true
+  textGlow: false   # phosphor halo — try true with amber / green-phosphor / cyberpunk
   shadow: true
   scanlines: true
 
