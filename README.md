@@ -56,6 +56,13 @@ blocks:
 | `dracula` | Dark purple/green theme (default) |
 | `nord` | Arctic blue/frost palette |
 | `monokai` | Classic warm dark theme |
+| `amber` | Vintage amber CRT (pairs well with `effects.textGlow: true`) |
+| `green-phosphor` | Classic green-on-black phosphor (pair with glow) |
+| `cyberpunk` | Neon magenta/cyan on near-black |
+| `solarized-dark` | Ethan Schoonover's solarized dark palette |
+| `win95` | Authentic Windows 95 chrome — auto-switches `window.style: win95` |
+
+Special value: `theme: random` rotates through all themes deterministically by day of year — gives you a different look every day without committing to one.
 
 ## Blocks
 
@@ -192,6 +199,26 @@ createBox({ style: 'rounded', width: 40, lines: ['Hello!'] });
 ```
 
 Styles: `double` (╔═╗), `rounded` (╭─╮), `single` (┌─┐), `heavy` (┏━┓), `dashed` (┌╌┐)
+
+## Contributing
+
+**Add a new block:**
+
+1. Create `src/blocks/<name>.ts` exporting a `Block` (see `src/blocks/vim-exit.ts` for a minimal example).
+2. Import + register it in `src/blocks/index.ts` — add to `registerBuiltinBlocks` and to the re-exports.
+3. Add a test in `src/blocks/__tests__/blocks.test.ts` covering the default render plus any config overrides.
+4. Add a row to the Blocks table in this README.
+
+**Add a new theme:**
+
+1. Create `src/themes/<name>.ts` exporting a `Theme` (palette + button colors). Copy `src/themes/nord.ts` as a starting point.
+2. Import + add to the `themes` registry in `src/themes/index.ts`.
+3. Generate a sample to eyeball: `npm run build && node dist/cli.js init && node dist/cli.js generate --config terminal.yml`.
+4. Add a row to the Themes table.
+
+Note: themes named `win95` get special chrome handling in `src/core/config.ts` (window style + effects auto-config). If you add another theme that needs custom chrome, follow the same pattern.
+
+**Run locally:** `npm test`, `npm run typecheck`, `npm run build`. The CLI builds to `dist/cli.js`.
 
 ## License
 

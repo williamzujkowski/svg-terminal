@@ -39,6 +39,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: '22'
+        cache: 'npm'
 
     - name: Install svg-terminal
       shell: bash
@@ -50,8 +51,9 @@ runs:
       env:
         TZ: ${{ env.TZ || 'UTC' }}
       run: |
+        set -euo pipefail
         svg-terminal generate --config "${{ inputs.config }}" --output "${{ inputs.output }}"
-        echo "size=$(stat -c%s "${{ inputs.output }}" 2>/dev/null || stat -f%z "${{ inputs.output }}")" >> $GITHUB_OUTPUT
+        echo "size=$(stat -c%s "${{ inputs.output }}" 2>/dev/null || stat -f%z "${{ inputs.output }}")" >> "$GITHUB_OUTPUT"
 
     - name: Commit SVG
       if: inputs.commit == 'true'
