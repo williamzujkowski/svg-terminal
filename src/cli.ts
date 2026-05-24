@@ -34,6 +34,18 @@ function hasFlag(name: string): boolean {
   return args.includes(`--${name}`);
 }
 
+/**
+ * Collapse inter-element whitespace in an SVG string.
+ * Conservative — leaves attribute values and text-node content alone, only
+ * strips whitespace that sits between tags.
+ */
+function minifySvg(svg: string): string {
+  return svg
+    .replace(/>\s+</g, '><')
+    .replace(/\n\s+/g, '\n')
+    .replace(/^\s+|\s+$/g, '');
+}
+
 async function main(): Promise<void> {
   if (hasFlag('version') || command === '--version') {
     console.log(`svg-terminal ${VERSION}`);
@@ -45,14 +57,17 @@ async function main(): Promise<void> {
       const configPath = getFlag('config') ?? 'terminal.yml';
       const outputPath = getFlag('output') ?? 'terminal.svg';
       const isStatic = hasFlag('static');
+      const minify = hasFlag('minify');
 
       const userConfig = loadConfig(resolve(configPath));
-      const svg = isStatic
+      let svg = isStatic
         ? await generateStatic(userConfig)
         : await generate(userConfig);
+      if (minify) svg = minifySvg(svg);
       writeFileSync(resolve(outputPath), svg, 'utf-8');
-      const mode = isStatic ? ' (static)' : '';
-      console.log(`Generated ${outputPath}${mode} (${(svg.length / 1024).toFixed(1)} KB)`);
+      const mode = [isStatic && 'static', minify && 'minified'].filter(Boolean).join(', ');
+      const tag = mode ? ` (${mode})` : '';
+      console.log(`Generated ${outputPath}${tag} (${(svg.length / 1024).toFixed(1)} KB)`);
       break;
     }
 
@@ -151,12 +166,14 @@ Options:
   --config    Config file path (default: terminal.yml)
   --output    Output file path (default: terminal.svg)
   --static    Generate non-animated SVG (final frame snapshot)
+  --minify    Strip inter-element whitespace for smaller output
   --version   Print version number
 
 Example:
   svg-terminal init
   svg-terminal generate --config terminal.yml --output terminal.svg
   svg-terminal generate --config terminal.yml --output static.svg --static
+  svg-terminal generate --config terminal.yml --output tiny.svg --minify
 `);
     }
   }
