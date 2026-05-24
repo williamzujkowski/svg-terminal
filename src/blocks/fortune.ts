@@ -19,8 +19,8 @@ export const fortuneBlock: Block = {
     const command = (config['command'] as string) ?? 'fortune';
     const width = (config['width'] as number) ?? 48;
 
-    // Pick fortune based on time rotation
-    const index = Math.floor(context.now.getTime() / 3600000) % fortunes.length;
+    // Daily rotation — keeps CI output stable for a 24h window.
+    const index = Math.floor(context.now.getTime() / 86400000) % fortunes.length;
     const fortune = fortunes[index] ?? fortunes[0] ?? '';
 
     const box = createRoundedBox(['', ` ${fortune}`, ''], width);

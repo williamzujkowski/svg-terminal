@@ -29,7 +29,7 @@ export const DEFAULT_TERMINAL: TerminalTextConfig = {
   fontSize: 14,
   lineHeight: 1.8,
   padding: 12,
-  paddingTop: 8,
+  paddingTop: 14,
   prompt: 'user@host:~$ ',
 };
 

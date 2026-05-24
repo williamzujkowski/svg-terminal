@@ -31,6 +31,8 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
   // Auto-apply matching window style and effects for themes with dedicated chrome
   const isWin95 = theme.name === 'win95';
   const autoStyle = isWin95 && !userConfig.window?.style ? 'win95' : undefined;
+  // Real Win95 title bars are ~18-22px, not the 40px macOS-chrome default.
+  const autoTitleBarHeight = isWin95 && userConfig.window?.titleBarHeight === undefined ? 22 : undefined;
   const autoEffects = isWin95 && !userConfig.effects
     ? { textGlow: false, scanlines: false, shadow: true }
     : undefined;
@@ -40,6 +42,7 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
       ...DEFAULT_WINDOW,
       ...userConfig.window,
       ...(autoStyle ? { style: autoStyle } : {}),
+      ...(autoTitleBarHeight !== undefined ? { titleBarHeight: autoTitleBarHeight } : {}),
     },
     text: {
       ...DEFAULT_TERMINAL,

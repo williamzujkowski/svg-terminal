@@ -89,18 +89,7 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
       from { transform: translateY(0); }
       to { transform: translateY(4px); }
     }
-    @keyframes cursorPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-    @keyframes subtleFlicker {
-      0%, 100% { opacity: 1; }
-      92% { opacity: 0.98; }
-      94% { opacity: 0.95; }
-      96% { opacity: 0.98; }
-    }
-    .scanline-overlay { animation: scanlineScroll 0.3s linear infinite; }
-    .terminal-screen { animation: subtleFlicker 4s ease-in-out infinite; }
+    .scanline-overlay { animation: scanlineScroll 1.2s linear infinite; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -110,17 +99,25 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
     }
   </style>
   <defs>
-    ${generateDefs(effects)}
+    ${generateDefs(effects, window.style)}
     ${generateFilters(effects, theme.colors.cursor)}
   </defs>
 
-  <g${showShadow ? ' filter="url(#shadow)"' : ''} class="terminal-screen">
+  <g${showShadow ? ' filter="url(#shadow)"' : ''}>
     ${renderWindow(window, theme)}
     ${renderTitleBarForStyle(window, terminal, theme, chrome)}
     ${renderTerminalContent(window, terminal, theme, effects, chrome, animation, frames, lineHeight)}
-    ${effects.scanlines ? `<rect x="0" y="0" width="${window.width}" height="${window.height}" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>` : ''}
+    ${renderScanlineOverlay(effects, window)}
   </g>
 </svg>`;
+}
+
+/** Render the CRT scanline overlay constrained to the terminal content area. */
+function renderScanlineOverlay(effects: EffectsConfig, window: WindowConfig): string {
+  if (!effects.scanlines) return '';
+  const titleBarHeight = getTitleBarHeight(window);
+  const contentHeight = window.height - titleBarHeight;
+  return `<rect x="0" y="${titleBarHeight}" width="${window.width}" height="${contentHeight}" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>`;
 }
 
 /** Build an accessibility label from the sequence commands. */
@@ -146,49 +143,47 @@ function getTitleBarHeight(window: WindowConfig): number {
 }
 
 /** Render the title bar based on window style. */
-function renderWin95TitleBar(
-  window: WindowConfig,
-  terminal: TerminalTextConfig,
-): string {
+function renderWin95TitleBar(window: WindowConfig): string {
   const h = window.titleBarHeight;
   const w = window.width;
-  // Win95 colors — classic silver/blue
   const silver = '#c0c0c0';
   const darkGray = '#808080';
   const white = '#ffffff';
   const black = '#000000';
-  const titleBlue = '#000080';
-  const btnSize = 16;
+  // Authentic Win95 caption is a horizontal navy → lighter-blue gradient.
+  // The gradient def is emitted once per SVG via win95Caption id.
+  const btnSize = Math.max(12, h - 6);
   const btnY = (h - btnSize) / 2;
+  const btnGap = 2;
+  const btnsTotal = btnSize * 3 + btnGap * 2;
+  const btnsX = w - btnsTotal - 4;
+  const captionTextY = (h + 11) / 2;
 
   return `
     <!-- Win95 title bar -->
     <rect x="0" y="0" width="${w}" height="${h}" fill="${silver}"/>
-    <!-- 3D border: top/left white, bottom/right dark -->
+    <!-- 3D raised border: top/left white, bottom/right dark -->
     <line x1="0" y1="0" x2="${w}" y2="0" stroke="${white}" stroke-width="2"/>
     <line x1="0" y1="0" x2="0" y2="${h}" stroke="${white}" stroke-width="2"/>
     <line x1="${w}" y1="0" x2="${w}" y2="${h}" stroke="${black}" stroke-width="1"/>
     <line x1="0" y1="${h}" x2="${w}" y2="${h}" stroke="${darkGray}" stroke-width="1"/>
-    <!-- Blue title gradient -->
-    <rect x="3" y="3" width="${w - 6}" height="${h - 6}" fill="${titleBlue}"/>
-    <!-- Title text -->
-    <text x="8" y="${h / 2 + 5}"
-          font-family="Tahoma, ${terminal.fontFamily}" font-size="12" font-weight="bold"
+    <!-- Blue caption (gradient defined in defs) -->
+    <rect x="3" y="3" width="${w - 6 - btnsTotal - 6}" height="${h - 6}" fill="url(#win95Caption)"/>
+    <!-- Caption text — sans-serif chrome font, not the terminal monospace -->
+    <text x="8" y="${captionTextY}"
+          font-family="Tahoma, 'MS Sans Serif', Geneva, sans-serif" font-size="11" font-weight="bold"
           fill="${white}">
       ${escapeXml(window.title)}
     </text>
     <!-- Win95 buttons: minimize, maximize, close -->
-    <g transform="translate(${w - 56}, ${btnY})">
-      <!-- Minimize -->
-      <rect x="0" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${darkGray}"/>
-      <line x1="3" y1="12" x2="13" y2="12" stroke="${black}" stroke-width="2"/>
-      <!-- Maximize -->
-      <rect x="18" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${darkGray}"/>
-      <rect x="21" y="3" width="10" height="10" fill="none" stroke="${black}" stroke-width="1.5"/>
-      <!-- Close -->
-      <rect x="36" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${darkGray}"/>
-      <line x1="40" y1="4" x2="48" y2="12" stroke="${black}" stroke-width="1.5"/>
-      <line x1="48" y1="4" x2="40" y2="12" stroke="${black}" stroke-width="1.5"/>
+    <g transform="translate(${btnsX}, ${btnY})">
+      <rect x="0" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${black}" stroke-width="1"/>
+      <line x1="${btnSize * 0.2}" y1="${btnSize - 3}" x2="${btnSize * 0.75}" y2="${btnSize - 3}" stroke="${black}" stroke-width="1.5"/>
+      <rect x="${btnSize + btnGap}" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${black}" stroke-width="1"/>
+      <rect x="${btnSize + btnGap + 3}" y="3" width="${btnSize - 6}" height="${btnSize - 6}" fill="none" stroke="${black}" stroke-width="1.2"/>
+      <rect x="${(btnSize + btnGap) * 2}" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${black}" stroke-width="1"/>
+      <line x1="${(btnSize + btnGap) * 2 + 3}" y1="3" x2="${(btnSize + btnGap) * 2 + btnSize - 3}" y2="${btnSize - 3}" stroke="${black}" stroke-width="1.2"/>
+      <line x1="${(btnSize + btnGap) * 2 + btnSize - 3}" y1="3" x2="${(btnSize + btnGap) * 2 + 3}" y2="${btnSize - 3}" stroke="${black}" stroke-width="1.2"/>
     </g>`;
 }
 
@@ -202,7 +197,7 @@ function renderTitleBarForStyle(
     return '';
   }
   if (window.style === 'win95') {
-    return renderWin95TitleBar(window, terminal);
+    return renderWin95TitleBar(window);
   }
   return renderTitleBar(window, terminal, theme, chrome);
 }
@@ -355,11 +350,11 @@ function renderTitleBar(
     <rect x="0" y="${y}" width="${window.width}" height="${y}"
           fill="${theme.colors.titleBarBackground}"/>
     <g id="window-controls">
-      <circle cx="${terminal.padding + 2}" cy="${y}" r="${r}" fill="${theme.buttons.close}"/>
-      <circle cx="${terminal.padding + 2 + s}" cy="${y}" r="${r}" fill="${theme.buttons.minimize}"/>
-      <circle cx="${terminal.padding + 2 + s * 2}" cy="${y}" r="${r}" fill="${theme.buttons.maximize}"/>
+      <circle cx="${terminal.padding + 2}" cy="${y}" r="${r}" fill="${theme.buttons.close}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="${terminal.padding + 2 + s}" cy="${y}" r="${r}" fill="${theme.buttons.minimize}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="${terminal.padding + 2 + s * 2}" cy="${y}" r="${r}" fill="${theme.buttons.maximize}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
-    <text x="${window.width / 2}" y="${y + 5}"
+    <text x="${window.width / 2}" y="${(window.titleBarHeight + titleFontSize * 0.7) / 2}"
           font-family="${terminal.fontFamily}" font-size="${titleFontSize}"
           fill="${theme.colors.titleBarText}" text-anchor="middle">
       ${escapeXml(window.title)}
@@ -408,8 +403,10 @@ function renderScrollAnimations(
   const scrollFrames = frames.filter(f => f.type === 'scroll');
   const roundedLineHeight = roundCoord(lineHeight);
   let totalScroll = 0;
-  // Content Y offset: title bar contributes to the scroll origin
-  const scrollOriginY = terminal.padding + (window.titleBarHeight - terminal.paddingTop);
+  // Must match the initial scrollContainer transform in renderTerminalContent —
+  // any mismatch causes a visible jump on the first scroll.
+  const titleBarHeight = getTitleBarHeight(window);
+  const scrollOriginY = titleBarHeight + terminal.paddingTop;
 
   return scrollFrames.map(frame => {
     const scrollAmount = (frame.scrollLines ?? 1) * roundedLineHeight;
@@ -488,18 +485,16 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
   <defs>
-    ${generateDefs(effects)}
+    ${generateDefs(effects, window.style)}
     ${generateFilters(effects, theme.colors.cursor)}
+    <clipPath id="terminalViewport">
+      <rect x="0" y="${titleBarHeight}" width="${window.width}" height="${viewportHeight}"/>
+    </clipPath>
   </defs>
 
-  <g${showShadow ? ' filter="url(#shadow)"' : ''} class="terminal-screen">
+  <g${showShadow ? ' filter="url(#shadow)"' : ''}>
     ${renderWindow(window, theme)}
     ${renderTitleBarForStyle(window, terminal, theme, chrome)}
-    <defs>
-      <clipPath id="terminalViewport">
-        <rect x="0" y="${titleBarHeight}" width="${window.width}" height="${viewportHeight}"/>
-      </clipPath>
-    </defs>
     <rect x="0" y="${titleBarHeight}" width="${window.width}"
           height="${viewportHeight}" fill="${theme.colors.background}"/>
     <g clip-path="url(#terminalViewport)">
@@ -507,7 +502,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
         ${lineElements}
       </g>
     </g>
-    ${effects.scanlines ? `<rect x="0" y="0" width="${window.width}" height="${window.height}" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>` : ''}
+    ${renderScanlineOverlay(effects, window)}
   </g>
 </svg>`;
 }

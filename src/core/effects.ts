@@ -2,11 +2,11 @@
  * SVG visual effects — filters, patterns, and defs for terminal appearance.
  */
 
-import type { EffectsConfig } from '../types.js';
+import type { EffectsConfig, WindowStyle } from '../types.js';
 import { GLOW_BLUR_VALUES, SCANLINE_PARAMS, SHADOW_PARAMS } from './defaults.js';
 
-/** Generate SVG pattern definitions (scanlines). */
-export function generateDefs(effects: EffectsConfig): string {
+/** Generate SVG pattern + gradient definitions. */
+export function generateDefs(effects: EffectsConfig, windowStyle?: WindowStyle): string {
   const parts: string[] = [];
 
   if (effects.scanlines) {
@@ -15,6 +15,14 @@ export function generateDefs(effects: EffectsConfig): string {
       <rect width="1" height="1" fill="transparent"/>
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,${SCANLINE_PARAMS.opacity})"/>
     </pattern>`);
+  }
+
+  if (windowStyle === 'win95') {
+    parts.push(`
+    <linearGradient id="win95Caption" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000080"/>
+      <stop offset="1" stop-color="#1084d0"/>
+    </linearGradient>`);
   }
 
   return parts.join('\n');

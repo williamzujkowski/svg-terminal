@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod';
+import type { UserConfig } from '../types.js';
 
 const BlockEntrySchema = z.object({
   block: z.string().min(1, 'Block name is required'),
