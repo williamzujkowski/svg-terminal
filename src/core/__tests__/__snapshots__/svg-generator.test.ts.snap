@@ -61,13 +61,12 @@ hi</desc>
         
         
     <g id="line-0" transform="translate(0, 0)">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f">
-        <tspan opacity="0">w<animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="33.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="66.7ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">a<animate attributeName="opacity" from="0" to="1" begin="100ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">m<animate attributeName="opacity" from="0" to="1" begin="133.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="166.7ms" dur="10ms" fill="freeze"/></tspan>
-      </text>
+      <text class="tt" x="109" fill="#00ff9f" clip-path="url(#cmdrev-0)">whoami</text>
       
     <rect x="109" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
@@ -86,13 +85,12 @@ hi</desc>
     </g>
 
     <g id="line-2" transform="translate(0, 50)">
+      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f">
-        <tspan opacity="0">e<animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">c<animate attributeName="opacity" from="0" to="1" begin="2478.6ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2507.1ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="2535.7ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="2564.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2592.9ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="2621.4ms" dur="10ms" fill="freeze"/></tspan>
-      </text>
+      <text class="tt" x="109" fill="#00ff9f" clip-path="url(#cmdrev-2)">echo hi</text>
       
     <rect x="109" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
@@ -192,13 +190,12 @@ hi</desc>
         
         
     <g id="line-0" transform="translate(0, 0)">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f">
-        <tspan opacity="0">w<animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="33.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="66.7ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">a<animate attributeName="opacity" from="0" to="1" begin="100ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">m<animate attributeName="opacity" from="0" to="1" begin="133.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="166.7ms" dur="10ms" fill="freeze"/></tspan>
-      </text>
+      <text class="tt" x="109" fill="#00ff9f" clip-path="url(#cmdrev-0)">whoami</text>
       
     <rect x="109" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
@@ -217,13 +214,12 @@ hi</desc>
     </g>
 
     <g id="line-2" transform="translate(0, 50)">
+      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f">
-        <tspan opacity="0">e<animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">c<animate attributeName="opacity" from="0" to="1" begin="2478.6ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2507.1ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="2535.7ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="2564.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2592.9ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="2621.4ms" dur="10ms" fill="freeze"/></tspan>
-      </text>
+      <text class="tt" x="109" fill="#00ff9f" clip-path="url(#cmdrev-2)">echo hi</text>
       
     <rect x="109" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
@@ -329,13 +325,12 @@ hi</desc>
         
         
     <g id="line-0" transform="translate(0, 0)">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f">
-        <tspan opacity="0">w<animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="33.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="66.7ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">a<animate attributeName="opacity" from="0" to="1" begin="100ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">m<animate attributeName="opacity" from="0" to="1" begin="133.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="166.7ms" dur="10ms" fill="freeze"/></tspan>
-      </text>
+      <text class="tt" x="109" fill="#00ff9f" clip-path="url(#cmdrev-0)">whoami</text>
       
     <rect x="109" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
@@ -354,13 +349,12 @@ hi</desc>
     </g>
 
     <g id="line-2" transform="translate(0, 50)">
+      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f">
-        <tspan opacity="0">e<animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">c<animate attributeName="opacity" from="0" to="1" begin="2478.6ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2507.1ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="2535.7ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="2564.3ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2592.9ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="2621.4ms" dur="10ms" fill="freeze"/></tspan>
-      </text>
+      <text class="tt" x="109" fill="#00ff9f" clip-path="url(#cmdrev-2)">echo hi</text>
       
     <rect x="109" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">

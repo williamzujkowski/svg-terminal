@@ -177,6 +177,26 @@ describe('generateStaticSvg', () => {
   });
 });
 
+describe('output element-count budget', () => {
+  // Regression net for issue #63 — per-character tspans + per-character
+  // cursor animates were consolidated into one clipPath + one cursor walk.
+  // If these counts regress, someone re-introduced per-char animates.
+  it('keeps animate elements bounded on a representative 5-line config', () => {
+    const seq: Sequence[] = [];
+    for (let i = 0; i < 5; i++) {
+      seq.push({ type: 'command', content: `echo "hello ${i}"`, typingDuration: 500 });
+      seq.push({ type: 'output', content: `hello ${i}` });
+    }
+    const svg = generateSvg(seq, makeConfig());
+    const animateCount = (svg.match(/<animate /g) ?? []).length;
+    // Pre-#63: ~80 animates (per-char + per-char cursor + frames).
+    // Post-#63: well under 40 for this fixture. Tight ceiling to catch regression.
+    expect(animateCount).toBeLessThan(40);
+    // Per-tspan-with-animate pattern should be entirely gone.
+    expect(svg).not.toMatch(/<tspan opacity="0">/);
+  });
+});
+
 describe('animated output (frame-cycle)', () => {
   const animSeq: Sequence[] = [
     { type: 'command', content: 'spin', typingDuration: 100 },
@@ -191,9 +211,9 @@ describe('animated output (frame-cycle)', () => {
 
   it('emits one <text> per frame with discrete opacity animation', () => {
     const svg = generateSvg(animSeq, makeConfig());
-    // 3 frame-opacity animates + 1 cursor-walk animate = 4 total
+    // 3 frame-opacity animates + 1 cursor walk + 1 char-reveal clipPath = 5
     const animateCount = (svg.match(/calcMode="discrete"/g) ?? []).length;
-    expect(animateCount).toBe(4);
+    expect(animateCount).toBe(5);
   });
 
   it('cycle duration equals frames/fps seconds', () => {

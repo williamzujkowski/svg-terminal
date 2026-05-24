@@ -135,7 +135,12 @@ export interface EffectsConfig {
 export interface AnimationConfig {
   /** Cursor blink cycle duration in ms (default: 1000) */
   cursorBlinkCycle: number;
-  /** Duration of character appear fade-in in ms (default: 10) */
+  /**
+   * Duration of character appear fade-in in ms (default: 10).
+   * @deprecated As of v0.7 typed-character reveal is discrete (one clip-path
+   *   animate per command); this field only affects the prompt fade-in and
+   *   the output-line fade-in. Will be removed in v1.0.
+   */
   charAppearDuration: number;
   /** Delay between output lines in ms (default: 50) */
   outputLineStagger: number;

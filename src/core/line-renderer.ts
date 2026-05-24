@@ -5,7 +5,7 @@
 
 import type { AnimationConfig, AnimationFrame, ChromeConfig, StyledSpan, TerminalTextConfig, ThemeColors } from '../types.js';
 import { buildColorMap, hasMarkup, parseMarkup } from './markup-parser.js';
-import { escapeXml, getTextWidth, roundCoord, roundTime } from './xml.js';
+import { escapeXml, getTextWidth, roundCoord } from './xml.js';
 import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHROME } from './defaults.js';
 
 /** Generate SVG tspan elements from styled spans. */
@@ -73,7 +73,16 @@ function buildCursorWalk(
   return `<animate attributeName="x" values="${values.join(';')}" keyTimes="${keyTimes.join(';')}" calcMode="discrete" begin="${startTime}ms" dur="${typingDuration}ms" fill="freeze"/>`;
 }
 
-/** Generate a command line with character-by-character typing animation. */
+/**
+ * Generate a command line with character-by-character typing animation.
+ *
+ * Per-character `<tspan opacity="0">char<animate.../></tspan>` is replaced by
+ * a single animated clip-path whose `width` discretely grows as each
+ * character reveal time elapses. One animate per command instead of N.
+ * `charAppearDuration` is no longer honored for the per-character fade —
+ * the field is kept in the schema/types for back-compat but is functionally
+ * a no-op for typed characters (it still drives the prompt fade-in).
+ */
 function generateCommandLine(
   lineIndex: number,
   y: number,
@@ -88,24 +97,40 @@ function generateCommandLine(
   charAppearDuration: number,
 ): string {
   const promptWidth = getTextWidth(prompt, terminal.fontSize);
-  const charDuration = command.length > 0 ? typingDuration / command.length : 0;
-
-  const typedChars = command.split('').map((char, i) => {
-    const charStart = roundTime(startTime + (i * charDuration));
-    return `<tspan opacity="0">${escapeXml(char)}<animate attributeName="opacity" from="0" to="1" begin="${charStart}ms" dur="${charAppearDuration}ms" fill="freeze"/></tspan>`;
-  }).join('');
+  const charWidth = roundCoord(terminal.fontSize * CHAR_WIDTH_RATIO);
+  const clipId = `cmdrev-${lineIndex}`;
+  const revealClip = command.length > 0
+    ? buildRevealClip(clipId, promptWidth, charWidth, command.length, terminal.fontSize, startTime, typingDuration)
+    : '';
 
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})">
+      ${revealClip}
       <text class="tt" fill="${promptColor}" opacity="0">
         ${escapeXml(prompt)}
         <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       </text>
-      <text class="tt" x="${promptWidth}" fill="${promptColor}">
-        ${typedChars}
-      </text>
+      <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
       ${generateCursor(prompt, command, startTime, typingDuration, terminal, cursorColor, cursorBlinkCycle, charAppearDuration)}
     </g>`;
+}
+
+/**
+ * Single-animate clip-path that reveals N characters discretely.
+ * Lives inside the line's transformed <g>, so coords are in line-local space.
+ * The y range (-fontSize..fontSize) is generous; any monospace glyph fits.
+ */
+function buildRevealClip(
+  clipId: string, startX: number, charWidth: number, charCount: number,
+  fontSize: number, startTime: number, typingDuration: number,
+): string {
+  const values: string[] = [];
+  const keyTimes: string[] = [];
+  for (let i = 0; i <= charCount; i++) {
+    values.push(String(roundCoord(i * charWidth)));
+    keyTimes.push((i / charCount).toFixed(4));
+  }
+  return `<defs><clipPath id="${clipId}"><rect x="${startX}" y="${-fontSize}" width="0" height="${fontSize * 2}"><animate attributeName="width" values="${values.join(';')}" keyTimes="${keyTimes.join(';')}" calcMode="discrete" begin="${startTime}ms" dur="${typingDuration}ms" fill="freeze"/></rect></clipPath></defs>`;
 }
 
 /** Generate an output line with fade-in animation. */
