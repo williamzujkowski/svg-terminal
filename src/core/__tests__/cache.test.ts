@@ -166,6 +166,44 @@ describe('useCache modes', () => {
   });
 });
 
+describe('checkCache', () => {
+  it('reports OK for fresh entries and STALE for expired ones', async () => {
+    const file = {
+      version: 1,
+      entries: {
+        fresh: { fetchedAt: new Date().toISOString(), payload: {} },
+        old: { fetchedAt: new Date(Date.now() - 7200_000).toISOString(), payload: {} },
+      },
+    };
+    const filePath = join(dir, 'check.json');
+    writeFileSync(filePath, JSON.stringify(file));
+
+    const { checkCache } = await import('../cache.js');
+    const results = checkCache({
+      filePath,
+      ttl: 3600,
+      entries: [
+        { blockName: 'a', entryIndex: 0, key: 'fresh' },
+        { blockName: 'b', entryIndex: 1, key: 'old' },
+        { blockName: 'c', entryIndex: 2, key: 'missing' },
+      ],
+    });
+    expect(results.map(r => r.status)).toEqual(['OK', 'STALE', 'MISSING']);
+    expect(results[0]!.ageSeconds).toBeGreaterThanOrEqual(0);
+    expect(results[1]!.ageSeconds).toBeGreaterThan(3600);
+  });
+
+  it('treats a missing cache file as all entries MISSING', async () => {
+    const { checkCache } = await import('../cache.js');
+    const results = checkCache({
+      filePath: join(dir, 'does-not-exist.json'),
+      ttl: 60,
+      entries: [{ blockName: 'x', entryIndex: 0, key: 'k' }],
+    });
+    expect(results).toEqual([{ blockName: 'x', entryIndex: 0, key: 'k', status: 'MISSING' }]);
+  });
+});
+
 describe('corrupt cache file handling', () => {
   it('ignores corrupt JSON and starts fresh', async () => {
     const rt = runtime('normal');

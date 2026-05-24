@@ -31,6 +31,7 @@ export const githubStatsBlock: Block = {
   name: 'github-stats',
   description: 'Display live GitHub user statistics',
   allowedKeys: ['username', 'width'] as const,
+  cacheable: true,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const username = (config['username'] as string) ?? '';

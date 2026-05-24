@@ -273,6 +273,11 @@ export interface Block {
    * the actual destructures in render().
    */
   allowedKeys?: readonly string[];
+  /**
+   * True if this block reads via `context.useCache`. Used by the `cache check`
+   * CLI command to know which entries should have a cache record.
+   */
+  cacheable?: boolean;
   /** Render the block content */
   render(context: BlockContext, blockConfig: Record<string, unknown>): BlockResult | Promise<BlockResult>;
 }

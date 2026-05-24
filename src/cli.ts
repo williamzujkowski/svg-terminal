@@ -13,7 +13,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { generate, generateStatic, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
+import { generate, generateStatic, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
 
@@ -32,6 +32,14 @@ function getFlag(name: string): string | undefined {
 
 function hasFlag(name: string): boolean {
   return args.includes(`--${name}`);
+}
+
+/** Human-readable age string for the cache check output. */
+function humanAge(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+  return `${Math.floor(seconds / 86400)}d`;
 }
 
 /** Map mutually-exclusive cache flags to a CacheMode. Last flag wins. */
@@ -170,14 +178,47 @@ blocks:
       break;
     }
 
+    case 'cache': {
+      const sub = args[1];
+      if (sub !== 'check') {
+        console.error('Usage: svg-terminal cache check [--config <path>]');
+        process.exit(1);
+      }
+      const configPath = getFlag('config') ?? 'terminal.yml';
+      const resolved = resolve(configPath);
+      const userConfig = loadConfig(resolved);
+      const { filePath, results } = inspectCache(userConfig, resolved);
+      const w = Math.max(0, ...results.map(r => r.key.length));
+      console.log(`Checking cache at ${filePath}...`);
+      if (results.length === 0) {
+        console.log('  (no cacheable blocks in this config)');
+        break;
+      }
+      let bad = 0;
+      for (const r of results) {
+        const ageStr = r.ageSeconds !== undefined ? `age ${humanAge(r.ageSeconds)}` : '';
+        const tag = r.status === 'OK' ? `\x1b[32mOK\x1b[0m   `
+          : r.status === 'STALE' ? `\x1b[33mSTALE\x1b[0m`
+          : `\x1b[31mMISS\x1b[0m `;
+        console.log(`  ${r.key.padEnd(w)}  ${tag}  ${ageStr}`);
+        if (r.status !== 'OK') bad++;
+      }
+      if (bad > 0) {
+        console.error(`\n${bad} cacheable block(s) need a refresh. Run: svg-terminal generate --refresh-cache`);
+        process.exit(1);
+      }
+      break;
+    }
+
     default: {
       console.log(`svg-terminal — Generate animated SVG terminals
 
 Commands:
-  generate    Generate SVG from config file
-  init        Create a starter terminal.yml
-  themes      List available themes
-  blocks      List available block types
+  generate     Generate SVG from config file
+  init         Create a starter terminal.yml
+  themes       List available themes
+  blocks       List available block types
+  cache check  Verify dynamic-block cache freshness (exit 1 on stale/missing)
 
 Options:
   --config    Config file path (default: terminal.yml)

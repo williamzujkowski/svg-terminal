@@ -23,8 +23,8 @@ import { resolvePause, resolveTyping } from './core/defaults.js';
 import { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 import { getBlock, registerBuiltinBlocks } from './blocks/index.js';
 import { BlockConfigError } from './core/errors.js';
-import type { CacheMode, CacheRuntime } from './core/cache.js';
-import { flushCache, makeUseCache, resolveCachePath } from './core/cache.js';
+import type { CacheCheckResult, CacheMode, CacheRuntime } from './core/cache.js';
+import { checkCache, flushCache, hashConfig, makeUseCache, resolveCachePath } from './core/cache.js';
 
 /** Options to thread cache runtime + file context into generate(). */
 export interface GenerateOptions {
@@ -143,6 +143,33 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
 
   if (cacheRuntime) flushCache(cacheRuntime);
   return generateSvg(sequences, config);
+}
+
+/**
+ * Walk a config and report each cacheable block's status against the cache file.
+ * Returns one result per entry whose block declares `cacheable: true`.
+ * Used by the `svg-terminal cache check` CLI command.
+ */
+export function inspectCache(userConfig: UserConfig, configPath: string): {
+  filePath: string;
+  results: CacheCheckResult[];
+} {
+  const merged = mergeConfig(userConfig);
+  const filePath = resolveCachePath(configPath, merged.cachePath);
+  const entries: Array<{ blockName: string; entryIndex: number; key: string }> = [];
+
+  for (let i = 0; i < userConfig.blocks.length; i++) {
+    const entry = userConfig.blocks[i]!;
+    const block = getBlock(entry.block);
+    if (!block?.cacheable) continue;
+    entries.push({
+      blockName: entry.block,
+      entryIndex: i,
+      key: `${entry.block}:${hashConfig(entry.config ?? {})}`,
+    });
+  }
+
+  return { filePath, results: checkCache({ filePath, ttl: merged.cacheTTL, entries }) };
 }
 
 /** Build a CacheRuntime if a config path is known and the mode is not 'off'. */

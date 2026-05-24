@@ -163,3 +163,49 @@ export function flushCache(runtime: CacheRuntime): void {
   if (runtime.mode === 'off' || runtime.mode === 'frozen' || !runtime.dirty || !runtime.data) return;
   persistCacheFile(runtime.filePath, runtime.data);
 }
+
+/** Per-entry status returned by checkCache(). */
+export interface CacheCheckResult {
+  key: string;
+  blockName: string;
+  entryIndex: number;
+  /** OK = present + within TTL; STALE = present + expired; MISSING = no entry. */
+  status: 'OK' | 'STALE' | 'MISSING';
+  /** Age in seconds, present when status is OK or STALE. */
+  ageSeconds?: number;
+}
+
+export interface CacheCheckInput {
+  /** Cache file to inspect (already path-resolved). */
+  filePath: string;
+  /** TTL in seconds against which OK/STALE is judged. */
+  ttl: number;
+  /** Entries to verify — one per cacheable block in the config. */
+  entries: Array<{ blockName: string; entryIndex: number; key: string }>;
+}
+
+/** Walk a cache file and verify each expected entry's freshness. */
+export function checkCache(input: CacheCheckInput): CacheCheckResult[] {
+  // loadCacheFile is module-private; inline the read here for the public surface.
+  let data: CacheFile;
+  try {
+    data = JSON.parse(readFileSync(input.filePath, 'utf-8')) as CacheFile;
+    if (data.version !== CACHE_VERSION || typeof data.entries !== 'object' || data.entries === null) {
+      data = { version: CACHE_VERSION, entries: {} };
+    }
+  } catch {
+    data = { version: CACHE_VERSION, entries: {} };
+  }
+
+  const now = Date.now();
+  return input.entries.map(({ blockName, entryIndex, key }) => {
+    const entry = data.entries[key];
+    if (!entry) return { key, blockName, entryIndex, status: 'MISSING' };
+    const ageMs = now - Date.parse(entry.fetchedAt);
+    const ageSeconds = Math.max(0, Math.round(ageMs / 1000));
+    if (ageMs >= 0 && ageMs < input.ttl * 1000) {
+      return { key, blockName, entryIndex, status: 'OK', ageSeconds };
+    }
+    return { key, blockName, entryIndex, status: 'STALE', ageSeconds };
+  });
+}
