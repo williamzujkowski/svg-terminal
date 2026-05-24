@@ -2,14 +2,26 @@
  * Profile block — developer/user profile info card.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+
+const profileConfigSchema = z.object({
+  name: z.string().optional(),
+  github: z.string().optional(),
+  web: z.string().optional(),
+  focus: z.string().optional(),
+  motto: z.string().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** Profile info card block. */
 export const profileBlock: Block = {
   name: 'profile',
   description: 'Display a developer profile info card',
+  configSchema: profileConfigSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const name = (config['name'] as string) ?? 'Developer';

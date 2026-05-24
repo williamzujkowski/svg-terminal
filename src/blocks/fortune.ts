@@ -2,14 +2,23 @@
  * Fortune block — displays a random fortune/quote.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createRoundedBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+
+const fortuneConfigSchema = z.object({
+  fortunes: z.array(z.string()).optional(),
+  command: z.string().optional(),
+  width: z.number().positive().optional(),
+  color: z.string().optional(),
+}).strict();
 
 /** Fortune/quote block. */
 export const fortuneBlock: Block = {
   name: 'fortune',
   description: 'Display a random fortune or quote in an ASCII box',
+  configSchema: fortuneConfigSchema,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const fortunes = (config['fortunes'] as string[]) ?? [

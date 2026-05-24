@@ -205,9 +205,10 @@ Styles: `double` (╔═╗), `rounded` (╭─╮), `single` (┌─┐), `heav
 **Add a new block:**
 
 1. Create `src/blocks/<name>.ts` exporting a `Block` (see `src/blocks/vim-exit.ts` for a minimal example).
-2. Import + register it in `src/blocks/index.ts` — add to `registerBuiltinBlocks` and to the re-exports.
-3. Add a test in `src/blocks/__tests__/blocks.test.ts` covering the default render plus any config overrides.
-4. Add a row to the Blocks table in this README.
+2. Declare a `configSchema` (a strict zod object) on your block — this is how typos in user YAML surface as actionable errors instead of silent fallbacks. Existing examples: `src/blocks/custom.ts`, `src/blocks/neofetch.ts`, `src/blocks/htop.ts`, `src/blocks/motd.ts`, `src/blocks/fortune.ts`, `src/blocks/profile.ts`. If you don't have a schema yet, set `allowedKeys: ['list', 'of', 'keys'] as const` as a fallback — unknown keys will warn (or error under `--strict`).
+3. Import + register it in `src/blocks/index.ts` — add to `registerBuiltinBlocks` and to the re-exports.
+4. Add a test in `src/blocks/__tests__/blocks.test.ts` covering the default render plus any config overrides.
+5. Add a row to the Blocks table in this README.
 
 **Add a new theme:**
 

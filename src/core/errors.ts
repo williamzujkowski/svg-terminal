@@ -14,3 +14,24 @@ export class ConfigError extends Error {
     this.formatted = formatted;
   }
 }
+
+/**
+ * A block-config validation failure: the block declares a configSchema (or an
+ * allowedKeys list under --strict) and the YAML entry violated it.
+ *
+ * Sibling of ConfigError so the CLI can render both with the same path —
+ * pattern-match on `err.formatted` either way.
+ */
+export class BlockConfigError extends Error {
+  readonly formatted: string;
+  readonly blockName: string;
+  readonly entryIndex: number;
+
+  constructor(blockName: string, entryIndex: number, formatted: string) {
+    super(formatted);
+    this.name = 'BlockConfigError';
+    this.formatted = formatted;
+    this.blockName = blockName;
+    this.entryIndex = entryIndex;
+  }
+}

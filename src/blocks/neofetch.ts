@@ -2,12 +2,28 @@
  * Neofetch block — system info display in terminal style.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
+
+const neofetchConfigSchema = z.object({
+  username: z.string().optional(),
+  hostname: z.string().optional(),
+  title: z.string().optional(),
+  os: z.string().optional(),
+  shell: z.string().optional(),
+  uptime: z.string().optional(),
+  role: z.string().optional(),
+  location: z.string().optional(),
+  languages: z.string().optional(),
+  editor: z.string().optional(),
+  command: z.string().optional(),
+}).strict();
 
 /** Neofetch-style system info block. */
 export const neofetchBlock: Block = {
   name: 'neofetch',
   description: 'Display system-info style output like neofetch',
+  configSchema: neofetchConfigSchema,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const username = (config['username'] as string) ?? 'user';

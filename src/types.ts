@@ -244,6 +244,20 @@ export interface Block {
   name: string;
   /** Human-readable description */
   description?: string;
+  /**
+   * Optional zod schema for the block's config. When set, the YAML config entry
+   * is parsed through this schema BEFORE render() is called; failures throw
+   * BlockConfigError. Use `.strict()` on the schema so typos surface as errors
+   * rather than being silently stripped.
+   */
+  configSchema?: import('zod').ZodTypeAny;
+  /**
+   * Optional explicit list of config keys this block accepts. Used when
+   * configSchema is not set — unknown keys in the YAML produce a stderr
+   * warning (promoted to error under `--strict`). Keep this list synced with
+   * the actual destructures in render().
+   */
+  allowedKeys?: readonly string[];
   /** Render the block content */
   render(context: BlockContext, blockConfig: Record<string, unknown>): BlockResult | Promise<BlockResult>;
 }

@@ -13,9 +13,9 @@
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { generate, generateStatic, listBlocks, loadConfig } from './index.js';
+import { generate, generateStatic, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
-import { ConfigError } from './core/errors.js';
+import { ConfigError, BlockConfigError } from './core/errors.js';
 
 // Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
 declare const __PKG_VERSION__: string;
@@ -58,7 +58,9 @@ async function main(): Promise<void> {
       const outputPath = getFlag('output') ?? 'terminal.svg';
       const isStatic = hasFlag('static');
       const minify = hasFlag('minify');
+      const strict = hasFlag('strict');
 
+      setStrictBlockConfig(strict);
       const userConfig = loadConfig(resolve(configPath));
       let svg = isStatic
         ? await generateStatic(userConfig)
@@ -167,6 +169,7 @@ Options:
   --output    Output file path (default: terminal.svg)
   --static    Generate non-animated SVG (final frame snapshot)
   --minify    Strip inter-element whitespace for smaller output
+  --strict    Promote unknown-block-config-key warnings to hard errors
   --version   Print version number
 
 Example:
@@ -180,7 +183,7 @@ Example:
 }
 
 main().catch((err: unknown) => {
-  if (err instanceof ConfigError) {
+  if (err instanceof ConfigError || err instanceof BlockConfigError) {
     console.error(err.formatted);
   } else {
     console.error('Error:', err instanceof Error ? err.message : err);

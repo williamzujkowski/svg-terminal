@@ -2,7 +2,8 @@
  * htop block — colorful process/resource display.
  */
 
-import type { Block, BlockResult } from '../types.js';
+import { z } from 'zod';
+import type { Block, BlockContext, BlockResult } from '../types.js';
 
 interface Process {
   pid: string;
@@ -13,12 +14,29 @@ interface Process {
   state?: string;
 }
 
+const processSchema = z.object({
+  pid: z.string(),
+  user: z.string(),
+  cpu: z.string(),
+  mem: z.string(),
+  command: z.string(),
+  state: z.string().optional(),
+}).strict();
+
+const htopConfigSchema = z.object({
+  cpu: z.number().min(0).max(100).optional(),
+  mem: z.number().min(0).max(100).optional(),
+  processes: z.array(processSchema).optional(),
+  command: z.string().optional(),
+}).strict();
+
 /** htop-style process display block. */
 export const htopBlock: Block = {
   name: 'htop',
   description: 'Display an htop-style process and resource monitor',
+  configSchema: htopConfigSchema,
 
-  render(_context, config: Record<string, unknown>): BlockResult {
+  render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const cpuPercent = (config['cpu'] as number) ?? 80.5;
     const memPercent = (config['mem'] as number) ?? 50.0;
     const processes = (config['processes'] as Process[]) ?? [

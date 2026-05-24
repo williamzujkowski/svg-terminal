@@ -3,15 +3,29 @@
  * Optionally includes live weather data from wttr.in.
  */
 
+import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
 import { fetchWeatherSummary } from './weather.js';
 
+const motdConfigSchema = z.object({
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  width: z.number().positive().optional(),
+  command: z.string().optional(),
+  lines: z.array(z.string()).optional(),
+  weather: z.object({
+    location: z.string().optional(),
+    units: z.enum(['imperial', 'metric', 'both']).optional(),
+  }).strict().optional(),
+}).strict();
+
 /** MOTD welcome banner block. */
 export const motdBlock: Block = {
   name: 'motd',
   description: 'Display a welcome banner / message of the day',
+  configSchema: motdConfigSchema,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const title = (config['title'] as string) ?? 'DEV TERMINAL';
