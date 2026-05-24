@@ -166,6 +166,50 @@ describe('useCache modes', () => {
   });
 });
 
+describe('flushCache pruning', () => {
+  it('drops entries older than TTL when flushing', async () => {
+    const now = Date.now();
+    const ttl = 60; // 60s
+    const file = {
+      version: 1,
+      entries: {
+        fresh: { fetchedAt: new Date(now - 10_000).toISOString(), payload: { ok: true } },
+        stale: { fetchedAt: new Date(now - 120_000).toISOString(), payload: { ok: false } },
+        ancient: { fetchedAt: '2020-01-01T00:00:00.000Z', payload: {} },
+      },
+    };
+    const filePath = join(dir, 'prune.json');
+    writeFileSync(filePath, JSON.stringify(file));
+
+    const rt = runtime('normal', ttl, 'prune.json');
+    const useCache = makeUseCache(rt);
+
+    // Touch the cache so it's loaded + marked dirty (write happens on flush)
+    await useCache('fresh', async () => { throw new Error('should not fetch'); });
+    rt.dirty = true; // force flush
+
+    flushCache(rt);
+    const after = JSON.parse(readFileSync(filePath, 'utf-8')) as { entries: Record<string, unknown> };
+    expect(Object.keys(after.entries).sort()).toEqual(['fresh']);
+  });
+
+  it('does not prune when ttl is 0 (cache disabled effectively)', () => {
+    const file = {
+      version: 1,
+      entries: { ancient: { fetchedAt: '2020-01-01T00:00:00.000Z', payload: {} } },
+    };
+    const filePath = join(dir, 'nottl.json');
+    writeFileSync(filePath, JSON.stringify(file));
+
+    const rt = runtime('normal', 0, 'nottl.json');
+    rt.data = { version: 1, entries: { ...file.entries } };
+    rt.dirty = true;
+    flushCache(rt);
+    const after = JSON.parse(readFileSync(filePath, 'utf-8')) as { entries: Record<string, unknown> };
+    expect(Object.keys(after.entries)).toEqual(['ancient']);
+  });
+});
+
 describe('checkCache', () => {
   it('reports OK for fresh entries and STALE for expired ones', async () => {
     const file = {

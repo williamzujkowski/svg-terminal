@@ -5,7 +5,7 @@
 
 import type { AnimationConfig, AnimationFrame, ChromeConfig, StyledSpan, TerminalTextConfig, ThemeColors } from '../types.js';
 import { buildColorMap, hasMarkup, parseMarkup } from './markup-parser.js';
-import { escapeXml, getTextWidth, roundCoord } from './xml.js';
+import { escapeXml, getTextWidth, roundCoord, roundTime } from './xml.js';
 import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHROME } from './defaults.js';
 
 /** Generate SVG tspan elements from styled spans. */
@@ -42,7 +42,7 @@ function generateCursor(
   const blinkDur = `${cursorBlinkCycle}ms`;
 
   const moveAnims = command.split('').map((_, idx) => {
-    const charAppearTime = startTime + (idx * charDuration);
+    const charAppearTime = roundTime(startTime + (idx * charDuration));
     const fromX = roundCoord(promptWidth + (idx * charWidth));
     const toX = roundCoord(promptWidth + ((idx + 1) * charWidth));
     return `<animate attributeName="x" from="${fromX}" to="${toX}" begin="${charAppearTime}ms" dur="1ms" fill="freeze"/>`;
@@ -76,7 +76,7 @@ function generateCommandLine(
   const charDuration = command.length > 0 ? typingDuration / command.length : 0;
 
   const typedChars = command.split('').map((char, i) => {
-    const charStart = startTime + (i * charDuration);
+    const charStart = roundTime(startTime + (i * charDuration));
     return `<tspan opacity="0">${escapeXml(char)}<animate attributeName="opacity" from="0" to="1" begin="${charStart}ms" dur="${charAppearDuration}ms" fill="freeze"/></tspan>`;
   }).join('');
 

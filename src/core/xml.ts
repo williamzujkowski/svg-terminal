@@ -19,6 +19,15 @@ export function roundCoord(value: number, decimals = 0): number {
   return Math.round(value * factor) / factor;
 }
 
+/**
+ * Round an animation timing value (ms) for SVG output.
+ * 1 decimal is sub-frame-perception precision — saves ~15 bytes per
+ * `begin="..."` attribute vs. full IEEE 754 floats like `2809.090909090909`.
+ */
+export function roundTime(ms: number): number {
+  return Math.round(ms * 10) / 10;
+}
+
 /** Calculate approximate text width for monospace font. */
 export function getTextWidth(text: string, fontSize: number): number {
   return roundCoord(text.length * (fontSize * 0.6));

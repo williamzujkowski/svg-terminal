@@ -161,7 +161,23 @@ export function makeUseCache(runtime: CacheRuntime): NonNullable<import('../type
 /** Flush the in-memory cache to disk if anything changed. */
 export function flushCache(runtime: CacheRuntime): void {
   if (runtime.mode === 'off' || runtime.mode === 'frozen' || !runtime.dirty || !runtime.data) return;
+  pruneStaleEntries(runtime.data, runtime.ttl);
   persistCacheFile(runtime.filePath, runtime.data);
+}
+
+/**
+ * Drop entries whose `fetchedAt` is older than `ttl` seconds. Keeps the cache
+ * file bounded over long-lived projects with shifting block configs (rotating
+ * quote sources, evolving entry shapes that change the configHash).
+ */
+function pruneStaleEntries(data: CacheFile, ttl: number): void {
+  if (ttl <= 0) return;
+  const cutoffMs = Date.now() - ttl * 1000;
+  for (const [key, entry] of Object.entries(data.entries)) {
+    if (Date.parse(entry.fetchedAt) < cutoffMs) {
+      delete data.entries[key];
+    }
+  }
 }
 
 /** Per-entry status returned by checkCache(). */
