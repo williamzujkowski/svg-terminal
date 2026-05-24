@@ -191,9 +191,9 @@ describe('animated output (frame-cycle)', () => {
 
   it('emits one <text> per frame with discrete opacity animation', () => {
     const svg = generateSvg(animSeq, makeConfig());
-    // 3 frames + the cursor + the command line = at least the 3 expected ones
+    // 3 frame-opacity animates + 1 cursor-walk animate = 4 total
     const animateCount = (svg.match(/calcMode="discrete"/g) ?? []).length;
-    expect(animateCount).toBe(3);
+    expect(animateCount).toBe(4);
   });
 
   it('cycle duration equals frames/fps seconds', () => {

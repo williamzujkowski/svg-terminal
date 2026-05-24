@@ -37,16 +37,15 @@ function generateCursor(
   const promptWidth = getTextWidth(prompt, terminal.fontSize);
   const charWidth = roundCoord(terminal.fontSize * CHAR_WIDTH_RATIO);
   const cursorY = roundCoord(terminal.fontSize * CURSOR_Y_OFFSET_RATIO);
-  const charDuration = command.length > 0 ? typingDuration / command.length : 0;
   const typingEndTime = startTime + typingDuration;
   const blinkDur = `${cursorBlinkCycle}ms`;
 
-  const moveAnims = command.split('').map((_, idx) => {
-    const charAppearTime = roundTime(startTime + (idx * charDuration));
-    const fromX = roundCoord(promptWidth + (idx * charWidth));
-    const toX = roundCoord(promptWidth + ((idx + 1) * charWidth));
-    return `<animate attributeName="x" from="${fromX}" to="${toX}" begin="${charAppearTime}ms" dur="1ms" fill="freeze"/>`;
-  }).join('');
+  // One discrete-step <animate> walks the cursor across N+1 positions
+  // instead of N per-character animates. Visually identical because the
+  // old per-char animates were dur=1ms (already effectively discrete).
+  const moveAnim = command.length > 0
+    ? buildCursorWalk(command.length, promptWidth, charWidth, startTime, typingDuration)
+    : '';
 
   return `
     <rect x="${promptWidth}" y="${cursorY}" width="${charWidth}" height="${terminal.fontSize}"
@@ -54,8 +53,24 @@ function generateCursor(
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       <animate attributeName="opacity" values="1;1;0;0" dur="${blinkDur}" begin="${startTime}ms" end="${typingEndTime}ms" repeatCount="indefinite"/>
       <animate attributeName="opacity" to="0" begin="${typingEndTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
-      ${moveAnims}
+      ${moveAnim}
     </rect>`;
+}
+
+/** Single discrete <animate> that steps cursor x through N+1 positions. */
+function buildCursorWalk(
+  charCount: number, promptWidth: number, charWidth: number,
+  startTime: number, typingDuration: number,
+): string {
+  // values[i] = cursor x after i characters typed (i ∈ 0..N).
+  // keyTimes[i] = i / N — cursor jumps to next position at each char-reveal time.
+  const values: string[] = [];
+  const keyTimes: string[] = [];
+  for (let i = 0; i <= charCount; i++) {
+    values.push(String(roundCoord(promptWidth + i * charWidth)));
+    keyTimes.push((i / charCount).toFixed(4));
+  }
+  return `<animate attributeName="x" values="${values.join(';')}" keyTimes="${keyTimes.join(';')}" calcMode="discrete" begin="${startTime}ms" dur="${typingDuration}ms" fill="freeze"/>`;
 }
 
 /** Generate a command line with character-by-character typing animation. */
