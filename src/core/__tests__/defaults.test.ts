@@ -12,7 +12,6 @@ import {
   DEFAULT_CONFIG,
   CHAR_WIDTH_RATIO,
   CURSOR_Y_OFFSET_RATIO,
-  GLOW_BLUR_VALUES,
   SHADOW_PARAMS,
   SCANLINE_PARAMS,
 } from '../defaults.js';
@@ -106,7 +105,6 @@ describe('defaults', () => {
   it('has internal constants', () => {
     expect(CHAR_WIDTH_RATIO).toBe(0.6);
     expect(CURSOR_Y_OFFSET_RATIO).toBe(-0.85);
-    expect(GLOW_BLUR_VALUES).toEqual([0.2, 1.5, 3.5]);
     expect(SHADOW_PARAMS.dy).toBe(15);
     expect(SCANLINE_PARAMS.height).toBe(2);
   });

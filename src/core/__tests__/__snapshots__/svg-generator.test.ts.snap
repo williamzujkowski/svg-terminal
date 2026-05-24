@@ -258,19 +258,12 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
   <defs>
     
     
-    <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="0.2" result="coreBlur"/>
-      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="mediumBlur"/>
-      <feColorMatrix in="mediumBlur" type="matrix" result="themeGlow"
-        values="0 0 0 0 0.00
-                0 0 0 0 1.00
-                0 0 0 0 0.25
-                0 0 0 0.8 0"/>
-      <feGaussianBlur in="SourceAlpha" stdDeviation="3.5" result="outerBlur"/>
-      <feBlend in="coreBlur" in2="themeGlow" mode="screen" result="layer12"/>
-      <feBlend in="layer12" in2="outerBlur" mode="screen" result="allLayers"/>
+    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="core"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="halo"/>
       <feMerge>
-        <feMergeNode in="allLayers"/>
+        <feMergeNode in="halo"/>
+        <feMergeNode in="core"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
@@ -317,15 +310,15 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
     <rect x="0" y="40" width="1000"
           height="520" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
-      <g id="scrollContainer" transform="translate(12, 54)">
+      <g id="scrollContainer" transform="translate(12, 54)" filter="url(#textGlow)">
         
         
     <g id="line-0" transform="translate(0, 0)">
-      <text class="tt" fill="#00ff9f" filter="url(#textGlow)" opacity="0">
+      <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f" filter="url(#textGlow)">
+      <text class="tt" x="109" fill="#00ff9f">
         <tspan opacity="0">w<animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="33.333333333333336ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="66.66666666666667ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">a<animate attributeName="opacity" from="0" to="1" begin="100ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">m<animate attributeName="opacity" from="0" to="1" begin="133.33333333333334ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="166.66666666666669ms" dur="10ms" fill="freeze"/></tspan>
       </text>
       
@@ -340,17 +333,17 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
 
     <g id="line-1" transform="translate(0, 25)" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="1200ms" dur="10ms" fill="freeze"/>
-      <text class="tt" fill="#e4e4e4" filter="url(#textGlow)">
+      <text class="tt" fill="#e4e4e4">
         dev
       </text>
     </g>
 
     <g id="line-2" transform="translate(0, 50)">
-      <text class="tt" fill="#00ff9f" filter="url(#textGlow)" opacity="0">
+      <text class="tt" fill="#00ff9f" opacity="0">
         user@host:~$ 
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="109" fill="#00ff9f" filter="url(#textGlow)">
+      <text class="tt" x="109" fill="#00ff9f">
         <tspan opacity="0">e<animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">c<animate attributeName="opacity" from="0" to="1" begin="2478.5714285714284ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2507.1428571428573ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">o<animate attributeName="opacity" from="0" to="1" begin="2535.714285714286ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="2564.285714285714ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">h<animate attributeName="opacity" from="0" to="1" begin="2592.8571428571427ms" dur="10ms" fill="freeze"/></tspan><tspan opacity="0">i<animate attributeName="opacity" from="0" to="1" begin="2621.4285714285716ms" dur="10ms" fill="freeze"/></tspan>
       </text>
       
@@ -365,7 +358,7 @@ exports[`SVG snapshots > scanlines off + glow on 1`] = `
 
     <g id="line-3" transform="translate(0, 76)" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="3650ms" dur="10ms" fill="freeze"/>
-      <text class="tt" filter="url(#textGlow)">
+      <text class="tt">
         <tspan fill="#50fa7b">hi</tspan>
       </text>
     </g>

@@ -377,7 +377,8 @@ function renderTerminalContent(
   const viewportHeight = window.height - titleBarHeight;
 
   const scrollAnimations = renderScrollAnimations(frames, terminal, window, lineHeight);
-  const allLines = generateAllLines(frames, terminal, lineHeight, theme.colors, effects.textGlow, chrome, animation);
+  const allLines = generateAllLines(frames, terminal, lineHeight, theme.colors, chrome, animation);
+  const glow = effects.textGlow ? ' filter="url(#textGlow)"' : '';
 
   return `
     <defs>
@@ -388,7 +389,7 @@ function renderTerminalContent(
     <rect x="0" y="${titleBarHeight}" width="${window.width}"
           height="${viewportHeight}" fill="${theme.colors.background}"/>
     <g clip-path="url(#terminalViewport)">
-      <g id="scrollContainer" transform="translate(${terminal.padding}, ${contentY})">
+      <g id="scrollContainer" transform="translate(${terminal.padding}, ${contentY})"${glow}>
         ${scrollAnimations}
         ${allLines}
       </g>
@@ -465,7 +466,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   const viewportHeight = window.height - titleBarHeight;
   const accessibilityLabel = `Static terminal showing ${lines.length} lines`;
   const colorMap = buildColorMap(theme.colors);
-  const filter = effects.textGlow ? ' filter="url(#textGlow)"' : '';
+  const glow = effects.textGlow ? ' filter="url(#textGlow)"' : '';
   const showShadow = effects.shadow && window.style !== 'none';
 
   const lineElements = lines.map((line, i) => {
@@ -477,7 +478,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
     const fill = hasMarkupTags ? '' : ` fill="${theme.colors.text}"`;
 
     return `
-      <text class="tt" y="${y}"${fill}${filter}>
+      <text class="tt" y="${y}"${fill}>
         ${textContent}
       </text>`;
   }).join('');
@@ -499,7 +500,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
     <rect x="0" y="${titleBarHeight}" width="${window.width}"
           height="${viewportHeight}" fill="${theme.colors.background}"/>
     <g clip-path="url(#terminalViewport)">
-      <g transform="translate(${terminal.padding}, ${contentY})">
+      <g transform="translate(${terminal.padding}, ${contentY})"${glow}>
         ${lineElements}
       </g>
     </g>

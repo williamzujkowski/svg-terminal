@@ -69,13 +69,11 @@ function generateCommandLine(
   terminal: TerminalTextConfig,
   promptColor: string,
   cursorColor: string,
-  textGlow: boolean,
   cursorBlinkCycle: number,
   charAppearDuration: number,
 ): string {
   const promptWidth = getTextWidth(prompt, terminal.fontSize);
   const charDuration = command.length > 0 ? typingDuration / command.length : 0;
-  const filter = textGlow ? ' filter="url(#textGlow)"' : '';
 
   const typedChars = command.split('').map((char, i) => {
     const charStart = startTime + (i * charDuration);
@@ -84,11 +82,11 @@ function generateCommandLine(
 
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})">
-      <text class="tt" fill="${promptColor}"${filter} opacity="0">
+      <text class="tt" fill="${promptColor}" opacity="0">
         ${escapeXml(prompt)}
         <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       </text>
-      <text class="tt" x="${promptWidth}" fill="${promptColor}"${filter}>
+      <text class="tt" x="${promptWidth}" fill="${promptColor}">
         ${typedChars}
       </text>
       ${generateCursor(prompt, command, startTime, typingDuration, terminal, cursorColor, cursorBlinkCycle, charAppearDuration)}
@@ -103,11 +101,9 @@ function generateOutputLine(
   color: string,
   startTime: number,
   colorMap: Record<string, string>,
-  textGlow: boolean,
   chrome: ChromeConfig,
   charAppearDuration: number,
 ): string {
-  const filter = textGlow ? ' filter="url(#textGlow)"' : '';
   const styled = hasMarkup(content);
   const textContent = styled
     ? generateStyledText(parseMarkup(content, colorMap, color), color, chrome.dimOpacity)
@@ -117,7 +113,7 @@ function generateOutputLine(
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
-      <text class="tt"${textFill}${filter}>
+      <text class="tt"${textFill}>
         ${textContent}
       </text>
     </g>`;
@@ -129,7 +125,6 @@ export function generateAllLines(
   terminal: TerminalTextConfig,
   lineHeight: number,
   colors: ThemeColors,
-  textGlow: boolean,
   chrome?: ChromeConfig,
   animation?: AnimationConfig,
 ): string {
@@ -149,7 +144,7 @@ export function generateAllLines(
           frame.command ?? '',
           frame.time,
           frame.typingDuration ?? animConfig.defaultTypingDuration,
-          terminal, colors.prompt, colors.cursor, textGlow,
+          terminal, colors.prompt, colors.cursor,
           animConfig.cursorBlinkCycle, animConfig.charAppearDuration,
         ),
       );
@@ -162,7 +157,7 @@ export function generateAllLines(
           frame.content ?? '',
           frame.color ?? colors.text,
           frame.time,
-          colorMap, textGlow,
+          colorMap,
           chromeConfig, animConfig.charAppearDuration,
         ),
       );

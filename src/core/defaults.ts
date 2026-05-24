@@ -96,9 +96,6 @@ export function getDefaultBoxWidth(maxCols: number): number {
 /** Cursor vertical offset as a fraction of font size. */
 export const CURSOR_Y_OFFSET_RATIO = -0.85;
 
-/** Phosphor glow blur standard deviations [core, medium, outer]. */
-export const GLOW_BLUR_VALUES = [0.2, 1.5, 3.5] as const;
-
 /** Shadow filter parameters. */
 export const SHADOW_PARAMS = { dy: 15, blur: 15, opacity: 0.8 } as const;
 

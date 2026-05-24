@@ -3,7 +3,7 @@
  */
 
 import type { EffectsConfig, WindowStyle } from '../types.js';
-import { GLOW_BLUR_VALUES, SCANLINE_PARAMS, SHADOW_PARAMS } from './defaults.js';
+import { SCANLINE_PARAMS, SHADOW_PARAMS } from './defaults.js';
 
 /** Generate SVG pattern + gradient definitions. */
 export function generateDefs(effects: EffectsConfig, windowStyle?: WindowStyle): string {
@@ -28,41 +28,21 @@ export function generateDefs(effects: EffectsConfig, windowStyle?: WindowStyle):
   return parts.join('\n');
 }
 
-/** Parse hex color to normalized RGB (0-1 range). */
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  const clean = hex.replace('#', '');
-  const full = clean.length === 3
-    ? clean.split('').map(c => c + c).join('')
-    : clean;
-  return {
-    r: parseInt(full.slice(0, 2), 16) / 255,
-    g: parseInt(full.slice(2, 4), 16) / 255,
-    b: parseInt(full.slice(4, 6), 16) / 255,
-  };
-}
-
 /** Generate SVG filter definitions. */
-export function generateFilters(effects: EffectsConfig, glowColor?: string): string {
+export function generateFilters(effects: EffectsConfig, _glowColor?: string): string {
   const parts: string[] = [];
 
   if (effects.textGlow) {
-    const [core, medium, outer] = GLOW_BLUR_VALUES;
-    // Derive glow color from theme cursor/foreground instead of hardcoded green
-    const { r, g, b } = hexToRgb(glowColor ?? '#00ff41');
+    // Two-pass blur of the SourceGraphic, then composite back over it.
+    // SourceGraphic (not SourceAlpha) makes the halo inherit the text color —
+    // green text glows green, magenta glows magenta. No theme recolor needed.
     parts.push(`
-    <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="${core}" result="coreBlur"/>
-      <feGaussianBlur in="SourceAlpha" stdDeviation="${medium}" result="mediumBlur"/>
-      <feColorMatrix in="mediumBlur" type="matrix" result="themeGlow"
-        values="0 0 0 0 ${r.toFixed(2)}
-                0 0 0 0 ${g.toFixed(2)}
-                0 0 0 0 ${b.toFixed(2)}
-                0 0 0 0.8 0"/>
-      <feGaussianBlur in="SourceAlpha" stdDeviation="${outer}" result="outerBlur"/>
-      <feBlend in="coreBlur" in2="themeGlow" mode="screen" result="layer12"/>
-      <feBlend in="layer12" in2="outerBlur" mode="screen" result="allLayers"/>
+    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="core"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="halo"/>
       <feMerge>
-        <feMergeNode in="allLayers"/>
+        <feMergeNode in="halo"/>
+        <feMergeNode in="core"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>`);
