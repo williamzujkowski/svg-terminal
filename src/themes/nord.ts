@@ -5,7 +5,10 @@ export const nord: Theme = {
   name: 'nord',
   colors: {
     text: '#d8dee9',
-    comment: '#4c566a',
+    // Upstream Nord uses #4c566a (Polar Night 3) — visually invisible on the
+    // #2e3440 terminal background (~1.7:1). Lifted to a Polar Night / Snow Storm
+    // midpoint so [[fg:comment]] / [[dim]] text stays legible.
+    comment: '#7c8ba8',
     background: '#2e3440',
     titleBarBackground: '#3b4252',
     titleBarText: '#d8dee9',

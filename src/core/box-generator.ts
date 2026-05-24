@@ -52,6 +52,7 @@ export const BOX_STYLES: Record<BoxStyle, BoxChars> = {
 export function getDisplayWidth(str: string): number {
   if (!str) return 0;
   // Strip [[markup]] tags first, then ANSI escapes
+  // eslint-disable-next-line no-control-regex
   const cleaned = stripMarkup(str).replace(/\x1b\[[0-9;]*m/g, '');
   let width = 0;
 

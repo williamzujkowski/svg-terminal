@@ -82,10 +82,10 @@ describe('wrapText', () => {
   it('applies indent to continuation lines only', () => {
     const result = wrapText('one two three four five six', 15, '  ');
     // First line has no indent
-    expect(result[0]).not.toMatch(/^  /);
+    expect(result[0]).not.toMatch(/^ {2}/);
     // Continuation lines have indent
     for (let i = 1; i < result.length; i++) {
-      expect(result[i]).toMatch(/^  /);
+      expect(result[i]).toMatch(/^ {2}/);
     }
   });
 
