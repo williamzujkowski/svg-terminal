@@ -168,6 +168,52 @@ describe('persona blocks', () => {
   });
 });
 
+describe('previously-uncovered blocks', () => {
+  const blocks = ['htop', 'npm-install', 'profile', 'blog-post', 'national-day', 'systemctl'];
+
+  for (const name of blocks) {
+    it(`${name} renders default command + non-empty output`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.command).toBeTruthy();
+      expect(result.lines.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('htop respects cpu/mem overrides', async () => {
+    const block = getBlock('htop')!;
+    const result = await block.render(context, { cpu: 99.9, mem: 12.3 });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('99.9');
+    expect(joined).toContain('12.3');
+  });
+
+  it('npm-install reflects package name in the command', async () => {
+    const block = getBlock('npm-install')!;
+    const result = await block.render(context, { package: 'is-odd' });
+    expect(result.command).toContain('is-odd');
+  });
+
+  it('profile renders supplied name (case-insensitive)', async () => {
+    const block = getBlock('profile')!;
+    const result = await block.render(context, { name: 'Ada Lovelace' });
+    expect(result.lines.join('\n').toLowerCase()).toContain('ada lovelace');
+  });
+
+  it('blog-post renders supplied title', async () => {
+    const block = getBlock('blog-post')!;
+    const result = await block.render(context, { title: 'A Brief History of Bugs' });
+    expect(result.lines.join('\n')).toContain('A Brief History of Bugs');
+  });
+
+  it('systemctl uses the supplied service name', async () => {
+    const block = getBlock('systemctl')!;
+    const result = await block.render(context, { service: 'nginx.service' });
+    expect(result.command).toContain('nginx.service');
+  });
+});
+
 describe('visual blocks', () => {
   it('matrix-rain emits requested row count + access-granted footer', async () => {
     const block = getBlock('matrix-rain')!;

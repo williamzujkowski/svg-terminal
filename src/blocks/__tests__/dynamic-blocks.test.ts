@@ -205,3 +205,32 @@ describe('motd block with weather', () => {
     expect(text).not.toContain('unavailable');
   });
 });
+
+describe('fetch timeout fallback', () => {
+  it('falls back to static defaults when the upstream API hangs past fetchTimeout', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // fetch that respects AbortSignal but otherwise never resolves
+    globalThis.fetch = vi.fn().mockImplementation((_url, opts) => {
+      const signal = (opts as { signal?: AbortSignal } | undefined)?.signal;
+      return new Promise((_resolve, reject) => {
+        if (signal?.aborted) {
+          reject(new DOMException('aborted', 'AbortError'));
+          return;
+        }
+        signal?.addEventListener('abort', () => {
+          reject(new DOMException('aborted', 'AbortError'));
+        });
+      });
+    });
+
+    const ctx: BlockContext = {
+      now: new Date('2026-02-19T12:00:00Z'),
+      config: { ...DEFAULT_CONFIG, fetchTimeout: 50 },
+      variables: {},
+    };
+
+    const result = await quoteBlock.render(ctx, {});
+    // Block should not hang — it bails to the fallback content within ~50ms.
+    expect(result.lines.length).toBeGreaterThan(0);
+  });
+});
