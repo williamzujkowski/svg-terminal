@@ -177,6 +177,58 @@ describe('generateStaticSvg', () => {
   });
 });
 
+describe('animated output (frame-cycle)', () => {
+  const animSeq: Sequence[] = [
+    { type: 'command', content: 'spin', typingDuration: 100 },
+    {
+      type: 'output',
+      content: 'A',
+      frames: ['A', 'B', 'C'],
+      framesFps: 3,
+      framesLoop: true,
+    },
+  ];
+
+  it('emits one <text> per frame with discrete opacity animation', () => {
+    const svg = generateSvg(animSeq, makeConfig());
+    // 3 frames + the cursor + the command line = at least the 3 expected ones
+    const animateCount = (svg.match(/calcMode="discrete"/g) ?? []).length;
+    expect(animateCount).toBe(3);
+  });
+
+  it('cycle duration equals frames/fps seconds', () => {
+    const svg = generateSvg(animSeq, makeConfig());
+    expect(svg).toContain('dur="1.000s"'); // 3 frames / 3 fps
+  });
+
+  it('uses indefinite repeat when framesLoop is true', () => {
+    const svg = generateSvg(animSeq, makeConfig());
+    expect(svg).toContain('repeatCount="indefinite"');
+    expect(svg).toContain('dur="1.000s"');
+  });
+
+  it('emits repeatCount=1 when framesLoop is false', () => {
+    const seq: Sequence[] = [{
+      type: 'output',
+      content: 'A',
+      frames: ['A', 'B'],
+      framesFps: 2,
+      framesLoop: false,
+    }];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).toContain('repeatCount="1"');
+    expect(svg).toContain('dur="1.000s"');
+  });
+
+  it('first frame is also the static fallback line', () => {
+    const svg = generateSvg(animSeq, makeConfig());
+    // Frame 0 starts visible (opacity="1"), others hidden (opacity="0")
+    expect(svg).toMatch(/<text class="tt"[^>]*opacity="1">A/);
+    expect(svg).toMatch(/<text class="tt"[^>]*opacity="0">B/);
+    expect(svg).toMatch(/<text class="tt"[^>]*opacity="0">C/);
+  });
+});
+
 describe('accessibility', () => {
   const a11ySeq: Sequence[] = [
     { type: 'command', content: 'whoami', typingDuration: 200 },

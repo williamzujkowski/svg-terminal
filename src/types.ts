@@ -198,7 +198,7 @@ export interface TerminalConfig {
 export interface Sequence {
   /** Sequence type */
   type: 'command' | 'output';
-  /** Text content */
+  /** Text content (when `frames` is set, this is the first frame joined). */
   content: string;
   /** Override prompt for this command */
   prompt?: string;
@@ -210,6 +210,12 @@ export interface Sequence {
   pause?: number;
   /** Delay before this sequence starts in ms */
   delay?: number;
+  /** Optional multi-frame payload — output sequences only. Each entry is one frame's content (newline-separated lines). Triggers frame-cycle rendering. */
+  frames?: string[];
+  /** Frames per second when `frames` is set (default 4, capped at 30). */
+  framesFps?: number;
+  /** Loop frames forever when set (default true). */
+  framesLoop?: boolean;
 }
 
 /** An animation frame in the timeline. */
@@ -224,6 +230,10 @@ export interface AnimationFrame {
   typingDuration?: number;
   scrollLines?: number;
   bufferStart?: number;
+  /** Multi-frame payload — present only on add-output frames spawned from animated blocks. */
+  frames?: string[];
+  framesFps?: number;
+  framesLoop?: boolean;
 }
 
 // ============================================================================
@@ -255,7 +265,7 @@ export interface BlockContext {
 export interface BlockResult {
   /** The command to display being "typed" */
   command: string;
-  /** Output lines (may contain [[fg:color]] markup) */
+  /** Output lines (may contain [[fg:color]] markup). When `animation` is set, this is the FIRST frame — used as the static fallback and screen-reader snapshot. */
   lines: string[];
   /** Override color for output */
   color?: string;
@@ -263,6 +273,23 @@ export interface BlockResult {
   typing?: string;
   /** Pause preset name after output */
   pause?: string;
+  /**
+   * Optional frame-by-frame animation. Each frame is a `string[]` matching
+   * the column-width / line-count of `lines`. Renderer emits N text-group
+   * siblings with SMIL opacity-cycle animations. The static SVG (`--static`)
+   * and screen-reader `<desc>` use `lines` only.
+   */
+  animation?: BlockAnimation;
+}
+
+/** Multi-frame animation payload for a block. */
+export interface BlockAnimation {
+  /** Frames in cycle order. Each entry is one frame's lines. */
+  frames: string[][];
+  /** Frames per second (default 4, capped at 30). */
+  fps?: number;
+  /** Loop forever (default true). When false, the final frame stays after one cycle. */
+  loop?: boolean;
 }
 
 /** Block definition — a self-contained terminal content module. */

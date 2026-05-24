@@ -98,6 +98,7 @@ Special value: `theme: random` rotates through all themes deterministically by d
 | `uptime` | Ridiculous uptime ("up 632 days, that one incident") |
 | `matrix-rain` | Single-frame Matrix rain screen with ACCESS GRANTED footer |
 | `cowsay` | Speech bubble + iconic ASCII cow (with word-wrap) |
+| `loading-spinner` | Braille spinner cycling at configurable fps |
 
 ### Dynamic API Blocks
 

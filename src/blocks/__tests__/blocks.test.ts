@@ -214,6 +214,31 @@ describe('previously-uncovered blocks', () => {
   });
 });
 
+describe('animated blocks', () => {
+  it('loading-spinner returns an animation payload with N frames', async () => {
+    const block = getBlock('loading-spinner')!;
+    const result = await block.render(context, {});
+    expect(result.animation).toBeDefined();
+    expect(result.animation!.frames.length).toBe(8);
+    expect(result.animation!.fps).toBe(8);
+    // First frame doubles as the static fallback
+    expect(result.lines).toEqual(result.animation!.frames[0]);
+  });
+
+  it('loading-spinner respects custom label and fps', async () => {
+    const block = getBlock('loading-spinner')!;
+    const result = await block.render(context, { label: 'building', fps: 4 });
+    expect(result.animation!.fps).toBe(4);
+    expect(result.animation!.frames[0]![0]).toContain('building');
+  });
+
+  it('loading-spinner rejects unknown keys via configSchema', async () => {
+    const block = getBlock('loading-spinner')!;
+    expect(block.configSchema).toBeDefined();
+    expect(() => block.configSchema!.parse({ labl: 'oops' })).toThrow();
+  });
+});
+
 describe('visual blocks', () => {
   it('matrix-rain emits requested row count + access-granted footer', async () => {
     const block = getBlock('matrix-rain')!;

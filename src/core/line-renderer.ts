@@ -94,6 +94,51 @@ function generateCommandLine(
 }
 
 /** Generate an output line with fade-in animation. */
+/**
+ * Generate an animated output line with N frames cycling via SMIL opacity.
+ * Each frame renders as its own <text> at the same y; only one is visible per
+ * cycle slot. Opacity uses calcMode="discrete" (no interpolation) so the
+ * transition is instantaneous like a sprite swap.
+ */
+function generateAnimatedOutputLine(
+  lineIndex: number,
+  y: number,
+  frames: string[],
+  color: string,
+  startTime: number,
+  colorMap: Record<string, string>,
+  chrome: ChromeConfig,
+  charAppearDuration: number,
+  fps: number,
+  loop: boolean,
+): string {
+  const n = frames.length;
+  const cycleDur = `${(n / fps).toFixed(3)}s`;
+  const repeat = loop ? 'indefinite' : '1';
+  const keyTimes = Array.from({ length: n + 1 }, (_, i) => (i / n).toFixed(4)).join(';');
+
+  const textElements = frames.map((frame, i) => {
+    const styled = hasMarkup(frame);
+    const textContent = styled
+      ? generateStyledText(parseMarkup(frame, colorMap, color), color, chrome.dimOpacity)
+      : escapeXml(frame);
+    const textFill = styled ? '' : ` fill="${color}"`;
+    // Frame i is visible during [i/n, (i+1)/n). values[k] is what's shown
+    // in [keyTimes[k], keyTimes[k+1]). values[n] is the wrap-around back to
+    // frame 0; for frame 0 itself that's "1", otherwise "0".
+    const values = Array.from({ length: n + 1 }, (_, k) =>
+      k === i ? '1' : (k === n && i === 0 ? '1' : '0'),
+    ).join(';');
+    return `<text class="tt"${textFill} opacity="${i === 0 ? '1' : '0'}">${textContent}<animate attributeName="opacity" values="${values}" keyTimes="${keyTimes}" calcMode="discrete" dur="${cycleDur}" begin="${startTime}ms" repeatCount="${repeat}" fill="freeze"/></text>`;
+  }).join('');
+
+  return `
+    <g id="line-${lineIndex}" transform="translate(0, ${y})" opacity="0">
+      <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
+      ${textElements}
+    </g>`;
+}
+
 function generateOutputLine(
   lineIndex: number,
   y: number,
@@ -150,17 +195,33 @@ export function generateAllLines(
       );
     } else if (frame.type === 'add-output' && frame.lineIndex !== undefined) {
       const y = roundCoord(frame.lineIndex * lineHeight);
-      processedLines.set(
-        frame.lineIndex,
-        generateOutputLine(
-          frame.lineIndex, y,
-          frame.content ?? '',
-          frame.color ?? colors.text,
-          frame.time,
-          colorMap,
-          chromeConfig, animConfig.charAppearDuration,
-        ),
-      );
+      if (frame.frames && frame.frames.length > 0) {
+        processedLines.set(
+          frame.lineIndex,
+          generateAnimatedOutputLine(
+            frame.lineIndex, y,
+            frame.frames,
+            frame.color ?? colors.text,
+            frame.time,
+            colorMap,
+            chromeConfig, animConfig.charAppearDuration,
+            frame.framesFps ?? 4,
+            frame.framesLoop ?? true,
+          ),
+        );
+      } else {
+        processedLines.set(
+          frame.lineIndex,
+          generateOutputLine(
+            frame.lineIndex, y,
+            frame.content ?? '',
+            frame.color ?? colors.text,
+            frame.time,
+            colorMap,
+            chromeConfig, animConfig.charAppearDuration,
+          ),
+        );
+      }
     }
   }
 

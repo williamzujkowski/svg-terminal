@@ -32,6 +32,7 @@ import { whoBlock } from './who.js';
 import { uptimeBlock } from './uptime.js';
 import { matrixRainBlock } from './matrix-rain.js';
 import { cowsayBlock } from './cowsay.js';
+import { loadingSpinnerBlock } from './loading-spinner.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -65,6 +66,7 @@ export function registerBuiltinBlocks(): void {
     uptimeBlock,
     matrixRainBlock,
     cowsayBlock,
+    loadingSpinnerBlock,
   ]);
 }
 
@@ -98,3 +100,4 @@ export { whoBlock } from './who.js';
 export { uptimeBlock } from './uptime.js';
 export { matrixRainBlock } from './matrix-rain.js';
 export { cowsayBlock } from './cowsay.js';
+export { loadingSpinnerBlock } from './loading-spinner.js';

@@ -316,36 +316,54 @@ function createAnimationFrames(
         currentTime += seq.pause ?? anim.defaultSequencePause;
         continue;
       }
-      const lines = seq.content.split('\n');
-      for (let i = 0; i < lines.length; i++) {
-        const baseTime = currentTime + (i * anim.outputLineStagger);
-        buffer.push({ type: 'output' });
 
-        if (buffer.length - bufferStart > maxVisibleLines) {
-          frames.push({
-            time: baseTime,
-            type: 'scroll',
-            scrollLines: 1,
-            bufferStart: ++bufferStart,
-          });
-          frames.push({
-            time: baseTime + scrollDuration + anim.scrollDelay,
-            type: 'add-output',
-            lineIndex: buffer.length - 1,
-            content: lines[i],
-            color: seq.color,
-          });
-        } else {
-          frames.push({
-            time: baseTime,
-            type: 'add-output',
-            lineIndex: buffer.length - 1,
-            content: lines[i],
-            color: seq.color,
-          });
+      // Animated output: emit one buffer line + one add-output carrying the frames payload.
+      // v1 restriction: every frame must be single-line. Multi-line spinners/mascots come later.
+      if (seq.frames && seq.frames.length > 0) {
+        buffer.push({ type: 'output' });
+        frames.push({
+          time: currentTime,
+          type: 'add-output',
+          lineIndex: buffer.length - 1,
+          content: seq.frames[0]!, // frame 0 acts as the static fallback
+          color: seq.color,
+          frames: seq.frames,
+          framesFps: seq.framesFps,
+          framesLoop: seq.framesLoop,
+        });
+        currentTime += anim.outputEndPause;
+      } else {
+        const lines = seq.content.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+          const baseTime = currentTime + (i * anim.outputLineStagger);
+          buffer.push({ type: 'output' });
+
+          if (buffer.length - bufferStart > maxVisibleLines) {
+            frames.push({
+              time: baseTime,
+              type: 'scroll',
+              scrollLines: 1,
+              bufferStart: ++bufferStart,
+            });
+            frames.push({
+              time: baseTime + scrollDuration + anim.scrollDelay,
+              type: 'add-output',
+              lineIndex: buffer.length - 1,
+              content: lines[i],
+              color: seq.color,
+            });
+          } else {
+            frames.push({
+              time: baseTime,
+              type: 'add-output',
+              lineIndex: buffer.length - 1,
+              content: lines[i],
+              color: seq.color,
+            });
+          }
         }
+        currentTime += lines.length * anim.outputLineStagger + anim.outputEndPause;
       }
-      currentTime += lines.length * anim.outputLineStagger + anim.outputEndPause;
     }
 
     currentTime += seq.pause ?? anim.defaultSequencePause;

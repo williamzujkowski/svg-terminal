@@ -132,12 +132,17 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
       pause: config.animation.commandOutputPause,
     });
 
-    // Output sequence
+    // Output sequence — carries optional multi-frame animation if the block returned one.
     sequences.push({
       type: 'output',
       content: result.lines.join('\n'),
       color: entry.color ?? result.color,
       pause: resolvePause(entry.pause ?? result.pause),
+      ...(result.animation ? {
+        frames: result.animation.frames.map(f => f.join('\n')),
+        framesFps: Math.min(30, Math.max(1, result.animation.fps ?? 4)),
+        framesLoop: result.animation.loop ?? true,
+      } : {}),
     });
   }
 
