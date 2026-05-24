@@ -28,13 +28,14 @@ describe('escapeXml', () => {
 });
 
 describe('roundCoord', () => {
-  it('rounds to 1 decimal by default', () => {
-    expect(roundCoord(1.234)).toBe(1.2);
-    expect(roundCoord(1.25)).toBe(1.3);
+  it('rounds to integer by default', () => {
+    expect(roundCoord(1.234)).toBe(1);
+    expect(roundCoord(1.55)).toBe(2);
   });
 
   it('rounds to specified decimals', () => {
     expect(roundCoord(1.2345, 2)).toBe(1.23);
+    expect(roundCoord(1.234, 1)).toBe(1.2);
     expect(roundCoord(1.2345, 0)).toBe(1);
   });
 

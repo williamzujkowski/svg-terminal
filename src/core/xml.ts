@@ -12,8 +12,9 @@ export function escapeXml(text: string): string {
     .replace(/'/g, '&apos;');
 }
 
-/** Round a coordinate to reduce floating-point artifacts in SVG. */
-export function roundCoord(value: number, decimals = 1): number {
+/** Round a coordinate to reduce floating-point artifacts in SVG output. */
+export function roundCoord(value: number, decimals = 0): number {
+  if (decimals === 0) return Math.round(value);
   const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;
 }

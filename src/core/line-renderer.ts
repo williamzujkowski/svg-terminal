@@ -84,13 +84,11 @@ function generateCommandLine(
 
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})">
-      <text font-family="${terminal.fontFamily}" font-size="${terminal.fontSize}"
-            fill="${promptColor}"${filter} xml:space="preserve" opacity="0">
+      <text class="tt" fill="${promptColor}"${filter} opacity="0">
         ${escapeXml(prompt)}
         <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       </text>
-      <text x="${promptWidth}" font-family="${terminal.fontFamily}"
-            font-size="${terminal.fontSize}" fill="${promptColor}"${filter} xml:space="preserve">
+      <text class="tt" x="${promptWidth}" fill="${promptColor}"${filter}>
         ${typedChars}
       </text>
       ${generateCursor(prompt, command, startTime, typingDuration, terminal, cursorColor, cursorBlinkCycle, charAppearDuration)}
@@ -104,26 +102,22 @@ function generateOutputLine(
   content: string,
   color: string,
   startTime: number,
-  terminal: TerminalTextConfig,
-  colors: ThemeColors,
+  colorMap: Record<string, string>,
   textGlow: boolean,
   chrome: ChromeConfig,
   charAppearDuration: number,
 ): string {
-  const colorMap = buildColorMap(colors);
   const filter = textGlow ? ' filter="url(#textGlow)"' : '';
-
-  const textContent = hasMarkup(content)
+  const styled = hasMarkup(content);
+  const textContent = styled
     ? generateStyledText(parseMarkup(content, colorMap, color), color, chrome.dimOpacity)
     : escapeXml(content);
-
-  const textFill = hasMarkup(content) ? '' : ` fill="${color}"`;
+  const textFill = styled ? '' : ` fill="${color}"`;
 
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
-      <text font-family="${terminal.fontFamily}" font-size="${terminal.fontSize}"
-            ${textFill}${filter} xml:space="preserve">
+      <text class="tt"${textFill}${filter}>
         ${textContent}
       </text>
     </g>`;
@@ -141,6 +135,7 @@ export function generateAllLines(
 ): string {
   const chromeConfig = chrome ?? DEFAULT_CHROME;
   const animConfig = animation ?? DEFAULT_ANIMATION;
+  const colorMap = buildColorMap(colors);
   const processedLines = new Map<number, string>();
 
   for (const frame of frames) {
@@ -167,7 +162,7 @@ export function generateAllLines(
           frame.content ?? '',
           frame.color ?? colors.text,
           frame.time,
-          terminal, colors, textGlow,
+          colorMap, textGlow,
           chromeConfig, animConfig.charAppearDuration,
         ),
       );

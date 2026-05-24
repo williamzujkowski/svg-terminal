@@ -16,6 +16,10 @@ import { resolve } from 'node:path';
 import { generate, generateStatic, listBlocks, loadConfig } from './index.js';
 import { themes } from './themes/index.js';
 
+// Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
+declare const __PKG_VERSION__: string;
+const VERSION = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev';
+
 const args = process.argv.slice(2);
 const command = args[0];
 
@@ -31,7 +35,7 @@ function hasFlag(name: string): boolean {
 
 async function main(): Promise<void> {
   if (hasFlag('version') || command === '--version') {
-    console.log('svg-terminal 0.4.0');
+    console.log(`svg-terminal ${VERSION}`);
     return;
   }
 

@@ -85,6 +85,7 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
   <style>
+    .tt { font-family: ${terminal.fontFamily}; font-size: ${terminal.fontSize}px; white-space: pre; }
     @keyframes scanlineScroll {
       from { transform: translateY(0); }
       to { transform: translateY(4px); }
@@ -476,14 +477,14 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
     const fill = hasMarkupTags ? '' : ` fill="${theme.colors.text}"`;
 
     return `
-      <text y="${y}" font-family="${terminal.fontFamily}" font-size="${terminal.fontSize}"
-            ${fill}${filter} xml:space="preserve">
+      <text class="tt" y="${y}"${fill}${filter}>
         ${textContent}
       </text>`;
   }).join('');
 
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">
+  <style>.tt { font-family: ${terminal.fontFamily}; font-size: ${terminal.fontSize}px; white-space: pre; }</style>
   <defs>
     ${generateDefs(effects, window.style)}
     ${generateFilters(effects, theme.colors.cursor)}
