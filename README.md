@@ -88,6 +88,8 @@ blocks:
 | `finger` | Faux finger(1) card with snarky plan lines |
 | `who` | `who` listing with ghost users (debugger, coffee, sanity) |
 | `uptime` | Ridiculous uptime ("up 632 days, that one incident") |
+| `matrix-rain` | Single-frame Matrix rain screen with ACCESS GRANTED footer |
+| `cowsay` | Speech bubble + iconic ASCII cow (with word-wrap) |
 
 ### Dynamic API Blocks
 

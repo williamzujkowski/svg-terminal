@@ -30,6 +30,8 @@ import { lastLoginBlock } from './last-login.js';
 import { fingerBlock } from './finger.js';
 import { whoBlock } from './who.js';
 import { uptimeBlock } from './uptime.js';
+import { matrixRainBlock } from './matrix-rain.js';
+import { cowsayBlock } from './cowsay.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -61,6 +63,8 @@ export function registerBuiltinBlocks(): void {
     fingerBlock,
     whoBlock,
     uptimeBlock,
+    matrixRainBlock,
+    cowsayBlock,
   ]);
 }
 
@@ -92,3 +96,5 @@ export { lastLoginBlock } from './last-login.js';
 export { fingerBlock } from './finger.js';
 export { whoBlock } from './who.js';
 export { uptimeBlock } from './uptime.js';
+export { matrixRainBlock } from './matrix-rain.js';
+export { cowsayBlock } from './cowsay.js';

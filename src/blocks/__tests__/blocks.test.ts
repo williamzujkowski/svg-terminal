@@ -167,3 +167,33 @@ describe('persona blocks', () => {
     expect(result.lines.some(l => l.includes('7'))).toBe(true);
   });
 });
+
+describe('visual blocks', () => {
+  it('matrix-rain emits requested row count + access-granted footer', async () => {
+    const block = getBlock('matrix-rain')!;
+    const result = await block.render(context, { rows: 4, cols: 20, message: 'go ahead.' });
+    // 4 rain rows + blank + footer = 6 lines
+    expect(result.lines.length).toBe(6);
+    expect(result.lines[5]).toContain('go ahead.');
+  });
+
+  it('matrix-rain output is stable for the same date', async () => {
+    const block = getBlock('matrix-rain')!;
+    const a = await block.render(context, { rows: 3, cols: 10 });
+    const b = await block.render(context, { rows: 3, cols: 10 });
+    expect(a.lines).toEqual(b.lines);
+  });
+
+  it('cowsay wraps long text and renders the cow', async () => {
+    const block = getBlock('cowsay')!;
+    const result = await block.render(context, { say: 'hello there friend how are you today', width: 12 });
+    expect(result.lines.some(l => l.includes('(oo)'))).toBe(true);
+    expect(result.lines[0]).toMatch(/^ _+$/);
+  });
+
+  it('cowsay handles a single short line', async () => {
+    const block = getBlock('cowsay')!;
+    const result = await block.render(context, { say: 'hi' });
+    expect(result.lines.some(l => l.includes('< hi'))).toBe(true);
+  });
+});
