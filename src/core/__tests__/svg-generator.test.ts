@@ -177,6 +177,49 @@ describe('generateStaticSvg', () => {
   });
 });
 
+describe('cursor positioning (lag-by-one + no blink during typing)', () => {
+  // Locks the fix from the cursor-animation bug report. Two specific shapes:
+  //   1. cursor x values lag by one column — values[0]=values[1]=col0,
+  //      values[k>=1]=col(k-1). Cursor sits ON the most-recently emerged char,
+  //      not after it.
+  //   2. cursor blink (values="1;1;0;0") is gone during typing so the cursor
+  //      is never invisible while characters appear.
+  const seq: Sequence[] = [
+    { type: 'command', content: 'echo hi', typingDuration: 200 },
+    { type: 'output', content: 'hi' },
+    { type: 'command', content: 'whoami', typingDuration: 200 },
+    { type: 'output', content: 'dev' },
+  ];
+
+  it('cursor x values lag the char-reveal clip widths by one column', () => {
+    const svg = generateSvg(seq, makeConfig());
+    // Cursor walk + clip width animate share the same keyTimes structure.
+    // After fix: cursor values[0] === values[1] (both at column 0); thereafter
+    // cursor[k] = clipWidth[k-1] + promptStartX.
+    const cursorAnimate = /<animate attributeName="x" values="([^"]+)"/g;
+    const matches = [...svg.matchAll(cursorAnimate)];
+    expect(matches.length).toBeGreaterThanOrEqual(2); // one per command line
+    for (const m of matches) {
+      const vals = m[1]!.split(';');
+      expect(vals[0]).toBe(vals[1]); // lag-by-one: first two values equal
+    }
+  });
+
+  it('cursor has no blink animate during typing', () => {
+    const svg = generateSvg(seq, makeConfig());
+    // The pre-fix blink pattern is "values=\"1;1;0;0\"" — should be gone now.
+    expect(svg).not.toMatch(/values="1;1;0;0"/);
+  });
+
+  it('cursor still fades in at start + fades out at typing end on every line', () => {
+    const svg = generateSvg(seq, makeConfig());
+    // Two command lines × (fade-in + fade-out) = 4 opacity animates that aren't part
+    // of the prompt/output fade-ins. Loose floor: at least 4 cursor-opacity animates.
+    const cursorOpacity = svg.match(/<animate attributeName="opacity" (?:from|to)="\d"/g) ?? [];
+    expect(cursorOpacity.length).toBeGreaterThanOrEqual(4);
+  });
+});
+
 describe('output element-count budget', () => {
   // Regression net for issue #63 — per-character tspans + per-character
   // cursor animates were consolidated into one clipPath + one cursor walk.

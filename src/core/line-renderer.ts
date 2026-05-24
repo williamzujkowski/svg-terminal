@@ -23,7 +23,22 @@ function generateStyledText(
   }).join('');
 }
 
-/** Generate a blinking cursor that follows typing. */
+/**
+ * Cursor that rides the typing front.
+ *
+ * Decided by nexus consensus vote, 100% approval (option A):
+ *  - Cursor sits ON the most-recently-emerged character, not after it. Before
+ *    any char is typed it sits at column 0 (where char 0 will appear). When
+ *    char k emerges, the cursor jumps to column k — riding the typing front,
+ *    never leading it.
+ *  - Cursor is SOLID visible the whole typing window. The pre-fix `values="1;1;0;0"`
+ *    blink was making the cursor invisible for ~333 ms out of every 1000 ms; chars
+ *    would appear without a visible cursor and the cursor seemed to "catch up"
+ *    at the end. `cursorBlinkCycle` stays in the config schema for back-compat
+ *    but no longer applies during typing.
+ *  - Fades in at startTime, fades out at typingEndTime so the next command line's
+ *    cursor takes over cleanly.
+ */
 function generateCursor(
   prompt: string,
   command: string,
@@ -31,18 +46,14 @@ function generateCursor(
   typingDuration: number,
   terminal: TerminalTextConfig,
   cursorColor: string,
-  cursorBlinkCycle: number,
+  _cursorBlinkCycle: number,
   charAppearDuration: number,
 ): string {
   const promptWidth = getTextWidth(prompt, terminal.fontSize);
   const charWidth = roundCoord(terminal.fontSize * CHAR_WIDTH_RATIO);
   const cursorY = roundCoord(terminal.fontSize * CURSOR_Y_OFFSET_RATIO);
   const typingEndTime = startTime + typingDuration;
-  const blinkDur = `${cursorBlinkCycle}ms`;
 
-  // One discrete-step <animate> walks the cursor across N+1 positions
-  // instead of N per-character animates. Visually identical because the
-  // old per-char animates were dur=1ms (already effectively discrete).
   const moveAnim = command.length > 0
     ? buildCursorWalk(command.length, promptWidth, charWidth, startTime, typingDuration)
     : '';
@@ -51,23 +62,27 @@ function generateCursor(
     <rect x="${promptWidth}" y="${cursorY}" width="${charWidth}" height="${terminal.fontSize}"
           fill="${cursorColor}" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
-      <animate attributeName="opacity" values="1;1;0;0" dur="${blinkDur}" begin="${startTime}ms" end="${typingEndTime}ms" repeatCount="indefinite"/>
       <animate attributeName="opacity" to="0" begin="${typingEndTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       ${moveAnim}
     </rect>`;
 }
 
-/** Single discrete <animate> that steps cursor x through N+1 positions. */
+/**
+ * Single discrete <animate> that steps cursor x through N+1 positions.
+ * Lag-by-one shape: values[k] for k≥1 is the column of the (k-1)-th char
+ * (the one that just emerged at keyTime k/N). values[0] is column 0.
+ */
 function buildCursorWalk(
   charCount: number, promptWidth: number, charWidth: number,
   startTime: number, typingDuration: number,
 ): string {
-  // values[i] = cursor x after i characters typed (i ∈ 0..N).
-  // keyTimes[i] = i / N — cursor jumps to next position at each char-reveal time.
   const values: string[] = [];
   const keyTimes: string[] = [];
   for (let i = 0; i <= charCount; i++) {
-    values.push(String(roundCoord(promptWidth + i * charWidth)));
+    // i=0: nothing emerged yet → cursor sits where char 0 will appear.
+    // i≥1: char (i-1) just emerged → cursor sits on column (i-1).
+    const col = Math.max(0, i - 1);
+    values.push(String(roundCoord(promptWidth + col * charWidth)));
     keyTimes.push((i / charCount).toFixed(4));
   }
   return `<animate attributeName="x" values="${values.join(';')}" keyTimes="${keyTimes.join(';')}" calcMode="discrete" begin="${startTime}ms" dur="${typingDuration}ms" fill="freeze"/>`;
