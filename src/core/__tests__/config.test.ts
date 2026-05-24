@@ -30,6 +30,14 @@ describe('mergeConfig', () => {
     expect(config.theme.name).toBe('nord');
   });
 
+  it('resolves a custom theme registered via registerTheme()', async () => {
+    const { registerTheme } = await import('../../themes/index.js');
+    const custom = { ...(await import('../../themes/nord.js')).nord, name: 'my-custom' };
+    registerTheme(custom);
+    const config = mergeConfig({ ...minimal, theme: 'my-custom' });
+    expect(config.theme.name).toBe('my-custom');
+  });
+
   it('defaults to dracula theme', () => {
     const config = mergeConfig(minimal);
     expect(config.theme.name).toBe('dracula');

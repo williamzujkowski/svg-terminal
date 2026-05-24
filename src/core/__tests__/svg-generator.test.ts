@@ -176,3 +176,34 @@ describe('generateStaticSvg', () => {
     expect(svg).not.toContain('height="700"');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Snapshot tests — guard against accidental visual regressions in CI.
+// If output changes intentionally: `npm test -- -u` to refresh.
+// ---------------------------------------------------------------------------
+describe('SVG snapshots', () => {
+  const snapshotSeq: Sequence[] = [
+    { type: 'command', content: 'whoami', typingDuration: 200 },
+    { type: 'output', content: 'dev' },
+    { type: 'command', content: 'echo hi', typingDuration: 200 },
+    { type: 'output', content: '[[fg:green]]hi[[/fg]]' },
+  ];
+
+  it('macOS chrome + default effects', () => {
+    expect(generateSvg(snapshotSeq, makeConfig())).toMatchSnapshot();
+  });
+
+  it('floating window (no chrome)', () => {
+    const config = makeConfig({ window: { ...DEFAULT_CONFIG.window, style: 'floating' } });
+    expect(generateSvg(snapshotSeq, config)).toMatchSnapshot();
+  });
+
+  it('scanlines off + glow on', () => {
+    const config = makeConfig({ effects: { ...DEFAULT_CONFIG.effects, scanlines: false, textGlow: true } });
+    expect(generateSvg(snapshotSeq, config)).toMatchSnapshot();
+  });
+
+  it('static SVG with markup', () => {
+    expect(generateStaticSvg(['hello', '[[fg:cyan]]world[[/fg]]'], makeConfig())).toMatchSnapshot();
+  });
+});

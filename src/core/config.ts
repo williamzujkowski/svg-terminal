@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import type { TerminalConfig, UserConfig } from '../types.js';
-import { resolveTheme, themes } from '../themes/index.js';
+import { resolveTheme, listThemes, getTheme } from '../themes/index.js';
 import { getBlock } from '../blocks/registry.js';
 import {
   DEFAULT_ANIMATION,
@@ -60,10 +60,10 @@ export function loadConfig(filePath: string): UserConfig {
 /** Validate theme + block names against the live registries with actionable lists. */
 function validateNames(config: UserConfig, filePath: string): void {
   if (typeof config.theme === 'string') {
-    const available = Object.keys(themes);
-    if (config.theme !== 'random' && !available.includes(config.theme)) {
+    if (config.theme !== 'random' && !getTheme(config.theme)) {
+      const available = listThemes().join(', ');
       throw new ConfigError(
-        `Unknown theme "${config.theme}" in ${filePath}\n  Available: ${available.join(', ')}, random`,
+        `Unknown theme "${config.theme}" in ${filePath}\n  Available: ${available}, random`,
       );
     }
   }

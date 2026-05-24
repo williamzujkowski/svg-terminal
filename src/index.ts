@@ -108,7 +108,7 @@ export { ConfigError } from './core/errors.js';
 export { registerBlock, registerBlocks, getBlock, listBlocks, registerBuiltinBlocks } from './blocks/index.js';
 export { createBox, createAutoBox, createDoubleBox, createRoundedBox, createTitledBox } from './core/box-generator.js';
 export { parseMarkup, hasMarkup, stripMarkup, buildColorMap } from './core/markup-parser.js';
-export { resolveTheme, themes, dracula, nord, monokai } from './themes/index.js';
+export { resolveTheme, themes, registerTheme, getTheme, listThemes, dracula, nord, monokai } from './themes/index.js';
 export { TYPING_PRESETS, PAUSE_PRESETS, resolveTyping, resolvePause } from './core/defaults.js';
 export { fetchWithTimeout, fetchJson, fetchText } from './core/http.js';
 export type * from './types.js';

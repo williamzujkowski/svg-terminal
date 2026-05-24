@@ -20,7 +20,27 @@ export const themes: Record<string, Theme> = {
   win95,
 };
 
-/** All theme names available for rotation. */
+/** User-registered themes; shadow built-ins when names collide. */
+const customThemes = new Map<string, Theme>();
+
+/** Register a custom theme. Mirrors registerBlock() — name shadows built-ins. */
+export function registerTheme(theme: Theme): void {
+  customThemes.set(theme.name, theme);
+}
+
+/** Get a registered theme by name (custom + built-in). */
+export function getTheme(name: string): Theme | undefined {
+  return customThemes.get(name) ?? themes[name];
+}
+
+/** All theme names — custom first, then built-ins. */
+export function listThemes(): string[] {
+  const names = new Set<string>(customThemes.keys());
+  for (const name of Object.keys(themes)) names.add(name);
+  return Array.from(names);
+}
+
+/** All theme names available for rotation (deprecated: prefer listThemes()). */
 export const THEME_NAMES = Object.keys(themes);
 
 /** Resolve a theme by name. Supports 'random' for random selection. Throws if not found. */
@@ -31,18 +51,19 @@ export function resolveTheme(nameOrTheme: string | Theme): Theme {
 
   // 'random' — deterministic rotation based on day of year
   if (nameOrTheme === 'random') {
+    const names = listThemes();
     const dayOfYear = Math.floor(
       (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
     );
-    const idx = dayOfYear % THEME_NAMES.length;
-    const selected = THEME_NAMES[idx]!;
+    const idx = dayOfYear % names.length;
+    const selected = names[idx]!;
     console.log(`[svg-terminal] Theme rotation: day ${dayOfYear} → ${selected}`);
-    return themes[selected]!;
+    return getTheme(selected)!;
   }
 
-  const theme = themes[nameOrTheme];
+  const theme = getTheme(nameOrTheme);
   if (!theme) {
-    const available = Object.keys(themes).join(', ');
+    const available = listThemes().join(', ');
     throw new Error(`Unknown theme "${nameOrTheme}". Available: ${available}, random`);
   }
   return theme;
