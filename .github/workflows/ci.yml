@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: typecheck
+        run: npm run typecheck
+
+      - name: lint
+        run: npm run lint
+
+      - name: test
+        run: npm test
+
+      - name: build
+        run: npm run build
+
+      - name: smoke generate
+        run: |
+          node dist/cli.js init
+          node dist/cli.js generate --config terminal.yml --output /tmp/sample.svg --no-cache
+          node dist/cli.js generate --config terminal.yml --output /tmp/sample.min.svg --minify --no-cache
+          test -s /tmp/sample.svg
+          test -s /tmp/sample.min.svg
