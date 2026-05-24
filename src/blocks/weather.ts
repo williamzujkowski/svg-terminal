@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+import { hashConfig } from '../core/cache.js';
 
 /** wttr.in JSON response shape (subset). */
 interface WttrResponse {
@@ -102,7 +103,10 @@ export const weatherBlock: Block = {
     // wttr.in hangs on %20 and misroutes ~ — underscores work reliably for spaces
     const encodedLocation = encodeURIComponent(location).replace(/%20/g, '_');
     const url = `https://wttr.in/${encodedLocation}?format=j1`;
-    const data = await fetchJson<WttrResponse>(url, timeout);
+    const cacheKey = `weather:${hashConfig(config)}`;
+    const data = context.useCache
+      ? await context.useCache(cacheKey, () => fetchJson<WttrResponse>(url, timeout))
+      : await fetchJson<WttrResponse>(url, timeout);
 
     let lines: string[];
     if (data?.current_condition?.length) {

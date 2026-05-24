@@ -34,6 +34,14 @@ function hasFlag(name: string): boolean {
   return args.includes(`--${name}`);
 }
 
+/** Map mutually-exclusive cache flags to a CacheMode. Last flag wins. */
+function resolveCacheMode(): 'normal' | 'refresh' | 'frozen' | 'off' {
+  if (hasFlag('no-cache')) return 'off';
+  if (hasFlag('refresh-cache')) return 'refresh';
+  if (hasFlag('frozen-cache')) return 'frozen';
+  return 'normal';
+}
+
 /**
  * Collapse inter-element whitespace in an SVG string.
  * Conservative — leaves attribute values and text-node content alone, only
@@ -59,15 +67,22 @@ async function main(): Promise<void> {
       const isStatic = hasFlag('static');
       const minify = hasFlag('minify');
       const strict = hasFlag('strict');
+      const cacheMode = resolveCacheMode();
 
       setStrictBlockConfig(strict);
-      const userConfig = loadConfig(resolve(configPath));
+      const resolvedConfigPath = resolve(configPath);
+      const userConfig = loadConfig(resolvedConfigPath);
+      const genOpts = { configPath: resolvedConfigPath, cacheMode };
       let svg = isStatic
-        ? await generateStatic(userConfig)
-        : await generate(userConfig);
+        ? await generateStatic(userConfig, genOpts)
+        : await generate(userConfig, genOpts);
       if (minify) svg = minifySvg(svg);
       writeFileSync(resolve(outputPath), svg, 'utf-8');
-      const mode = [isStatic && 'static', minify && 'minified'].filter(Boolean).join(', ');
+      const mode = [
+        isStatic && 'static',
+        minify && 'minified',
+        cacheMode !== 'normal' && `cache:${cacheMode}`,
+      ].filter(Boolean).join(', ');
       const tag = mode ? ` (${mode})` : '';
       console.log(`Generated ${outputPath}${tag} (${(svg.length / 1024).toFixed(1)} KB)`);
       break;
@@ -168,9 +183,12 @@ Options:
   --config    Config file path (default: terminal.yml)
   --output    Output file path (default: terminal.svg)
   --static    Generate non-animated SVG (final frame snapshot)
-  --minify    Strip inter-element whitespace for smaller output
-  --strict    Promote unknown-block-config-key warnings to hard errors
-  --version   Print version number
+  --minify          Strip inter-element whitespace for smaller output
+  --strict          Promote unknown-block-config-key warnings to hard errors
+  --no-cache        Don't read or write the dynamic-block fetch cache
+  --refresh-cache   Force refresh: ignore existing cache entries, re-fetch all
+  --frozen-cache    Use cached values only; never fetch (CI offline mode)
+  --version         Print version number
 
 Example:
   svg-terminal init

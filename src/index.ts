@@ -23,6 +23,16 @@ import { resolvePause, resolveTyping } from './core/defaults.js';
 import { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 import { getBlock, registerBuiltinBlocks } from './blocks/index.js';
 import { BlockConfigError } from './core/errors.js';
+import type { CacheMode, CacheRuntime } from './core/cache.js';
+import { flushCache, makeUseCache, resolveCachePath } from './core/cache.js';
+
+/** Options to thread cache runtime + file context into generate(). */
+export interface GenerateOptions {
+  /** Absolute or relative path to the YAML config file — anchors cachePath resolution. */
+  configPath?: string;
+  /** Cache mode (default: 'normal'). Set via CLI flags --no-cache / --refresh-cache / --frozen-cache. */
+  cacheMode?: CacheMode;
+}
 
 // Register built-in blocks on import
 registerBuiltinBlocks();
@@ -90,14 +100,16 @@ function validateBlockEntry(block: Block, entry: BlockEntry, index: number): voi
  * Generate an animated SVG terminal from a declarative config.
  * This is the main API entry point.
  */
-export async function generate(userConfig: UserConfig): Promise<string> {
+export async function generate(userConfig: UserConfig, options: GenerateOptions = {}): Promise<string> {
   const config = mergeConfig(userConfig);
   const sequences: Sequence[] = [];
 
+  const cacheRuntime = makeCacheRuntime(config, options);
   const context: BlockContext = {
     now: new Date(),
     config,
     variables: userConfig.variables ?? {},
+    useCache: cacheRuntime ? makeUseCache(cacheRuntime) : undefined,
   };
 
   for (let i = 0; i < userConfig.blocks.length; i++) {
@@ -129,7 +141,29 @@ export async function generate(userConfig: UserConfig): Promise<string> {
     });
   }
 
+  if (cacheRuntime) flushCache(cacheRuntime);
   return generateSvg(sequences, config);
+}
+
+/** Build a CacheRuntime if a config path is known and the mode is not 'off'. */
+function makeCacheRuntime(
+  config: ReturnType<typeof mergeConfig>,
+  options: GenerateOptions,
+): CacheRuntime | undefined {
+  const mode: CacheMode = options.cacheMode ?? 'normal';
+  if (mode === 'off') {
+    // Still return a runtime so blocks that opted in get the bypass behaviour.
+    return { mode, filePath: '', ttl: config.cacheTTL, dirty: false };
+  }
+  if (!options.configPath) return undefined;
+  let filePath: string;
+  try {
+    filePath = resolveCachePath(options.configPath, config.cachePath);
+  } catch (err) {
+    console.warn(`[svg-terminal] cache: disabled — ${(err as Error).message}`);
+    return undefined;
+  }
+  return { mode, filePath, ttl: config.cacheTTL, dirty: false };
 }
 
 /**
@@ -137,14 +171,16 @@ export async function generate(userConfig: UserConfig): Promise<string> {
  * All content is visible at full opacity with no animations.
  * Useful for accessibility fallbacks, print, and social media previews.
  */
-export async function generateStatic(userConfig: UserConfig): Promise<string> {
+export async function generateStatic(userConfig: UserConfig, options: GenerateOptions = {}): Promise<string> {
   const config = mergeConfig(userConfig);
   const allLines: string[] = [];
 
+  const cacheRuntime = makeCacheRuntime(config, options);
   const context: BlockContext = {
     now: new Date(),
     config,
     variables: userConfig.variables ?? {},
+    useCache: cacheRuntime ? makeUseCache(cacheRuntime) : undefined,
   };
 
   for (let i = 0; i < userConfig.blocks.length; i++) {
@@ -163,6 +199,7 @@ export async function generateStatic(userConfig: UserConfig): Promise<string> {
     allLines.push(...result.lines);
   }
 
+  if (cacheRuntime) flushCache(cacheRuntime);
   return generateStaticSvg(allLines, config);
 }
 

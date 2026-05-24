@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+import { hashConfig } from '../core/cache.js';
 
 /** DummyJSON quote response. */
 interface QuoteResponse {
@@ -26,7 +27,11 @@ export const quoteBlock: Block = {
     const fallbackAuthor = (config['fallbackAuthor'] as string) ?? 'Steve Jobs';
     const timeout = context.config.fetchTimeout;
 
-    const data = await fetchJson<QuoteResponse>('https://dummyjson.com/quotes/random', timeout);
+    const url = 'https://dummyjson.com/quotes/random';
+    const cacheKey = `quote:${hashConfig(config)}`;
+    const data = context.useCache
+      ? await context.useCache(cacheKey, () => fetchJson<QuoteResponse>(url, timeout))
+      : await fetchJson<QuoteResponse>(url, timeout);
 
     const quote = data?.quote ?? fallbackQuote;
     const author = data?.author ?? fallbackAuthor;

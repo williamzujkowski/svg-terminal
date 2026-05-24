@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { resolveBoxWidth } from '../core/defaults.js';
 import { fetchJson } from '../core/http.js';
+import { hashConfig } from '../core/cache.js';
 
 /** GitHub user API response (subset). */
 interface GitHubUser {
@@ -45,7 +46,10 @@ export const githubStatsBlock: Block = {
     }
 
     const url = `https://api.github.com/users/${encodeURIComponent(username)}`;
-    const data = await fetchJson<GitHubUser>(url, timeout);
+    const cacheKey = `github-stats:${hashConfig(config)}`;
+    const data = context.useCache
+      ? await context.useCache(cacheKey, () => fetchJson<GitHubUser>(url, timeout))
+      : await fetchJson<GitHubUser>(url, timeout);
 
     let lines: string[];
     if (data) {

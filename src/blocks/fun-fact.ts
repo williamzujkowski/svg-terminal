@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 import { createDoubleBox } from '../core/box-generator.js';
 import { fetchJson } from '../core/http.js';
 import { resolveBoxWidth } from '../core/defaults.js';
+import { hashConfig } from '../core/cache.js';
 
 /** Useless Facts API response. */
 interface FactResponse {
@@ -30,7 +31,10 @@ export const funFactBlock: Block = {
     const timeout = context.config.fetchTimeout;
 
     const url = `https://uselessfacts.jsph.pl/api/v2/facts/random?language=${encodeURIComponent(language)}`;
-    const data = await fetchJson<FactResponse>(url, timeout);
+    const cacheKey = `fun-fact:${hashConfig(config)}`;
+    const data = context.useCache
+      ? await context.useCache(cacheKey, () => fetchJson<FactResponse>(url, timeout))
+      : await fetchJson<FactResponse>(url, timeout);
 
     const factText = data?.text ?? fallback;
 

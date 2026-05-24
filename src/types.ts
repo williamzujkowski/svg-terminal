@@ -172,6 +172,10 @@ export interface TerminalConfig {
   scrollDuration: number;
   /** HTTP fetch timeout in ms for dynamic blocks (default: 10000) */
   fetchTimeout: number;
+  /** Cache TTL in seconds for dynamic-block fetches (default: 86400 = 24h) */
+  cacheTTL: number;
+  /** Cache file path, relative to the config file (default: `.svg-terminal-cache.json`) */
+  cachePath: string;
 }
 
 // ============================================================================
@@ -222,6 +226,17 @@ export interface BlockContext {
   config: TerminalConfig;
   /** User-provided variables */
   variables: Record<string, unknown>;
+  /**
+   * Cache helper. A block calls `useCache(key, () => fetchSomething())`
+   * to either return a cached payload (within TTL) or run the getter and
+   * write the result back to the cache file. Use a stable key — typically
+   * `${blockName}:${configHash}` so reconfigurations don't collide.
+   *
+   * Behavior is controlled by the runtime cache settings: enabled by
+   * default, bypassed under `--no-cache`, refreshed under
+   * `--refresh-cache`, and frozen (never fetch) under `--frozen-cache`.
+   */
+  useCache?<T>(key: string, getter: () => Promise<T>, opts?: { ttl?: number }): Promise<T>;
 }
 
 /** A rendered block — produces sequences for the animation. */
@@ -308,6 +323,10 @@ export interface UserConfig {
   accessibilityLabel?: string;
   /** HTTP fetch timeout in ms for dynamic blocks (default: 10000) */
   fetchTimeout?: number;
+  /** Cache TTL in seconds for dynamic-block fetches (default: 86400 = 24h) */
+  cacheTTL?: number;
+  /** Cache file path, relative to the config file (default: `.svg-terminal-cache.json`) */
+  cachePath?: string;
 }
 
 // ============================================================================

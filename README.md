@@ -133,6 +133,29 @@ Set `fetchTimeout` at the top level to control API timeout (default: 10000ms):
 fetchTimeout: 15000  # 15 seconds — generous for slow APIs
 ```
 
+### Caching API responses
+
+Dynamic blocks cache their responses in `.svg-terminal-cache.json` next to your config file (24h TTL by default). Commit that file alongside the YAML and CI builds become deterministic — no upstream hits, no diff churn from quote-of-the-minute drift.
+
+```yaml
+# Top-level overrides
+cacheTTL: 86400         # seconds (default 86400 = 24h)
+cachePath: ".cache.json" # relative to the config file (must stay inside)
+```
+
+CLI control:
+
+```bash
+svg-terminal generate                       # use cache if fresh, fetch + write back when stale
+svg-terminal generate --refresh-cache       # ignore cache entries, re-fetch everything
+svg-terminal generate --frozen-cache        # serve only cached values, never fetch (CI offline)
+svg-terminal generate --no-cache            # bypass cache entirely (don't read, don't write)
+```
+
+**Reproducibility note:** committed cache + a generous `cacheTTL` makes CI _reproducible_; pair with `--frozen-cache` to make it _truly offline_ (the build fails loudly if any block lacks a cached entry, rather than silently reaching for the network).
+
+**Privacy note:** the cache file stores the raw API payloads. If a block fetches data you'd rather not commit (e.g. a private GitHub profile), either skip that block in versioned configs or add `.svg-terminal-cache.json` to `.gitignore`.
+
 ### Custom Blocks
 
 ```typescript
@@ -172,6 +195,8 @@ const svg = await generate({
     output: src/terminal.svg
     commit: true
 ```
+
+For maximally reproducible CI, commit `.svg-terminal-cache.json` alongside `terminal.yml` and add an `args: --frozen-cache` step to the workflow — every build will serve cached payloads with zero network calls.
 
 ## Text Markup
 

@@ -70,6 +70,8 @@ export const DEFAULT_CONFIG: TerminalConfig = {
   maxDuration: 90,
   scrollDuration: 100,
   fetchTimeout: 10000,
+  cacheTTL: 86400,
+  cachePath: '.svg-terminal-cache.json',
 };
 
 // ============================================================================
