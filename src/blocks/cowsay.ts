@@ -62,6 +62,7 @@ const COW = [
 export const cowsayBlock: Block = {
   name: 'cowsay',
   description: 'A cow says something. The cow is always right.',
+  allowedKeys: ['say', 'width'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? 'cowsay';

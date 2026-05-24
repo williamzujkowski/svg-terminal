@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 export const uptimeBlock: Block = {
   name: 'uptime',
   description: 'Fake uptime with absurd numbers and SRE commentary',
+  allowedKeys: ['days', 'lastIncident', 'load', 'users'] as const,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const days = (config['days'] as number) ?? 632;

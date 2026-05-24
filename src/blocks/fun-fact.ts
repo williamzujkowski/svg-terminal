@@ -22,6 +22,7 @@ interface FactResponse {
 export const funFactBlock: Block = {
   name: 'fun-fact',
   description: 'Display a random fun fact',
+  allowedKeys: ['fallback', 'language', 'width'] as const,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const width = resolveBoxWidth(config['width'] as number | undefined, context);

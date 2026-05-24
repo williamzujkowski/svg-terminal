@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 export const segfaultBlock: Block = {
   name: 'segfault',
   description: 'Fake segmentation fault with a corrupted backtrace',
+  allowedKeys: ['program'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? './a.out';

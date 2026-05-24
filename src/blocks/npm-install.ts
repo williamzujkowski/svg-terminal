@@ -8,6 +8,7 @@ import type { Block, BlockResult } from '../types.js';
 export const npmInstallBlock: Block = {
   name: 'npm-install',
   description: 'Display a humorous npm install dependency tree',
+  allowedKeys: ['package'] as const,
 
   render(_context, config: Record<string, unknown>): BlockResult {
     const pkg = (config['package'] as string) ?? 'left-pad';

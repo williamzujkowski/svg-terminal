@@ -14,6 +14,7 @@ interface WhoEntry {
 export const whoBlock: Block = {
   name: 'who',
   description: '`who` output with ghost users (debugger, coffee, sanity)',
+  allowedKeys: ['entries', 'user'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

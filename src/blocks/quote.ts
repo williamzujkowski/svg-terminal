@@ -20,6 +20,7 @@ interface QuoteResponse {
 export const quoteBlock: Block = {
   name: 'quote',
   description: 'Display a random inspirational quote',
+  allowedKeys: ['fallback', 'fallbackAuthor', 'width'] as const,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const width = resolveBoxWidth(config['width'] as number | undefined, context);

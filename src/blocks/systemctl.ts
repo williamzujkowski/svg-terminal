@@ -8,6 +8,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 export const systemctlBlock: Block = {
   name: 'systemctl',
   description: 'Display a systemd-style service status',
+  allowedKeys: ['description', 'logs', 'memory', 'pid', 'service'] as const,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const service = (config['service'] as string) ?? 'dev-mode.service';

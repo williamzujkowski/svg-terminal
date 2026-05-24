@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 export const whoamiBlock: Block = {
   name: 'whoami',
   description: 'Username + lightly existential identity bullets',
+  allowedKeys: ['bullets', 'user'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

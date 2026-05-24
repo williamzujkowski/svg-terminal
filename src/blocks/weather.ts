@@ -83,6 +83,7 @@ function formatWeather(
 export const weatherBlock: Block = {
   name: 'weather',
   description: 'Display current weather conditions from wttr.in',
+  allowedKeys: ['compact', 'location', 'units', 'width'] as const,
 
   async render(context: BlockContext, config: Record<string, unknown>): Promise<BlockResult> {
     const location = (config['location'] as string) ?? '';

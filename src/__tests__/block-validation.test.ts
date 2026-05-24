@@ -107,10 +107,16 @@ describe('per-block config validation (#35)', () => {
 
   describe('blocks without schema OR allowedKeys', () => {
     it('renders without validation noise', async () => {
+      // Register a throwaway block with neither contract — typo silence is expected here.
+      const opaque: Block = {
+        name: 'opaque-test',
+        render: () => ({ command: 'echo', lines: ['ok'] }),
+      };
+      registerBlock(opaque);
+
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      // dad-joke has neither configSchema nor allowedKeys yet — should be a no-op.
       const svg = await generate({
-        blocks: [{ block: 'dad-joke', config: { anyKeyAtAll: 'fine' } }],
+        blocks: [{ block: 'opaque-test', config: { anyKeyAtAll: 'fine' } }],
       });
       expect(svg).toContain('<svg');
       expect(spy).not.toHaveBeenCalled();

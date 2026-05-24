@@ -10,6 +10,7 @@ import { resolveBoxWidth } from '../core/defaults.js';
 export const goodbyeBlock: Block = {
   name: 'goodbye',
   description: 'Display a farewell message',
+  allowedKeys: ['lines', 'width'] as const,
 
   render(context, config: Record<string, unknown>): BlockResult {
     const lines = (config['lines'] as string[]) ?? [

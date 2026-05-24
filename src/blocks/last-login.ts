@@ -14,6 +14,7 @@ interface LoginEntry {
 export const lastLoginBlock: Block = {
   name: 'last-login',
   description: '`last` output with embarrassing timestamps and parentheticals',
+  allowedKeys: ['entries', 'user'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

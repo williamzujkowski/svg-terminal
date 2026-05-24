@@ -16,6 +16,7 @@ interface Joke {
 export const dadJokeBlock: Block = {
   name: 'dad-joke',
   description: 'Display a dad joke in a fancy ASCII box',
+  allowedKeys: ['jokes', 'width'] as const,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const jokes = (config['jokes'] as Joke[]) ?? [

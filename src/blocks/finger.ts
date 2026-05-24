@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 export const fingerBlock: Block = {
   name: 'finger',
   description: 'Faux finger(1) user info card',
+  allowedKeys: ['directory', 'lastLogin', 'mail', 'plan', 'shell', 'user'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

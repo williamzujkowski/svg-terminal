@@ -10,6 +10,7 @@ import { resolveBoxWidth } from '../core/defaults.js';
 export const blogPostBlock: Block = {
   name: 'blog-post',
   description: 'Display a blog post title in a box',
+  allowedKeys: ['title', 'url', 'width'] as const,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const title = (config['title'] as string) ?? 'My Latest Post';

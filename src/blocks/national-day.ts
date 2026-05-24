@@ -16,6 +16,7 @@ interface DayEntry {
 export const nationalDayBlock: Block = {
   name: 'national-day',
   description: 'Display a fun national day celebration',
+  allowedKeys: ['days', 'width'] as const,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const days = (config['days'] as DayEntry[]) ?? [];

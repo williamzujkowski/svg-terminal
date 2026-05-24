@@ -7,6 +7,7 @@ import type { Block, BlockContext, BlockResult } from '../types.js';
 export const sudoSandwichBlock: Block = {
   name: 'sudo-sandwich',
   description: 'xkcd 149 "make me a sandwich" callback',
+  allowedKeys: ['user'] as const,
 
   render(_context: BlockContext, config: Record<string, unknown>): BlockResult {
     const user = (config['user'] as string) ?? 'dev';

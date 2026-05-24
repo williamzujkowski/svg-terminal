@@ -25,6 +25,7 @@ function mulberry32(seed: number): () => number {
 export const matrixRainBlock: Block = {
   name: 'matrix-rain',
   description: 'Single-frame Matrix rain screen with ACCESS GRANTED footer',
+  allowedKeys: ['cols', 'message', 'rows'] as const,
 
   render(context: BlockContext, config: Record<string, unknown>): BlockResult {
     const command = (config['command'] as string) ?? './neo.sh';
