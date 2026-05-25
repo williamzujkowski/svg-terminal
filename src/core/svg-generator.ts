@@ -93,6 +93,13 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
       to { transform: translateY(4px); }
     }
     .scanline-overlay { animation: scanlineScroll 1.2s linear infinite; }
+    /* fadeIn drives all opacity fade-ins (prompt + output lines + animated frame
+       wrappers). Lives in CSS rather than SMIL so the @media block below kills
+       it under prefers-reduced-motion. fill-mode: backwards keeps the element
+       at opacity 0 during the animation-delay window so it doesn't pop in
+       before its scheduled time. */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 10ms linear backwards; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -472,25 +479,52 @@ function renderScrollAnimations(
   lineHeight: number,
 ): string {
   const scrollFrames = frames.filter(f => f.type === 'scroll');
+  if (scrollFrames.length === 0) return '';
+
   const roundedLineHeight = roundCoord(lineHeight);
-  let totalScroll = 0;
   // Must match the initial scrollContainer transform in renderTerminalContent —
   // any mismatch causes a visible jump on the first scroll.
   const titleBarHeight = getTitleBarHeight(window);
   const scrollOriginY = titleBarHeight + terminal.paddingTop;
 
-  return scrollFrames.map(frame => {
-    const scrollAmount = (frame.scrollLines ?? 1) * roundedLineHeight;
+  // Consolidate N per-scroll animateTransforms into one — closes #70. The
+  // values list is paired holds: [origin, origin, y1, y1, y2, y2, …]. Linear
+  // interpolation between adjacent equal values means the position holds;
+  // interpolation between hold and arrival is the scroll ramp. KeyTimes mark
+  // when each hold ends and each arrival completes, normalized to [0, 1] over
+  // the total dur. For N scrolls, drops N animate elements to 1; saves
+  // ~90 bytes/scroll. Per-scroll begin/dur is encoded in keyTimes; the
+  // playback is byte-identical to the previous N-animate form.
+  const values: string[] = [`${terminal.padding} ${roundCoord(scrollOriginY)}`];
+  const keyTimesMs: number[] = [0];
+
+  let totalScroll = 0;
+  for (const frame of scrollFrames) {
     const fromY = roundCoord(scrollOriginY - totalScroll);
+    const scrollAmount = (frame.scrollLines ?? 1) * roundedLineHeight;
     totalScroll += scrollAmount;
     const toY = roundCoord(scrollOriginY - totalScroll);
+    const startT = frame.time;
+    const endT = frame.time + SCROLL_ANIM_DURATION;
 
-    return `
+    // Hold prev position until startT (skip if no gap from prior keyTime).
+    if (keyTimesMs[keyTimesMs.length - 1]! < startT) {
+      values.push(`${terminal.padding} ${fromY}`);
+      keyTimesMs.push(startT);
+    }
+    // Ramp to new position by endT.
+    values.push(`${terminal.padding} ${toY}`);
+    keyTimesMs.push(endT);
+  }
+
+  const totalDur = keyTimesMs[keyTimesMs.length - 1]!;
+  const keyTimes = keyTimesMs.map(t => (t / totalDur).toFixed(4)).join(';');
+
+  return `
         <animateTransform
           attributeName="transform" type="translate"
-          from="${terminal.padding} ${fromY}" to="${terminal.padding} ${toY}"
-          begin="${frame.time}ms" dur="${SCROLL_ANIM_DURATION}ms" fill="freeze"/>`;
-  }).join('');
+          values="${values.join(';')}" keyTimes="${keyTimes}"
+          dur="${totalDur}ms" fill="freeze"/>`;
 }
 
 // ============================================================================

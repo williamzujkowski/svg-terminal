@@ -10,23 +10,37 @@ import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHR
 
 /**
  * SMIL `<set>` that holds an attribute at a value until `untilMs`, then
- * releases. Paired with a subsequent `<animate begin="untilMs">`, this lets
- * us drop the element's static initial attribute and rely on the underlying
- * value being the FINAL state instead. Why: SMIL-stripping renderers
- * (npm-readme, OG/social card scrapers, RSS) ignore both `<set>` and
- * `<animate>` but DO honor the element's static attributes. By making the
- * static attribute hold the final value, those renderers see fully-rendered
- * content; SMIL-honoring renderers see the set hold the start value until
- * the animate takes over.
- *
- * When `untilMs === 0` there's nothing to hold — the animate fires at t=0
- * and SMIL viewers see a brief 1-frame flash from underlying→from. The flash
- * is at SVG start so most users won't perceive it; non-SMIL viewers still
- * win.
+ * releases. Still used for the clip-path width animation (the typing reveal
+ * is inherently SMIL — no CSS equivalent for animating a clipPath rect's
+ * width with discrete keyframes). For opacity fade-ins we now use CSS
+ * keyframes instead — see fadeInStyle below.
  */
 function setHold(attr: string, value: string | number, untilMs: number): string {
   if (untilMs <= 0) return '';
   return `<set attributeName="${attr}" to="${value}" begin="0s" end="${untilMs}ms"/>`;
+}
+
+/**
+ * CSS `class` + inline `style` that drives an opacity fade-in via the
+ * `@keyframes fadeIn` rule in the SVG `<style>` block. Replaces what was a
+ * SMIL `<animate attributeName="opacity">` + `<set>` pair. Two reasons:
+ *
+ *  1. `prefers-reduced-motion` (#71). The SVG already wraps its CSS animations
+ *     in a `@media (prefers-reduced-motion: reduce)` block that clamps
+ *     animation-duration to 0.01ms. SMIL can't be controlled from CSS, so
+ *     migrating fade-ins to CSS automatically picks up that respect. (The
+ *     typing reveal, cursor walk, scroll, and frame cycle remain SMIL — those
+ *     can't move and still ignore reduced-motion. Documented limitation.)
+ *
+ *  2. SMIL-stripped fallback. Renderers that strip animation see the bare
+ *     element with no opacity attribute → renders at default 1 (visible).
+ *     The CSS fade-in is itself often stripped or no-op in those contexts —
+ *     either way the static state is correct. `fill-mode: backwards` means
+ *     the element stays at opacity 0 during the animation-delay window, so
+ *     content doesn't pop in early.
+ */
+function fadeInStyle(startTimeMs: number): string {
+  return ` class="fade-in" style="animation-delay: ${startTimeMs}ms"`;
 }
 
 /** Round a line-position y to 1 decimal place to avoid the +1px wobble on
@@ -154,16 +168,13 @@ function generateCommandLine(
   // typed text (which is positioned AT promptWidth). spacingAndGlyphs scales
   // glyphs minutely (~5%) to make total width match exactly.
   const cmdWidth = command.length * charWidth;
-  // Prompt: no static opacity → underlying is 1, so non-SMIL viewers see it.
-  // setHold pins it at 0 until startTime; animate takes over at startTime.
+  // Prompt fades in via CSS .fade-in + animation-delay so reduced-motion
+  // honors it. charAppearDuration is no longer the duration (CSS uses the
+  // .fade-in rule's 10ms) — kept in the schema for back-compat.
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})">
       ${revealClip}
-      <text class="tt" fill="${promptColor}" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">
-        ${escapeXml(prompt)}
-        ${setHold('opacity', 0, startTime)}
-        <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
-      </text>
+      <text class="tt fade-in" style="animation-delay: ${startTime}ms" fill="${promptColor}" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">${escapeXml(prompt)}</text>
       <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` textLength="${cmdWidth}" lengthAdjust="spacingAndGlyphs" clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
       ${generateCursor(prompt, command, startTime, typingDuration, terminal, cursorColor, cursorBlinkCycle, charAppearDuration)}
     </g>`;
@@ -206,7 +217,6 @@ function generateAnimatedOutputLine(
   startTime: number,
   colorMap: Record<string, string>,
   chrome: ChromeConfig,
-  charAppearDuration: number,
   fps: number,
   loop: boolean,
 ): string {
@@ -231,9 +241,7 @@ function generateAnimatedOutputLine(
   }).join('');
 
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})">
-      ${setHold('opacity', 0, startTime)}
-      <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
+    <g id="line-${lineIndex}" transform="translate(0, ${y})"${fadeInStyle(startTime)}>
       ${textElements}
     </g>`;
 }
@@ -246,7 +254,6 @@ function generateOutputLine(
   startTime: number,
   colorMap: Record<string, string>,
   chrome: ChromeConfig,
-  charAppearDuration: number,
 ): string {
   const styled = hasMarkup(content);
   const textContent = styled
@@ -255,9 +262,7 @@ function generateOutputLine(
   const textFill = styled ? '' : ` fill="${color}"`;
 
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})">
-      ${setHold('opacity', 0, startTime)}
-      <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
+    <g id="line-${lineIndex}" transform="translate(0, ${y})"${fadeInStyle(startTime)}>
       <text class="tt"${textFill}>
         ${textContent}
       </text>
@@ -304,7 +309,7 @@ export function generateAllLines(
             frame.color ?? colors.text,
             frame.time,
             colorMap,
-            chromeConfig, animConfig.charAppearDuration,
+            chromeConfig,
             frame.framesFps ?? 4,
             frame.framesLoop ?? true,
           ),
@@ -318,7 +323,7 @@ export function generateAllLines(
             frame.color ?? colors.text,
             frame.time,
             colorMap,
-            chromeConfig, animConfig.charAppearDuration,
+            chromeConfig,
           ),
         );
       }

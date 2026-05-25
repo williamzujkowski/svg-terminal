@@ -187,10 +187,9 @@ describe('prompt + typed-text width pinning', () => {
   it('prompt <text> carries textLength = computed promptWidth', () => {
     const seq: Sequence[] = [{ type: 'command', content: 'whoami', typingDuration: 200 }];
     const svg = generateSvg(seq, makeConfig());
-    // Prompt text element no longer has a static opacity="0" — the underlying
-    // value is left as default (1) so SMIL-stripping renderers still see it
-    //. textLength must still be present.
-    const promptText = /<text class="tt" fill="[^"]+" textLength="(\d+)" lengthAdjust="spacingAndGlyphs">/.exec(svg);
+    // Prompt text now has class="tt fade-in" + style="animation-delay:..." for
+    // reduced-motion compliance (#71); textLength remains for the width pin.
+    const promptText = /<text class="tt fade-in" style="animation-delay: \d+ms" fill="[^"]+" textLength="(\d+)" lengthAdjust="spacingAndGlyphs">/.exec(svg);
     expect(promptText).not.toBeNull();
     expect(parseInt(promptText![1]!, 10)).toBeGreaterThan(0);
   });
@@ -279,6 +278,76 @@ describe('SMIL-stripped fallback', () => {
     expect(svg).not.toMatch(/<g[^>]*id="line-1"[^>]*opacity="0"/);
     // Frame 0 still has opacity="1" so it's the static fallback when SMIL is stripped.
     expect(svg).toContain('opacity="1"');
+  });
+});
+
+describe('prefers-reduced-motion (CSS fade-ins, #71)', () => {
+  // Option 5 from the nexus vote: fade-ins migrated from SMIL <animate> to
+  // CSS @keyframes fadeIn. The existing @media (prefers-reduced-motion) block
+  // in the SVG <style> automatically clamps these animations to 0.01ms under
+  // reduced-motion. Typing reveal, cursor walk, scroll, and frame cycle
+  // remain SMIL — those continue to ignore reduced-motion (documented).
+  it('emits @keyframes fadeIn and a .fade-in class rule', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'hi' }];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).toContain('@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }');
+    expect(svg).toContain('.fade-in { animation: fadeIn');
+  });
+
+  it('emits @media (prefers-reduced-motion) block that clamps animation-duration', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'hi' }];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(svg).toContain('animation-duration: 0.01ms !important');
+  });
+
+  it('prompt + output lines + animated wrappers carry class="fade-in" with per-element animation-delay', () => {
+    const seq: Sequence[] = [
+      { type: 'command', content: 'hi' },
+      { type: 'output', content: 'world' },
+      { type: 'output', content: 'spin', frames: ['/', '-', '\\', '|'], framesFps: 4, framesLoop: true },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    // At least 3 fade-in elements: prompt text, output line group, animated group.
+    const matches = svg.match(/class="[^"]*fade-in[^"]*"/g) ?? [];
+    expect(matches.length).toBeGreaterThanOrEqual(3);
+    // Each carries animation-delay (some are 0ms — for the first sequence).
+    const delayMatches = svg.match(/style="animation-delay: \d+ms"/g) ?? [];
+    expect(delayMatches.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('replaces SMIL opacity animates with CSS for output line groups', () => {
+    const seq: Sequence[] = [
+      { type: 'output', content: 'pre' },
+      { type: 'output', content: 'post' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    // No <animate attributeName="opacity"> on output line groups anymore (the
+    // animated-frame-cycle inner <text> still uses SMIL for its frame cycle —
+    // that's the documented remaining SMIL surface; this test has no animated
+    // frames so should be zero opacity animates).
+    expect(svg).not.toMatch(/<animate attributeName="opacity"/);
+  });
+});
+
+describe('scroll consolidation', () => {
+  // Before: N per-scroll <animateTransform> elements. After: 1 with values +
+  // keyTimes spanning the full timeline. Verifies the consolidation actually
+  // emits exactly 1 animateTransform regardless of scroll count.
+  it('emits exactly 1 animateTransform regardless of scroll count', () => {
+    const seq: Sequence[] = Array.from({ length: 20 }, (_, i) => ({
+      type: 'output' as const,
+      content: `line ${i}`,
+    }));
+    const cfg = {
+      ...makeConfig(),
+      window: { ...makeConfig().window, height: 200, autoHeight: false },
+    };
+    const svg = generateSvg(seq, cfg);
+    const matches = svg.match(/<animateTransform/g) ?? [];
+    expect(matches.length).toBe(1);
+    expect(svg).toContain('values="');
+    expect(svg).toContain('keyTimes="');
   });
 });
 

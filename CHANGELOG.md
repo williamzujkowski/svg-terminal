@@ -1,5 +1,42 @@
 # Changelog
 
+## v0.10.0 — 2026-05-25
+
+Accessibility + perf release. Closes `#70` (perf) and `#71` (a11y prefers-reduced-motion, partial — fade-ins only). Docs friction from a user-journey audit fixed in the same batch.
+
+### Accessibility (closes #71, partial)
+
+- **CSS fade-ins honor `prefers-reduced-motion`.** Output line + prompt + animated-wrapper fade-ins migrated from SMIL `<animate opacity>` (which has no CSS-controllable equivalent) to a CSS `@keyframes fadeIn` rule with per-element `style="animation-delay: ${startTime}ms"`. The existing `@media (prefers-reduced-motion: reduce)` block in the SVG `<style>` already clamps CSS animation-duration to 0.01ms, so reduced-motion users now see instant appearance instead of fades — without losing the staggered narrative.
+
+  **Partial coverage by design.** The typing reveal, cursor walk, scroll, and frame cycle remain SMIL-driven and continue to ignore reduced-motion — those animations are inherently SMIL (no CSS equivalent for animating a clip-path width, cursor x position, scroll transform, or frame opacity cycle). Motion-sensitive users should pair with `--static` for full stillness. README + CONTRIBUTING both call out the boundary explicitly.
+
+  Decision via 7-agent nexus consensus vote: 100% approval, majority for Option 5 (CSS fade-ins) over Option 3 (dual-render). Option 3's full-coverage win was judged not worth the ~1.4–1.6x SVG size doubling and doubled snapshot-test surface.
+
+### Perf (closes #70)
+
+- **Consolidated per-scroll `<animateTransform>` into one.** Each scroll used to emit its own `<animateTransform>` with its own `begin` and `dur` (N elements for N scrolls). Now one `<animateTransform>` with `values` + `keyTimes` encodes the entire scroll trajectory. For a typical 30-scroll config, drops ~30 elements to 1; ~2 KB savings.
+
+- **Net SVG size DOWN** despite adding 9 fade-in elements per scene: removing the SMIL `<animate>` + `<set>` pairs (~150 bytes each) and replacing with `class="fade-in" style="animation-delay: …"` (~50 bytes each) saves ~100 bytes per fade-in. Demo SVG now ~20.5 KB (was ~22 KB).
+
+### Docs (user-journey audit)
+
+- **Node 22+ requirement now above the fold** in README (was buried in `engines`).
+- **Complete `.github/workflows/refresh-svg.yml` example** with cron schedule, `permissions: contents: write`, checkout, and `commit: true`. The previous snippet showed only the `uses:` step in isolation.
+- **`registerBlock` documented** with TSDoc at `src/index.ts` listing the `Block` interface fields and override-on-collision semantics.
+- **CONTRIBUTING.md theme section now inlines the 24 + 3 color slot list** so authors don't have to spelunk into `src/types.ts`. Adds WCAG AA contrast guidance.
+- **CONTRIBUTING.md block-author section** points at `ascii-clock.ts` as the `context.now` reference (was vim-exit only). Documents the entry-config `command` override.
+- **Programmatic API snippet** shows the ESM async wrapper to avoid the top-level-await trap for new TS users. Documents `inspectCache`.
+
+### Tests
+
+- 291 → 296 (+5): scroll consolidation regression; CSS fade-in emit + class + delay (4 cases).
+
+### Filed for follow-up (carried)
+
+- `#69` (multi-spinner DOM bloat) — still deferred; marginal savings, medium complexity.
+- `#72` (snapshot helper) — still deferred; DX-only.
+- `#85`–`#91` — 7 UX-audit follow-ups carried.
+
 ## v0.9.0 — 2026-05-25
 
 UX polish release driven by a frontend-design audit + backlog rerank. Substantial visible changes to rendered output: SVGs now render meaningful content even when SMIL is stripped (social-card scrapers, npm-readme, RSS); three themes had concrete bugs fixed; the heart in `heartbeat` no longer reads as a punctuation glitch; line spacing no longer wobbles every 5th row. The `cache.ts` symlink-escape (`#84`) is closed.

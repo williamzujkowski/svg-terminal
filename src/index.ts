@@ -253,9 +253,27 @@ export async function generateStatic(userConfig: UserConfig, options: GenerateOp
 }
 
 // Re-export public API
+
 export { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 export { loadConfig, mergeConfig } from './core/config.js';
 export { ConfigError, BlockConfigError } from './core/errors.js';
+
+/**
+ * Register a custom block at runtime, before `generate()` runs. The block's
+ * `render()` will be called with `(context, entryConfig)` where entryConfig
+ * is whatever the user wrote under the block entry's `config:` key — pre-
+ * validated by your `configSchema` (a strict zod schema).
+ *
+ * See `Block` in src/types.ts for the full interface:
+ *   - name (required, unique key in the block registry)
+ *   - description (one-line summary shown by `svg-terminal list-blocks`)
+ *   - configSchema (zod object, strict)
+ *   - render (returns { command, lines, animation?, typing?, pause? })
+ *   - cacheable (boolean — if true, `render()` may call `context.useCache()`)
+ *
+ * Override-on-collision: registering a name that's already in the built-in
+ * registry shadows the built-in. Useful for forking a built-in's behavior.
+ */
 export { registerBlock, registerBlocks, getBlock, listBlocks, registerBuiltinBlocks } from './blocks/index.js';
 export { createBox, createAutoBox, createDoubleBox, createRoundedBox, createTitledBox } from './core/box-generator.js';
 export { parseMarkup, hasMarkup, stripMarkup, buildColorMap } from './core/markup-parser.js';

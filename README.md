@@ -1,5 +1,7 @@
 # svg-terminal
 
+> Requires **Node 22+**
+
 Generate animated SVG terminals from a declarative YAML config. The output is a single self-contained SVG that works inside GitHub's sandbox — no script, no external assets.
 
 ![svg-terminal demo](./examples/demo.svg)
@@ -11,7 +13,8 @@ Generate animated SVG terminals from a declarative YAML config. The output is a 
 - **8 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95 (with chrome to match)
 - **Single-line frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 9 animated blocks (spinners, clock, dice, progress bar, etc.). Multi-line is a known restriction
 - **Dynamic-block cache** — the 4 cacheable blocks (weather, github-stats, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
-- **No runtime deps in the output** — SMIL animation, inline CSS, GitHub-sandbox-safe
+- **Reduced-motion respected for fade-ins** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins. SMIL-driven typing reveal, cursor walk, scroll, and frame cycles remain animated; pair with `--static` for full stillness
+- **No runtime deps in the output** — SMIL + CSS animation, inline, GitHub-sandbox-safe
 - **CLI + library** — `npx svg-terminal generate`, or `import { generate } from 'svg-terminal'`. Strict zod validation on every block's config
 
 ## Quick Start
@@ -233,34 +236,55 @@ registerBlock({
 ## Programmatic API
 
 ```typescript
+// ESM. Run as `node --experimental-vm-modules` or save as .mjs / set "type":"module".
 import { generate, generateStatic } from 'svg-terminal';
 
-const svg = await generate({
-  theme: 'nord',
-  blocks: [
-    { block: 'neofetch', config: { username: 'dev' } },
-    { block: 'custom', config: { command: 'date', lines: ['2026-05-25'] } },
-  ]
-}, {
-  // All fields optional. configPath anchors cachePath resolution if you
-  // want the cache; cacheMode is one of 'normal' | 'refresh' | 'frozen' | 'off';
-  // now lets you pin context.now for reproducible test/demo output.
-  configPath: '/abs/path/to/config.yml',
-  cacheMode: 'frozen',
-  now: new Date('2026-05-25T13:37:00Z'),
-});
+async function main() {
+  const svg = await generate({
+    theme: 'nord',
+    blocks: [
+      { block: 'neofetch', config: { username: 'dev' } },
+      { block: 'custom', config: { command: 'date', lines: ['2026-05-25'] } },
+    ]
+  }, {
+    // All fields optional. configPath anchors cachePath resolution if you
+    // want the cache; cacheMode is one of 'normal' | 'refresh' | 'frozen' | 'off';
+    // now lets you pin context.now for reproducible test/demo output.
+    configPath: '/abs/path/to/config.yml',
+    cacheMode: 'frozen',
+    now: new Date('2026-05-25T13:37:00Z'),
+  });
+}
+main();
 ```
 
 `generateStatic` returns the same content as a non-animated SVG — useful for accessibility fallbacks and social-preview cards.
 
+`inspectCache(configPath)` returns the cache file's stored entries with their TTL freshness — useful for building your own "is the cache hot?" CI gates without invoking the `svg-terminal cache check` subcommand.
+
 ## GitHub Action
 
+Complete `.github/workflows/refresh-svg.yml` for a weekly README refresh:
+
 ```yaml
-- uses: williamzujkowski/svg-terminal@v1
-  with:
-    config: terminal.yml
-    output: src/terminal.svg
-    commit: true
+name: Refresh SVG terminal
+on:
+  schedule:
+    - cron: '0 12 * * MON'   # Mondays at 12:00 UTC
+  workflow_dispatch:          # also run on demand
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write         # required for commit: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: williamzujkowski/svg-terminal@v1
+        with:
+          config: terminal.yml
+          output: terminal.svg
+          commit: true
 ```
 
 For maximally reproducible CI, commit `.svg-terminal-cache.json` alongside `terminal.yml` and set `cache-mode: frozen` — every build will serve cached payloads with zero network calls. The build fails loudly if a cacheable block is missing an entry:
@@ -269,12 +293,15 @@ For maximally reproducible CI, commit `.svg-terminal-cache.json` alongside `term
 - uses: williamzujkowski/svg-terminal@v1
   with:
     config: terminal.yml
-    output: src/terminal.svg
+    output: terminal.svg
     cache-mode: frozen   # normal | refresh | frozen | off
     static: false        # set true to skip animation
     minify: false        # set true to strip inter-element whitespace
     commit: true
+    commit-message: chore(readme): refresh terminal svg
 ```
+
+The action commits as `github-actions[bot]`; the `commit` input only runs `git add output + git commit + git push` against the current branch. Skip `commit: true` and add your own commit step if you need signed commits or a custom author.
 
 ## Text Markup
 

@@ -33,6 +33,13 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
       to { transform: translateY(4px); }
     }
     .scanline-overlay { animation: scanlineScroll 1.2s linear infinite; }
+    /* fadeIn drives all opacity fade-ins (prompt + output lines + animated frame
+       wrappers). Lives in CSS rather than SMIL so the @media block below kills
+       it under prefers-reduced-motion. fill-mode: backwards keeps the element
+       at opacity 0 during the animation-delay window so it doesn't pop in
+       before its scheduled time. */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 10ms linear backwards; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -93,11 +100,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
         
     <g id="line-0" transform="translate(0, 0)">
       <defs><clipPath id="cmdrev-0"><rect x="168" y="-14" width="104" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104" keyTimes="0.0000;0.0769;0.1538;0.2308;0.3077;0.3846;0.4615;0.5385;0.6154;0.6923;0.7692;0.8462;0.9231;1.0000" calcMode="discrete" begin="0ms" dur="500ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">
-        you@svg-terminal:~$ 
-        
-        <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
-      </text>
+      <text class="tt fade-in" style="animation-delay: 0ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
       <text class="tt" x="168" fill="#00ff9f" textLength="104" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">cat /etc/motd</text>
       
     <rect x="168" y="-12" width="8" height="14"
@@ -108,49 +111,37 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </rect>
     </g>
 
-    <g id="line-1" transform="translate(0, 25.2)">
-      <set attributeName="opacity" to="0" begin="0s" end="800ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="800ms" dur="10ms" fill="freeze"/>
+    <g id="line-1" transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms">
       <text class="tt" fill="#e4e4e4">
         ╔════════════════════════════════════════════════════════════════════════════════════════╗
       </text>
     </g>
 
-    <g id="line-2" transform="translate(0, 50.4)">
-      <set attributeName="opacity" to="0" begin="0s" end="850ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="850ms" dur="10ms" fill="freeze"/>
+    <g id="line-2" transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms">
       <text class="tt" fill="#e4e4e4">
         ║                                                                                        ║
       </text>
     </g>
 
-    <g id="line-3" transform="translate(0, 75.6)">
-      <set attributeName="opacity" to="0" begin="0s" end="900ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="900ms" dur="10ms" fill="freeze"/>
+    <g id="line-3" transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms">
       <text class="tt" fill="#e4e4e4">
         ║ SVG-TERMINAL v2026.05                                                                  ║
       </text>
     </g>
 
-    <g id="line-4" transform="translate(0, 100.8)">
-      <set attributeName="opacity" to="0" begin="0s" end="950ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="950ms" dur="10ms" fill="freeze"/>
+    <g id="line-4" transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms">
       <text class="tt" fill="#e4e4e4">
         ║ Animated terminals in your README, declarative YAML in.                                ║
       </text>
     </g>
 
-    <g id="line-5" transform="translate(0, 126)">
-      <set attributeName="opacity" to="0" begin="0s" end="1000ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="1000ms" dur="10ms" fill="freeze"/>
+    <g id="line-5" transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms">
       <text class="tt" fill="#e4e4e4">
         ║                                                                                        ║
       </text>
     </g>
 
-    <g id="line-6" transform="translate(0, 151.2)">
-      <set attributeName="opacity" to="0" begin="0s" end="1050ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="1050ms" dur="10ms" fill="freeze"/>
+    <g id="line-6" transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms">
       <text class="tt" fill="#e4e4e4">
         ╚════════════════════════════════════════════════════════════════════════════════════════╝
       </text>
@@ -158,11 +149,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
 
     <g id="line-7" transform="translate(0, 176.4)">
       <defs><clipPath id="cmdrev-7"><rect x="168" y="-14" width="288" height="28"><set attributeName="width" to="0" begin="0s" end="2100ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128;136;144;152;160;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288" keyTimes="0.0000;0.0278;0.0556;0.0833;0.1111;0.1389;0.1667;0.1944;0.2222;0.2500;0.2778;0.3056;0.3333;0.3611;0.3889;0.4167;0.4444;0.4722;0.5000;0.5278;0.5556;0.5833;0.6111;0.6389;0.6667;0.6944;0.7222;0.7500;0.7778;0.8056;0.8333;0.8611;0.8889;0.9167;0.9444;0.9722;1.0000" calcMode="discrete" begin="2100ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">
-        you@svg-terminal:~$ 
-        <set attributeName="opacity" to="0" begin="0s" end="2100ms"/>
-        <animate attributeName="opacity" from="0" to="1" begin="2100ms" dur="10ms" fill="freeze"/>
-      </text>
+      <text class="tt fade-in" style="animation-delay: 2100ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
       <text class="tt" x="168" fill="#00ff9f" textLength="288" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-7)">neofetch --ascii_distro svg-terminal</text>
       
     <rect x="168" y="-12" width="8" height="14"
@@ -173,89 +160,67 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </rect>
     </g>
 
-    <g id="line-8" transform="translate(0, 201.6)">
-      <set attributeName="opacity" to="0" begin="0s" end="3600ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3600ms" dur="10ms" fill="freeze"/>
+    <g id="line-8" transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 3600ms">
       <text class="tt">
         <tspan fill="#8be9fd">dev@svg-terminal</tspan>
       </text>
     </g>
 
-    <g id="line-9" transform="translate(0, 226.8)">
-      <set attributeName="opacity" to="0" begin="0s" end="3650ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3650ms" dur="10ms" fill="freeze"/>
+    <g id="line-9" transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 3650ms">
       <text class="tt">
         <tspan fill="#8be9fd">────────────────</tspan>
       </text>
     </g>
 
-    <g id="line-10" transform="translate(0, 252)">
-      <set attributeName="opacity" to="0" begin="0s" end="3700ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3700ms" dur="10ms" fill="freeze"/>
+    <g id="line-10" transform="translate(0, 252)" class="fade-in" style="animation-delay: 3700ms">
       <text class="tt">
         <tspan fill="#8be9fd">OS</tspan><tspan fill="#e4e4e4">:        TerminalOS v1.0</tspan>
       </text>
     </g>
 
-    <g id="line-11" transform="translate(0, 277.2)">
-      <set attributeName="opacity" to="0" begin="0s" end="3750ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3750ms" dur="10ms" fill="freeze"/>
+    <g id="line-11" transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 3750ms">
       <text class="tt">
         <tspan fill="#8be9fd">Shell</tspan><tspan fill="#e4e4e4">:     bash 5.2</tspan>
       </text>
     </g>
 
-    <g id="line-12" transform="translate(0, 302.4)">
-      <set attributeName="opacity" to="0" begin="0s" end="3800ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3800ms" dur="10ms" fill="freeze"/>
+    <g id="line-12" transform="translate(0, 302.4)" class="fade-in" style="animation-delay: 3800ms">
       <text class="tt">
         <tspan fill="#8be9fd">Uptime</tspan><tspan fill="#e4e4e4">:    a long time</tspan>
       </text>
     </g>
 
-    <g id="line-13" transform="translate(0, 327.6)">
-      <set attributeName="opacity" to="0" begin="0s" end="3850ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3850ms" dur="10ms" fill="freeze"/>
+    <g id="line-13" transform="translate(0, 327.6)" class="fade-in" style="animation-delay: 3850ms">
       <text class="tt">
         <tspan fill="#8be9fd">Role</tspan><tspan fill="#e4e4e4">:      Library Author</tspan>
       </text>
     </g>
 
-    <g id="line-14" transform="translate(0, 352.8)">
-      <set attributeName="opacity" to="0" begin="0s" end="3900ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3900ms" dur="10ms" fill="freeze"/>
+    <g id="line-14" transform="translate(0, 352.8)" class="fade-in" style="animation-delay: 3900ms">
       <text class="tt">
         <tspan fill="#8be9fd">Location</tspan><tspan fill="#e4e4e4">:  localhost</tspan>
       </text>
     </g>
 
-    <g id="line-15" transform="translate(0, 378)">
-      <set attributeName="opacity" to="0" begin="0s" end="3950ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="3950ms" dur="10ms" fill="freeze"/>
+    <g id="line-15" transform="translate(0, 378)" class="fade-in" style="animation-delay: 3950ms">
       <text class="tt">
         <tspan fill="#8be9fd">Languages</tspan><tspan fill="#e4e4e4">: TypeScript, SVG, SMIL</tspan>
       </text>
     </g>
 
-    <g id="line-16" transform="translate(0, 403.2)">
-      <set attributeName="opacity" to="0" begin="0s" end="4000ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="4000ms" dur="10ms" fill="freeze"/>
+    <g id="line-16" transform="translate(0, 403.2)" class="fade-in" style="animation-delay: 4000ms">
       <text class="tt">
         <tspan fill="#8be9fd">Editor</tspan><tspan fill="#e4e4e4">:    vim (still trying to exit)</tspan>
       </text>
     </g>
 
-    <g id="line-17" transform="translate(0, 428.4)">
-      <set attributeName="opacity" to="0" begin="0s" end="4050ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="4050ms" dur="10ms" fill="freeze"/>
+    <g id="line-17" transform="translate(0, 428.4)" class="fade-in" style="animation-delay: 4050ms">
       <text class="tt" fill="#e4e4e4">
         
       </text>
     </g>
 
-    <g id="line-18" transform="translate(0, 453.6)">
-      <set attributeName="opacity" to="0" begin="0s" end="4100ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="4100ms" dur="10ms" fill="freeze"/>
+    <g id="line-18" transform="translate(0, 453.6)" class="fade-in" style="animation-delay: 4100ms">
       <text class="tt">
         <tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan>
       </text>
@@ -263,11 +228,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
 
     <g id="line-19" transform="translate(0, 478.8)">
       <defs><clipPath id="cmdrev-19"><rect x="168" y="-14" width="112" height="28"><set attributeName="width" to="0" begin="0s" end="5350ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112" keyTimes="0.0000;0.0714;0.1429;0.2143;0.2857;0.3571;0.4286;0.5000;0.5714;0.6429;0.7143;0.7857;0.8571;0.9286;1.0000" calcMode="discrete" begin="5350ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">
-        you@svg-terminal:~$ 
-        <set attributeName="opacity" to="0" begin="0s" end="5350ms"/>
-        <animate attributeName="opacity" from="0" to="1" begin="5350ms" dur="10ms" fill="freeze"/>
-      </text>
+      <text class="tt fade-in" style="animation-delay: 5350ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
       <text class="tt" x="168" fill="#00ff9f" textLength="112" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-19)">date +%H:%M:%S</text>
       
     <rect x="168" y="-12" width="8" height="14"
@@ -278,19 +239,13 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </rect>
     </g>
 
-    <g id="line-20" transform="translate(0, 504)">
-      <set attributeName="opacity" to="0" begin="0s" end="6850ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="6850ms" dur="10ms" fill="freeze"/>
+    <g id="line-20" transform="translate(0, 504)" class="fade-in" style="animation-delay: 6850ms">
       <text class="tt" opacity="1"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09:37:00</tspan><animate attributeName="opacity" values="1;0;1" keyTimes="0.0000;0.5000;1.0000" calcMode="discrete" dur="2.000s" begin="6850ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09·37·00</tspan><animate attributeName="opacity" values="0;1;0" keyTimes="0.0000;0.5000;1.0000" calcMode="discrete" dur="2.000s" begin="6850ms" repeatCount="indefinite" fill="freeze"/></text>
     </g>
 
     <g id="line-21" transform="translate(0, 529.2)">
       <defs><clipPath id="cmdrev-21"><rect x="168" y="-14" width="128" height="28"><set attributeName="width" to="0" begin="0s" end="8050ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128" keyTimes="0.0000;0.0625;0.1250;0.1875;0.2500;0.3125;0.3750;0.4375;0.5000;0.5625;0.6250;0.6875;0.7500;0.8125;0.8750;0.9375;1.0000" calcMode="discrete" begin="8050ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">
-        you@svg-terminal:~$ 
-        <set attributeName="opacity" to="0" begin="0s" end="8050ms"/>
-        <animate attributeName="opacity" from="0" to="1" begin="8050ms" dur="10ms" fill="freeze"/>
-      </text>
+      <text class="tt fade-in" style="animation-delay: 8050ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
       <text class="tt" x="168" fill="#00ff9f" textLength="128" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-21)">made-with --love</text>
       
     <rect x="168" y="-12" width="8" height="14"
@@ -301,19 +256,13 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </rect>
     </g>
 
-    <g id="line-22" transform="translate(0, 554.4)">
-      <set attributeName="opacity" to="0" begin="0s" end="9550ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="9550ms" dur="10ms" fill="freeze"/>
+    <g id="line-22" transform="translate(0, 554.4)" class="fade-in" style="animation-delay: 9550ms">
       <text class="tt" opacity="1"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="1;0;0;0;0;1" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;1;0;0;0;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;0;1;0;0;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;0;0;1;0;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;0;0;0;1;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text>
     </g>
 
     <g id="line-23" transform="translate(0, 579.6)">
       <defs><clipPath id="cmdrev-23"><rect x="168" y="-14" width="56" height="28"><set attributeName="width" to="0" begin="0s" end="10750ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="10750ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">
-        you@svg-terminal:~$ 
-        <set attributeName="opacity" to="0" begin="0s" end="10750ms"/>
-        <animate attributeName="opacity" from="0" to="1" begin="10750ms" dur="10ms" fill="freeze"/>
-      </text>
+      <text class="tt fade-in" style="animation-delay: 10750ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
       <text class="tt" x="168" fill="#00ff9f" textLength="56" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-23)">palette</text>
       
     <rect x="168" y="-12" width="8" height="14"
@@ -324,9 +273,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </rect>
     </g>
 
-    <g id="line-24" transform="translate(0, 604.8)">
-      <set attributeName="opacity" to="0" begin="0s" end="12250ms"/>
-      <animate attributeName="opacity" from="0" to="1" begin="12250ms" dur="10ms" fill="freeze"/>
+    <g id="line-24" transform="translate(0, 604.8)" class="fade-in" style="animation-delay: 12250ms">
       <text class="tt">
         <tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan>
       </text>
