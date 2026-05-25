@@ -104,6 +104,9 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   <defs>
     ${generateDefs(effects, window.style)}
     ${generateFilters(effects, theme.colors.cursor)}
+    <clipPath id="terminalViewport">
+      <rect x="0" y="${getTitleBarHeight(window)}" width="${window.width}" height="${window.height - getTitleBarHeight(window)}"/>
+    </clipPath>
   </defs>
 
   <g${showShadow ? ' filter="url(#shadow)"' : ''}>
@@ -444,12 +447,10 @@ function renderTerminalContent(
   const allLines = generateAllLines(frames, terminal, lineHeight, theme.colors, chrome, animation);
   const glow = effects.textGlow ? ' filter="url(#textGlow)"' : '';
 
+  // viewport clipPath was previously emitted in a second <defs> here; it now
+  // lives in the top-level <defs> emitted by generateSvg, so only one defs
+  // block sits at the SVG root.
   return `
-    <defs>
-      <clipPath id="terminalViewport">
-        <rect x="0" y="${titleBarHeight}" width="${window.width}" height="${viewportHeight}"/>
-      </clipPath>
-    </defs>
     <rect x="0" y="${titleBarHeight}" width="${window.width}"
           height="${viewportHeight}" fill="${theme.colors.background}"/>
     <g clip-path="url(#terminalViewport)">

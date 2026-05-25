@@ -133,7 +133,13 @@ export interface EffectsConfig {
 
 /** Animation timing configuration. */
 export interface AnimationConfig {
-  /** Cursor blink cycle duration in ms (default: 1000) */
+  /**
+   * Cursor blink cycle duration in ms (default: 1000).
+   * @deprecated As of v0.7.1 the cursor is solid-visible during typing —
+   *   the blink would render it invisible for chunks of the typing window,
+   *   which was the cursor-animation bug we fixed. Real terminals also
+   *   don't blink during active key input. Will be removed in v1.0.
+   */
   cursorBlinkCycle: number;
   /**
    * Duration of character appear fade-in in ms (default: 10).

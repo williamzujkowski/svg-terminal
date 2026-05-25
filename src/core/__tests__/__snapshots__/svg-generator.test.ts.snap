@@ -40,6 +40,9 @@ hi</desc>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="0" width="1000" height="560"/>
+    </clipPath>
   </defs>
 
   <g filter="url(#shadow)">
@@ -49,11 +52,6 @@ hi</desc>
           fill="#0a0e27"/>
     
     
-    <defs>
-      <clipPath id="terminalViewport">
-        <rect x="0" y="0" width="1000" height="560"/>
-      </clipPath>
-    </defs>
     <rect x="0" y="0" width="1000"
           height="560" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
@@ -152,6 +150,9 @@ hi</desc>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="40" width="1000" height="520"/>
+    </clipPath>
   </defs>
 
   <g filter="url(#shadow)">
@@ -176,11 +177,6 @@ hi</desc>
       user@terminal:~
     </text>
     
-    <defs>
-      <clipPath id="terminalViewport">
-        <rect x="0" y="40" width="1000" height="520"/>
-      </clipPath>
-    </defs>
     <rect x="0" y="40" width="1000"
           height="520" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
@@ -285,6 +281,9 @@ hi</desc>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="40" width="1000" height="520"/>
+    </clipPath>
   </defs>
 
   <g filter="url(#shadow)">
@@ -309,11 +308,6 @@ hi</desc>
       user@terminal:~
     </text>
     
-    <defs>
-      <clipPath id="terminalViewport">
-        <rect x="0" y="40" width="1000" height="520"/>
-      </clipPath>
-    </defs>
     <rect x="0" y="40" width="1000"
           height="520" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
