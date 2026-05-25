@@ -54,6 +54,18 @@ describe('resolveCachePath', () => {
   });
 });
 
+describe('CacheRuntime invariants', () => {
+  it('throws when constructed with a negative TTL', () => {
+    const rt = runtime('normal', -10);
+    expect(() => makeUseCache(rt)).toThrow(/≥ 0/);
+  });
+
+  it('throws when ttl is NaN', () => {
+    const rt = runtime('normal', NaN);
+    expect(() => makeUseCache(rt)).toThrow(/≥ 0/);
+  });
+});
+
 describe('useCache modes', () => {
   it('normal mode: fetches on miss and persists on flush', async () => {
     const rt = runtime('normal');

@@ -38,6 +38,12 @@ describe('mergeConfig', () => {
     expect(config.theme.name).toBe('my-custom');
   });
 
+  it('reserves "random" — registerTheme({ name: "random" }) throws', async () => {
+    const { registerTheme } = await import('../../themes/index.js');
+    const fake = { ...(await import('../../themes/nord.js')).nord, name: 'random' };
+    expect(() => registerTheme(fake)).toThrow(/reserved/);
+  });
+
   it('defaults to dracula theme', () => {
     const config = mergeConfig(minimal);
     expect(config.theme.name).toBe('dracula');
@@ -197,6 +203,17 @@ describe('loadConfig error paths', () => {
   it('accepts the special "random" theme name', async () => {
     const file = write('random-theme.yml', 'theme: random\nblocks:\n  - block: custom\n');
     await expect(loadConfig(file)).resolves.toBeDefined();
+  });
+
+  it('hints at { describe: false } when user passes accessibility: false', async () => {
+    const file = write('a11y-bool.yml', 'accessibility: false\nblocks:\n  - block: custom\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('describe: false');
+    }
   });
 
   it('rejects unknown block names with the index that failed', async () => {

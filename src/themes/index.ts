@@ -23,8 +23,16 @@ export const themes: Record<string, Theme> = {
 /** User-registered themes; shadow built-ins when names collide. */
 const customThemes = new Map<string, Theme>();
 
-/** Register a custom theme. Mirrors registerBlock() — name shadows built-ins. */
+/**
+ * Register a custom theme. Mirrors registerBlock() — name shadows built-ins.
+ * Throws on the reserved name "random" (which triggers daily rotation).
+ */
 export function registerTheme(theme: Theme): void {
+  if (theme.name === 'random') {
+    throw new Error(
+      `"random" is a reserved theme name (it triggers the daily-rotation behavior). Pick a different name for your custom theme.`,
+    );
+  }
   customThemes.set(theme.name, theme);
 }
 

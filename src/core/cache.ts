@@ -123,6 +123,11 @@ function persistCacheFile(filePath: string, data: CacheFile): void {
  * Wire this into BlockContext.useCache.
  */
 export function makeUseCache(runtime: CacheRuntime): NonNullable<import('../types.js').BlockContext['useCache']> {
+  // Fail fast on negative TTL — silently no-op'ing (the old pruneStaleEntries
+  // behavior) hides API misuse from library consumers building runtimes by hand.
+  if (!Number.isFinite(runtime.ttl) || runtime.ttl < 0) {
+    throw new Error(`CacheRuntime.ttl must be ≥ 0, got ${runtime.ttl}`);
+  }
   return async <T>(key: string, getter: () => Promise<T>, opts?: { ttl?: number }): Promise<T> => {
     if (runtime.mode === 'off') {
       return getter();

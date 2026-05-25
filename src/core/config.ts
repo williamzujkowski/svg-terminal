@@ -53,13 +53,29 @@ export async function loadConfig(filePath: string): Promise<UserConfig> {
         const path = i.path.length ? i.path.join('.') : '<root>';
         return `  ${path}: ${i.message}`;
       }).join('\n');
-      throw new ConfigError(`Invalid config in ${filePath}:\n${issues}`);
+      throw new ConfigError(`Invalid config in ${filePath}:\n${issues}${hintForIssues(err)}`);
     }
     throw err;
   }
 
   validateNames(config, filePath);
   return config;
+}
+
+/**
+ * Add a contextual hint to certain zod failures that have a known correct
+ * spelling. Returns '' for issues we don't have a hint for — the standard
+ * per-issue list above is the primary error message.
+ */
+function hintForIssues(err: z.ZodError): string {
+  const hints: string[] = [];
+  for (const issue of err.issues) {
+    if (issue.path[0] === 'accessibility' && issue.path.length === 1) {
+      // Most common: user passed `accessibility: false` to disable a11y.
+      hints.push('  hint: to disable accessibility descriptions, use `accessibility: { describe: false }` (not a boolean).');
+    }
+  }
+  return hints.length > 0 ? '\n' + hints.join('\n') : '';
 }
 
 /** Validate theme + block names against the live registries with actionable lists. */
