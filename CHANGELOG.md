@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.14.2 — 2026-05-25
+
+Closes `#101` — two new CLI instrumentation modes.
+
+### CLI
+
+- **`--timings`**: prints per-phase wall-clock breakdown to stderr after every render — `load: Nms / generate: Nms / write: Nms / total: Nms`. Useful for spotting "is loadConfig slow?" vs "is generate slow?" vs "is the cache layer hot?". Pairs naturally with `--watch` to see the iteration cost over time.
+- **`--explain`**: emits a JSON dump of the resolved config (theme, window, text, effects, maxDuration) plus the block list with cacheable status — to stderr so it doesn't interleave with the SVG if piped. Runs the full generate path; doesn't skip writing. Useful for debugging "why is my animation getting cut off at maxDuration", "is this theme actually applied", "did this block get registered".
+
+Both flags are added to the known-flags set (so the unknown-flag warning from v0.13.0 still works cleanly) and documented in `--help`.
+
+### Tests
+
+- 359 → 359 (no new tests — the additions are CLI-side instrumentation with stderr output; live-verified end-to-end).
+
 ## v0.14.1 — 2026-05-25
 
 Single-feature patch release. Closes `#100` — discoverability win for the 47-block library without grepping the source.

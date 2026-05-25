@@ -13,7 +13,7 @@
 
 import { existsSync, writeFileSync, watch as fsWatch } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
-import { generate, generateStatic, getBlock, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
+import { generate, generateStatic, getBlock, inspectCache, listBlocks, loadConfig, mergeConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
 import { formatModeTag, formatZodType, humanAge, isZodOptional, minifySvg, resolveCacheMode } from './core/cli-helpers.js';
@@ -40,6 +40,7 @@ function hasFlag(name: string): boolean {
 const GENERATE_KNOWN_FLAGS = new Set([
   'config', 'output', 'static', 'minify', 'strict', 'watch',
   'no-cache', 'refresh-cache', 'frozen-cache', 'cache-mode',
+  'timings', 'explain',
 ]);
 
 /** Warn (don't fail) on unknown `--flag` tokens. Skips value-position tokens
@@ -84,6 +85,8 @@ async function main(): Promise<void> {
       const minify = hasFlag('minify');
       const strict = hasFlag('strict');
       const watch = hasFlag('watch');
+      const timings = hasFlag('timings');
+      const explain = hasFlag('explain');
       const cacheMode = resolveCacheMode(args);
 
       setStrictBlockConfig(strict);
@@ -94,12 +97,43 @@ async function main(): Promise<void> {
 
       const runOnce = async (): Promise<void> => {
         const start = performance.now();
+        const tLoadStart = performance.now();
         const userConfig = await loadConfig(resolvedConfigPath);
+        const tLoadMs = performance.now() - tLoadStart;
+
+        // --explain: emit a JSON dump of the resolved config + block list to
+        // stderr (so it doesn't interleave with stdout if the SVG is piped).
+        // Runs the full generate path after; doesn't skip writing.
+        if (explain) {
+          const merged = mergeConfig(userConfig);
+          const explainDump = {
+            configPath: resolvedConfigPath,
+            outputPath: resolvedOutputPath,
+            theme: merged.theme.name,
+            window: merged.window,
+            text: merged.text,
+            effects: merged.effects,
+            blockCount: userConfig.blocks.length,
+            blocks: userConfig.blocks.map(entry => {
+              const block = getBlock(entry.block);
+              return { name: entry.block, cacheable: block?.cacheable ?? false, registered: !!block };
+            }),
+            maxDuration: merged.maxDuration,
+          };
+          console.error(`[svg-terminal --explain]\n${JSON.stringify(explainDump, null, 2)}`);
+        }
+
+        const tGenStart = performance.now();
         let svg = isStatic
           ? await generateStatic(userConfig, genOpts)
           : await generate(userConfig, genOpts);
+        const tGenMs = performance.now() - tGenStart;
+
+        const tWriteStart = performance.now();
         if (minify) svg = minifySvg(svg);
         writeFileSync(resolvedOutputPath, svg, 'utf-8');
+        const tWriteMs = performance.now() - tWriteStart;
+
         const elapsed = Math.round(performance.now() - start);
         // In watch mode, prefix the log with an HH:MM:SS timestamp + render
         // duration so the user can see when each re-render happened and how
@@ -107,6 +141,15 @@ async function main(): Promise<void> {
         const prefix = watch ? `[${new Date().toTimeString().slice(0, 8)}] ` : '';
         const duration = watch ? `, ${elapsed}ms` : '';
         console.log(`${prefix}Generated ${outputPath}${modeTag} (${(svg.length / 1024).toFixed(1)} KB${duration})`);
+
+        if (timings) {
+          // Phase breakdown to stderr. Values are wall-clock ms for the most
+          // recent runOnce call. Useful for spotting "is loadConfig slow?"
+          // vs "is generate slow?" vs "is write slow?".
+          console.error(
+            `[svg-terminal --timings]  load: ${tLoadMs.toFixed(1)}ms  generate: ${tGenMs.toFixed(1)}ms  write: ${tWriteMs.toFixed(1)}ms  total: ${elapsed}ms`,
+          );
+        }
       };
 
       if (!watch) {
@@ -358,6 +401,8 @@ Generate options:
   --minify           Strip inter-element whitespace for smaller output
   --strict           Promote unknown-block-config-key warnings to hard errors
   --watch            Re-generate on config file change (Ctrl-C to exit)
+  --timings          Print per-phase wall-clock timings (load, generate, write) to stderr
+  --explain          Print the resolved config + block list as JSON to stderr
 
 Cache modes (mutually exclusive — defaults to normal):
   --no-cache         Don't read or write the dynamic-block fetch cache
