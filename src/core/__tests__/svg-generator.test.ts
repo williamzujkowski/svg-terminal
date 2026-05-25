@@ -177,6 +177,24 @@ describe('generateStaticSvg', () => {
   });
 });
 
+describe('cursor positioning edge cases', () => {
+  it('single-character command — cursor stays at column 0 (values[0] === values[1])', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'a', typingDuration: 100 }];
+    const svg = generateSvg(seq, makeConfig());
+    const match = /<animate attributeName="x" values="([^"]+)"/.exec(svg);
+    expect(match).not.toBeNull();
+    const vals = match![1]!.split(';');
+    expect(vals).toHaveLength(2); // charCount=1 → values length = N+1 = 2
+    expect(vals[0]).toBe(vals[1]);
+  });
+
+  it('empty command — emits no cursor walk animate at all', () => {
+    const seq: Sequence[] = [{ type: 'command', content: '', typingDuration: 100 }];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).not.toMatch(/<animate attributeName="x"/);
+  });
+});
+
 describe('cursor positioning (lag-by-one + no blink during typing)', () => {
   // Locks the fix from the cursor-animation bug report. Two specific shapes:
   //   1. cursor x values lag by one column — values[0]=values[1]=col0,

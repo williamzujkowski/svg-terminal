@@ -143,7 +143,7 @@ function buildAccessibilityLabel(sequences: Sequence[]): string {
  * prompt, output lines as-is, color markup stripped — so screen readers can
  * read the terminal's content beyond the 5-command summary.
  *
- * Returns "" if accessibility.describe is false; still emits <title> in that case.
+ * Returns just <title> (no <desc>) when accessibility.describe is false.
  */
 function renderAccessibilityChildren(
   label: string,

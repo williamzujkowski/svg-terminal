@@ -164,13 +164,18 @@ async function main(): Promise<void> {
         console.error(`\x1b[31m[svg-terminal] watch error: ${err.message}\x1b[0m`);
       });
 
-      process.on('SIGINT', () => {
+      // Close the watcher on SIGINT (Ctrl-C) AND SIGTERM (docker stop,
+      // systemctl, kill, etc.) — process managers send SIGTERM, not SIGINT,
+      // and without this handler the watcher leaks until the kernel reaps it.
+      const cleanup = (): void => {
         watcher.close();
         console.log('\n\x1b[2m[svg-terminal] stopped\x1b[0m');
         process.exit(0);
-      });
+      };
+      process.on('SIGINT', cleanup);
+      process.on('SIGTERM', cleanup);
 
-      // Keep process alive until SIGINT.
+      // Keep process alive until a signal fires.
       return;
     }
 

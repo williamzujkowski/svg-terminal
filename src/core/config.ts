@@ -87,6 +87,13 @@ function validateNames(config: UserConfig, filePath: string): void {
         `Unknown theme "${config.theme}" in ${filePath}\n  Available: ${available}, random`,
       );
     }
+  } else if (config.theme && typeof config.theme === 'object' && (config.theme as { name?: string }).name === 'random') {
+    // Inline theme object using the reserved name would shadow the
+    // daily-rotation behavior (resolveTheme returns inline objects as-is).
+    // Catch this at the same point registerTheme catches the string form.
+    throw new ConfigError(
+      `Inline theme uses the reserved name "random" in ${filePath}\n  "random" triggers daily rotation; pick a different name for your inline theme.`,
+    );
   }
 
   for (let i = 0; i < config.blocks.length; i++) {

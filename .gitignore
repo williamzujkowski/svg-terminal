@@ -2,5 +2,16 @@ node_modules/
 dist/
 *.tgz
 .DS_Store
+
+# Default outputs of `svg-terminal init` + `svg-terminal generate`.
+# Users typically commit these intentionally; ignored here only so they
+# don't accidentally show up in this repo when you run the CLI locally.
+terminal.yml
 terminal.svg
+
+# Dynamic-block fetch cache. Users in their OWN projects often commit
+# this for reproducible builds (paired with --frozen-cache); ignored
+# here so local exploratory runs don't end up tracked.
+.svg-terminal-cache.json
+
 .nexus-agents/

@@ -14,6 +14,16 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+describe('generate() programmatic guards', () => {
+  it('throws when blocks is empty (programmatic bypass of zod schema)', async () => {
+    await expect(generate({ blocks: [] })).rejects.toThrow(/at least one block/i);
+  });
+
+  it('throws when blocks is missing entirely', async () => {
+    await expect(generate({} as Parameters<typeof generate>[0])).rejects.toThrow(/at least one block/i);
+  });
+});
+
 describe('per-block config validation (#35)', () => {
   describe('configSchema (strict zod)', () => {
     it('passes valid config through unchanged', async () => {

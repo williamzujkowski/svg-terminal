@@ -216,6 +216,19 @@ describe('loadConfig error paths', () => {
     }
   });
 
+  it('rejects an inline theme using the reserved name "random"', async () => {
+    const file = write('inline-random.yml',
+      'theme:\n  name: random\n  colors:\n    text: "#000"\n' +
+      'blocks:\n  - block: custom\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('reserved');
+    }
+  });
+
   it('rejects unknown block names with the index that failed', async () => {
     const file = write('bad-block.yml', 'blocks:\n  - block: custom\n  - block: cowsayy\n');
     try {

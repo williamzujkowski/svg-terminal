@@ -14,7 +14,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          # Pin to a specific 22.x patch so a Node minor bump can't silently
+          # change the generated SVGs (the demo-verification step diffs byte
+          # output). Bump deliberately when upgrading Node.
+          node-version: '22.19.0'
           cache: 'npm'
 
       - run: npm ci

@@ -108,6 +108,7 @@ function validateBlockEntry(block: Block, entry: BlockEntry, index: number): voi
  * This is the main API entry point.
  */
 export async function generate(userConfig: UserConfig, options: GenerateOptions = {}): Promise<string> {
+  assertHasBlocks(userConfig);
   const config = mergeConfig(userConfig);
   const sequences: Sequence[] = [];
 
@@ -210,7 +211,16 @@ function makeCacheRuntime(
  * All content is visible at full opacity with no animations.
  * Useful for accessibility fallbacks, print, and social media previews.
  */
+/** Programmatic guard — the zod schema enforces this at config-load time, but
+ * library consumers building a UserConfig in code can bypass loadConfig. */
+function assertHasBlocks(userConfig: UserConfig): void {
+  if (!Array.isArray(userConfig.blocks) || userConfig.blocks.length === 0) {
+    throw new Error('generate() requires at least one block in userConfig.blocks');
+  }
+}
+
 export async function generateStatic(userConfig: UserConfig, options: GenerateOptions = {}): Promise<string> {
+  assertHasBlocks(userConfig);
   const config = mergeConfig(userConfig);
   const allLines: string[] = [];
 
