@@ -74,7 +74,7 @@ A block is a small TypeScript module that exports an object implementing the `Bl
 
 - ESM only — use `.js` extensions in TypeScript imports (`from './types.js'`). `moduleResolution: 'bundler'` requires it.
 - The SVG output must remain self-contained: no `<script>`, no external `<link>`, no external fonts beyond CSS `@media` queries. GitHub's SVG sandbox strips that anyway.
-- All animation timing already respects `prefers-reduced-motion` via the inline `<style>` block. Keep that promise for any new animation you add.
+- The inline `@media (prefers-reduced-motion: reduce)` rule applies to CSS animations only. SMIL (`<animate>`, `<animateTransform>`) doesn't read that media query — typed-character reveal, cursor walk, scroll, and frame-cycle animations keep running. Document this honestly in any new animated block's description, and point motion-sensitive users at `--static` (issue #71 tracks the broader fix).
 - Default to no comments. Add one when the WHY isn't obvious from the code — a hidden constraint, a subtle invariant, a workaround for a specific bug. Don't narrate what the code does.
 
 ## Reporting bugs / asking questions

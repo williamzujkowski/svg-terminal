@@ -162,6 +162,8 @@ accessibility:
   describe: false   # default true — emit <desc> with full content
 ```
 
+**Reduced-motion caveat.** The SVG emits an inline `@media (prefers-reduced-motion: reduce)` rule, but it only applies to CSS animations. The typing reveal, cursor walk, scroll, and frame-cycle animations are SMIL (`<animate>` elements) and SMIL doesn't read the same CSS media query. Users who set the OS-level reduced-motion preference will still see full-speed animation. If that's a problem for your audience, generate with `--static` — same content, no motion at all.
+
 ### Caching API responses
 
 Dynamic blocks cache their responses in `.svg-terminal-cache.json` next to your config file (24h TTL by default). Commit that file alongside the YAML and CI builds become deterministic — no upstream hits, no diff churn from quote-of-the-minute drift.
