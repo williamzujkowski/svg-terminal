@@ -20,7 +20,7 @@
  */
 
 import { createHash, randomBytes } from 'node:crypto';
-import { readFileSync, renameSync, writeFileSync, unlinkSync } from 'node:fs';
+import { readFileSync, realpathSync, renameSync, writeFileSync, unlinkSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve, sep } from 'node:path';
 
 /** Current on-disk schema version. Bump when the entry shape changes. */
@@ -70,18 +70,49 @@ function canonicalize(value: unknown): string {
  * Resolve a user-supplied cachePath against the config-file directory,
  * with a path-traversal guard. Throws if the resolved path escapes the
  * config directory tree (defense against `cachePath: ../../etc/passwd`).
+ *
+ * The guard resolves symlinks on both sides via `fs.realpathSync` before
+ * comparing — so a symlinked config directory pointing outside its apparent
+ * parent can't be used to smuggle the cache file out via a relative path.
+ * Falls back to the textual path if `realpath` fails (e.g. configDir doesn't
+ * yet exist), in which case only the textual guard applies.
+ *
+ * TOCTOU caveat: this validates path identity at call time. A symlink swap
+ * between this check and the subsequent file write could still redirect the
+ * write — same limitation as any path-based guard. The realistic threat
+ * model is narrow: an attacker who can swap a symlink in the config dir
+ * already has write access there.
  */
 export function resolveCachePath(configPath: string, cachePath: string): string {
-  const configDir = dirname(resolve(configPath));
   // Explicit absolute paths: trust the user. They typed it with intent.
   if (isAbsolute(cachePath)) return resolve(cachePath);
-  // Relative paths: resolve against configDir, then require the result stays
-  // inside that directory tree. Blocks `../../etc/passwd` style traversal.
-  const resolved = resolve(configDir, cachePath);
+
+  const configDirRaw = dirname(resolve(configPath));
+  const resolvedRaw = resolve(configDirRaw, cachePath);
+
+  // Canonicalize both sides through realpath when possible. realpath resolves
+  // every symlink component so a symlinked configDir can't smuggle the cache
+  // file out via a relative path that LOOKS like it stays inside.
+  const configDir = safeRealpath(configDirRaw);
+  // The cache file may not exist yet — realpath its parent instead. The
+  // basename can't itself be a symlink before it's been written.
+  const resolvedCanonical = safeRealpath(dirname(resolvedRaw));
+  const resolvedBasename = resolvedRaw.slice(dirname(resolvedRaw).length);
+  const resolved = resolvedCanonical + resolvedBasename;
+
   if (resolved !== configDir && !resolved.startsWith(configDir + sep)) {
     throw new Error(`cachePath "${cachePath}" escapes the config directory`);
   }
   return resolved;
+}
+
+/** realpathSync that falls back to the input on any error (missing dir, EPERM, etc.). */
+function safeRealpath(p: string): string {
+  try {
+    return realpathSync(p);
+  } catch {
+    return p;
+  }
 }
 
 /** Load and parse the cache file. Returns empty defaults if missing or corrupt. */

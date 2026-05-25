@@ -35,6 +35,32 @@ describe('hashConfig', () => {
   });
 });
 
+describe('resolveCachePath symlink escape (#84)', () => {
+  it('rejects a cachePath that escapes via a symlinked configDir', async () => {
+    // outer/   ← contains the symlink + the "elsewhere" directory it points at
+    // outer/elsewhere/  ← the real target
+    // outer/linked/  ← symlink → outer/elsewhere/
+    // outer/elsewhere/sibling.json  ← what `cachePath: '../sibling.json'` would resolve to
+    //   from inside outer/linked/. Without the realpath guard, the textual
+    //   check sees `../sibling.json` resolve under `outer/linked/` and pass;
+    //   with the guard, realpath unwraps to `outer/elsewhere/`, and
+    //   `../sibling.json` resolves to `outer/sibling.json` — outside
+    //   `outer/elsewhere/`, so it must throw.
+    const outer = mkdtempSync(join(tmpdir(), 'svg-terminal-symlink-'));
+    const elsewhere = join(outer, 'elsewhere');
+    const linked = join(outer, 'linked');
+    const { mkdirSync, symlinkSync } = await import('node:fs');
+    mkdirSync(elsewhere);
+    symlinkSync(elsewhere, linked, 'dir');
+
+    const cfgInLinked = join(linked, 'terminal.yml');
+    // Path that would write into outer/, escaping the realpath'd configDir (elsewhere/).
+    expect(() => resolveCachePath(cfgInLinked, '../escaped.json')).toThrow(/escapes/);
+    // A normal sibling stays inside the realpath'd dir.
+    expect(() => resolveCachePath(cfgInLinked, 'cache.json')).not.toThrow();
+  });
+});
+
 describe('resolveCachePath', () => {
   it('resolves a relative cachePath against the config directory', () => {
     const cfg = join(dir, 'terminal.yml');
