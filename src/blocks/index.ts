@@ -17,6 +17,7 @@ import { nationalDayBlock } from './national-day.js';
 import { systemctlBlock } from './systemctl.js';
 import { weatherBlock } from './weather.js';
 import { githubStatsBlock } from './github-stats.js';
+import { githubLanguagesBlock } from './github-languages.js';
 import { quoteBlock } from './quote.js';
 import { funFactBlock } from './fun-fact.js';
 import { vimExitBlock } from './vim-exit.js';
@@ -67,6 +68,7 @@ export function registerBuiltinBlocks(): void {
     systemctlBlock,
     weatherBlock,
     githubStatsBlock,
+    githubLanguagesBlock,
     quoteBlock,
     funFactBlock,
     vimExitBlock,
@@ -117,6 +119,7 @@ export { nationalDayBlock } from './national-day.js';
 export { systemctlBlock } from './systemctl.js';
 export { weatherBlock } from './weather.js';
 export { githubStatsBlock } from './github-stats.js';
+export { githubLanguagesBlock } from './github-languages.js';
 export { quoteBlock } from './quote.js';
 export { funFactBlock } from './fun-fact.js';
 export { vimExitBlock } from './vim-exit.js';

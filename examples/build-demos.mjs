@@ -26,6 +26,7 @@ const THEMES = [
   'catppuccin',
   'tokyo-night',
   'gruvbox',
+  'high-contrast',
 ];
 
 async function writeSvg(svg, relPath) {

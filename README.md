@@ -9,10 +9,10 @@ Generate animated SVG terminals from a declarative YAML config. The output is a 
 <sub>Demo above is the actual SVG this library produces. Source: [`examples/demo.yml`](./examples/demo.yml). Regenerate with `npm run demo`.</sub>
 
 - **Declarative YAML config** — write blocks, pick a theme, run the CLI
-- **46 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories
-- **11 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95, catppuccin, tokyo-night, gruvbox (with chrome to match)
+- **47 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories
+- **12 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast (with chrome to match)
 - **Single-line frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 9 animated blocks (spinners, clock, dice, progress bar, etc.). Multi-line is a known restriction
-- **Dynamic-block cache** — the 4 cacheable blocks (weather, github-stats, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
+- **Dynamic-block cache** — the 5 cacheable blocks (weather, github-stats, github-languages, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
 - **Reduced-motion respected for fade-ins** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins. SMIL-driven typing reveal, cursor walk, scroll, and frame cycles remain animated; pair with `--static` for full stillness
 - **No runtime deps in the output** — SMIL + CSS animation, inline, GitHub-sandbox-safe
 - **CLI + library** — `npx svg-terminal generate`, or `import { generate } from 'svg-terminal'`. Strict zod validation on every block's config
@@ -74,11 +74,12 @@ blocks:
 | `catppuccin` | Catppuccin Mocha — soothing pastel dark theme |
 | `tokyo-night` | Tokyo Night (storm variant) — popular for Vim/Neovim |
 | `gruvbox` | Gruvbox Dark medium — retro warm contrast |
+| `high-contrast` | WCAG AAA pure-black-on-white palette — accessibility / slides / projector |
 
 Special value: `theme: random` rotates through all themes deterministically by day of year — gives you a different look every day without committing to one.
 
 <details>
-<summary>Theme gallery — click to expand all 11</summary>
+<summary>Theme gallery — click to expand all 12</summary>
 
 Each is the same 2-block config (motd + neofetch) rendered against the named theme. Source in [`examples/gallery/_template.yml`](./examples/gallery/_template.yml).
 
@@ -89,7 +90,7 @@ Each is the same 2-block config (motd + neofetch) rendered against the named the
 | **green-phosphor**<br><img src="./examples/gallery/green-phosphor.svg" width="380" alt="green-phosphor theme preview"/> | **cyberpunk**<br><img src="./examples/gallery/cyberpunk.svg" width="380" alt="cyberpunk theme preview"/> |
 | **solarized-dark**<br><img src="./examples/gallery/solarized-dark.svg" width="380" alt="solarized-dark theme preview"/> | **win95**<br><img src="./examples/gallery/win95.svg" width="380" alt="win95 theme preview"/> |
 | **catppuccin**<br><img src="./examples/gallery/catppuccin.svg" width="380" alt="catppuccin theme preview"/> | **tokyo-night**<br><img src="./examples/gallery/tokyo-night.svg" width="380" alt="tokyo-night theme preview"/> |
-| **gruvbox**<br><img src="./examples/gallery/gruvbox.svg" width="380" alt="gruvbox theme preview"/> | |
+| **gruvbox**<br><img src="./examples/gallery/gruvbox.svg" width="380" alt="gruvbox theme preview"/> | **high-contrast**<br><img src="./examples/gallery/high-contrast.svg" width="380" alt="high-contrast theme preview"/> |
 
 </details>
 
@@ -111,6 +112,7 @@ Each is the same 2-block config (motd + neofetch) rendered against the named the
 | `systemctl` | Fake systemd service status |
 | `weather` | Live weather from wttr.in (also embeds in MOTD) |
 | `github-stats` | Live GitHub user stats (repos, followers) |
+| `github-languages` | Top languages across a user's public repos, with percentage bars |
 | `quote` | Random quote from dummyjson.com |
 | `fun-fact` | Random fun fact from uselessfacts.jsph.pl |
 | `vim-exit` | The eternal "how do I quit vim?" meme |
@@ -168,6 +170,13 @@ Blocks marked with "Live" fetch data at build time from free, SFW APIs. They gra
 - block: github-stats
   config:
     username: your-github-username
+
+# Top languages across a user's public repos
+- block: github-languages
+  config:
+    username: your-github-username
+    top: 5          # top N languages (1-10, default 5)
+    barWidth: 20    # bar width in chars (5-40, default 20)
 
 # Random fun fact
 - block: fun-fact

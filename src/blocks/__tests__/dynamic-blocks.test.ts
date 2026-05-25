@@ -3,6 +3,7 @@ import type { BlockContext, TerminalConfig } from '../../types.js';
 import { DEFAULT_CONFIG } from '../../core/defaults.js';
 import { weatherBlock } from '../weather.js';
 import { githubStatsBlock } from '../github-stats.js';
+import { githubLanguagesBlock } from '../github-languages.js';
 import { quoteBlock } from '../quote.js';
 import { funFactBlock } from '../fun-fact.js';
 import { motdBlock } from '../motd.js';
@@ -95,6 +96,53 @@ describe('github-stats block', () => {
 
     const result = await githubStatsBlock.render(makeContext(), { username: 'testuser' });
     expect(result.lines.join('\n')).toContain('unavailable');
+  });
+});
+
+describe('github-languages block', () => {
+  it('aggregates languages from fetched repos and emits percentage bars', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify([
+        { language: 'TypeScript' },
+        { language: 'TypeScript' },
+        { language: 'TypeScript' },
+        { language: 'Python' },
+        { language: 'Python' },
+        { language: 'Rust' },
+        { language: null },
+      ]), { status: 200 }),
+    );
+
+    const result = await githubLanguagesBlock.render(makeContext(), { username: 'testuser' });
+    const text = result.lines.join('\n');
+    // 3 TS / 6 total = 50%, 2 Py / 6 = 33%, 1 Rust / 6 = 17%
+    expect(text).toContain('TypeScript');
+    expect(text).toContain('Python');
+    expect(text).toContain('Rust');
+    expect(text).toContain('50%');
+    // null language should have been skipped — only 3 distinct languages in output
+    expect(result.lines.length).toBe(3);
+  });
+
+  it('falls back to static defaults on API failure', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('rate limit'));
+
+    const result = await githubLanguagesBlock.render(makeContext(), { username: 'testuser' });
+    const text = result.lines.join('\n');
+    expect(text).toContain('TypeScript');
+    expect(text).toContain('65%');
+  });
+
+  it('falls back to user-provided fallback on API failure', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('rate limit'));
+
+    const result = await githubLanguagesBlock.render(makeContext(), {
+      username: 'testuser',
+      fallback: [{ name: 'Haskell', percent: 100 }],
+    });
+    expect(result.lines.join('\n')).toContain('Haskell');
   });
 });
 

@@ -413,6 +413,62 @@ describe('v0.7 animated blocks', () => {
   });
 });
 
+describe('github-languages block', () => {
+  it('renders static fallback when no username + no fallback', async () => {
+    const block = getBlock('github-languages')!;
+    const result = await block.render(context, {});
+    expect(result.lines.length).toBeGreaterThan(0);
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('TypeScript');
+    expect(joined).toContain('65%');
+    // Cycles through colors
+    expect(joined).toContain('[[fg:cyan]]');
+    expect(joined).toContain('[[fg:green]]');
+  });
+
+  it('respects custom barWidth', async () => {
+    const block = getBlock('github-languages')!;
+    const narrow = await block.render(context, { barWidth: 5 });
+    const wide = await block.render(context, { barWidth: 30 });
+    // Bar at 100% has barWidth filled chars; first row of static fallback is 65% — varies but the wide should be strictly longer than narrow.
+    const narrowFilled = (narrow.lines[0]!.match(/█/g) ?? []).length;
+    const wideFilled = (wide.lines[0]!.match(/█/g) ?? []).length;
+    expect(wideFilled).toBeGreaterThan(narrowFilled);
+  });
+
+  it('respects custom top count', async () => {
+    const block = getBlock('github-languages')!;
+    const result = await block.render(context, { top: 2 });
+    // Static fallback has 4 entries; top=2 should cap at 2 rows.
+    expect(result.lines.length).toBe(2);
+  });
+
+  it('uses user-provided fallback when no username', async () => {
+    const block = getBlock('github-languages')!;
+    const result = await block.render(context, {
+      fallback: [
+        { name: 'Python', percent: 80 },
+        { name: 'Shell', percent: 20 },
+      ],
+    });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('Python');
+    expect(joined).toContain('Shell');
+    expect(joined).toContain('80%');
+    expect(result.lines.length).toBe(2);
+  });
+
+  it('rejects unknown keys via configSchema', () => {
+    const block = getBlock('github-languages')!;
+    expect(() => block.configSchema!.parse({ usrname: 'oops' })).toThrow();
+  });
+
+  it('rejects top > 10 via configSchema', () => {
+    const block = getBlock('github-languages')!;
+    expect(() => block.configSchema!.parse({ top: 11 })).toThrow();
+  });
+});
+
 describe('animated blocks', () => {
   it('loading-spinner returns an animation payload with N frames', async () => {
     const block = getBlock('loading-spinner')!;

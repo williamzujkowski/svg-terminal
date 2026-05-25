@@ -10,6 +10,7 @@ import { win95 } from './win95.js';
 import { catppuccin } from './catppuccin.js';
 import { tokyoNight } from './tokyo-night.js';
 import { gruvbox } from './gruvbox.js';
+import { highContrast } from './high-contrast.js';
 
 /** Built-in theme registry. */
 export const themes: Record<string, Theme> = {
@@ -24,6 +25,7 @@ export const themes: Record<string, Theme> = {
   catppuccin,
   'tokyo-night': tokyoNight,
   gruvbox,
+  'high-contrast': highContrast,
 };
 
 /** User-registered themes; shadow built-ins when names collide. */
@@ -83,4 +85,4 @@ export function resolveTheme(nameOrTheme: string | Theme): Theme {
   return theme;
 }
 
-export { dracula, nord, monokai, amber, greenPhosphor, cyberpunk, solarizedDark, win95, catppuccin, tokyoNight, gruvbox };
+export { dracula, nord, monokai, amber, greenPhosphor, cyberpunk, solarizedDark, win95, catppuccin, tokyoNight, gruvbox, highContrast };

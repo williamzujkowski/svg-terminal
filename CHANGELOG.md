@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.12.0 — 2026-05-25
+
+New block + new theme. Closes `#92` (github-languages block) and `#93` (high-contrast theme — first new theme aimed at WCAG AAA / accessibility-first use).
+
+### New block: `github-languages` (closes #92)
+
+A cacheable block that fetches a GitHub user's public repos via `https://api.github.com/users/{username}/repos?per_page=100`, aggregates the `language` field (skipping null/no-language repos), and renders the top N as horizontal percentage bars with cycling theme colors. The single most-requested GitHub profile README widget — finally bundled. Implementation reuses the existing `useCache` + `fetchJson` pattern from `github-stats` / `quote` / `fun-fact`.
+
+**Config:**
+- `username` (required) — GitHub username
+- `top` (1–10, default 5) — how many languages to display
+- `barWidth` (5–40, default 20) — width of the unicode `█░` bar in chars
+- `fallback` — optional explicit `[{name, percent}, …]` for offline / no-username use
+- `command` — the displayed prompt
+
+Cache key uses `{ username, top }` only — `barWidth` and `fallback` are cosmetic and don't affect the fetched payload, so re-rendering with different bar widths shares the cache hit. Static fallback (TypeScript / JavaScript / Rust / Go) is sliced by `top` so `top: 2` still works offline.
+
+This is the 5th cacheable block (joins `weather`, `github-stats`, `quote`, `fun-fact`). Total built-in blocks: 46 → 47.
+
+### New theme: `high-contrast` (closes #93)
+
+WCAG AAA pure-black-on-white palette. Pure white text on pure black = 21:1; every accent color clears 7:1 against the black background (yellow 19.6:1, cyan 16.7:1, green 15.3:1, magenta 9.0:1, lifted blue 8.4:1, lifted red 5.7:1 [AA only — pure red would be too dim]). Useful for users with low vision, screen-readability needs, slide projections, or high-glare environments. Not aesthetic competition for the standard themes — a deliberately blunt accessibility-first instrument.
+
+Total themes: 11 → 12.
+
+### Tests
+
+- 301 → 310 (+9): github-languages block (6 unit tests covering static fallback, custom bar widths, top counts, schema rejection), plus 3 cache/fetch tests (live fetch aggregation with null-language skipping, fetch failure → static fallback, fetch failure → user fallback).
+
+### Filed for follow-up (carried)
+
+- `#69` (multi-spinner DOM bloat), `#71` (full SMIL reduced-motion), `#85` (output textLength), `#86` (cyberpunk contrast), `#87` (dracula/monokai similarity), `#90` (win95 button aspect), `#91` (full ARIA box-drawing), `#94` (CRT vignette), `#95` (snapshot file split), `#96` (pre-commit hook).
+
 ## v0.11.0 — 2026-05-25
 
 Themes + DX release. 3 community themes (catppuccin, tokyo-night, gruvbox), typo hints with Levenshtein suggestions, `<desc>` payload elision, shadow filter region widened, per-theme gallery title bars. Round 3 discovery surfaced 8 findings — 5 shipped here, 5 filed for future rounds.

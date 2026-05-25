@@ -35,10 +35,10 @@ The library converts a declarative YAML config into a single self-contained SVG 
 
 ### Blocks (`src/blocks/`)
 
-46 built-in blocks, all implementing `Block` from `src/types.ts` with a strict zod `configSchema`. Registered into a `Map` by `src/blocks/registry.ts`; `registerBuiltinBlocks()` runs on import of `src/index.ts`. Third parties call `registerBlock({ name, configSchema, render })` before `generate`.
+47 built-in blocks, all implementing `Block` from `src/types.ts` with a strict zod `configSchema`. Registered into a `Map` by `src/blocks/registry.ts`; `registerBuiltinBlocks()` runs on import of `src/index.ts`. Third parties call `registerBlock({ name, configSchema, render })` before `generate`.
 
-- **Dynamic blocks** (`weather`, `github-stats`, `quote`, `fun-fact`) are marked `cacheable: true` and call `context.useCache(key, getter)` to participate in the on-disk cache (`.svg-terminal-cache.json`). They fall back to static defaults on fetch failure.
-- **Animated blocks** (9 of the 46: `loading-spinner`, `heartbeat`, `spinning-gear`, `blinking-eyes`, `countdown`, `ascii-clock`, `progress-bar`, `bouncing-dot`, `dice-roll`) populate `BlockResult.animation`. Single-line frames only — multi-line is a known restriction (issue #69).
+- **Dynamic blocks** (`weather`, `github-stats`, `github-languages`, `quote`, `fun-fact`) are marked `cacheable: true` and call `context.useCache(key, getter)` to participate in the on-disk cache (`.svg-terminal-cache.json`). They fall back to static defaults on fetch failure.
+- **Animated blocks** (9 of the 47: `loading-spinner`, `heartbeat`, `spinning-gear`, `blinking-eyes`, `countdown`, `ascii-clock`, `progress-bar`, `bouncing-dot`, `dice-roll`) populate `BlockResult.animation`. Single-line frames only — multi-line is a known restriction (issue #69).
 - The `Block.allowedKeys` legacy field exists for downstream third-party compat; every built-in uses `configSchema` instead.
 
 ### SVG rendering (`src/core/`)
