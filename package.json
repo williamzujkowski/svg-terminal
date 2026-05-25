@@ -21,6 +21,7 @@
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "generate": "tsx src/cli.ts generate",
+    "demo": "npm run build && node dist/cli.js generate --config examples/demo.yml --output examples/demo.svg --no-cache && node dist/cli.js generate --config examples/demo.yml --output examples/demo-static.svg --no-cache --static",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

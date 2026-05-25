@@ -1,0 +1,69 @@
+# README hero demo. Exercises every visual config knob the library exposes
+# (shadow + scanlines + glow + auto-height + custom chrome) plus a curated
+# set of blocks that show the v0.6/v0.7/v0.8 capabilities:
+#   - motd            — welcome banner + dynamic block fallback path
+#   - neofetch        — color palette demo via [[fg:color]] markup
+#   - ascii-clock     — v0.8 animated block (pulsing colon, single-line frames)
+#   - heartbeat       — v0.7 animation primitive (multi-frame opacity cycle)
+#   - palette-swatch  — proves all 16 theme palette colors render
+#   - goodbye         — ASCII box rendering + farewell flourish
+#
+# Regenerate with `npm run demo`. CI does not currently regenerate this file —
+# we commit the rendered SVG so the README link doesn't depend on a CI step.
+
+theme: dracula
+
+window:
+  width: 960
+  title: "svg-terminal — demo"
+  autoHeight: true
+  maxHeight: 1200
+
+terminal:
+  prompt: "you@svg-terminal:~$ "
+  fontSize: 14
+
+effects:
+  textGlow: true   # opt-in CRT phosphor halo (off by default since v0.6)
+  shadow: true
+  scanlines: true
+
+blocks:
+  - block: motd
+    config:
+      title: "SVG-TERMINAL"
+      subtitle: "Animated terminals in your README, declarative YAML in."
+
+  - block: neofetch
+    config:
+      username: dev
+      hostname: svg-terminal
+      role: Library Author
+      languages: TypeScript, SVG, SMIL
+      editor: vim (still trying to exit)
+
+  - block: ascii-clock
+    config:
+      label: "uptime"
+      format: 24h
+
+  - block: heartbeat
+    config:
+      label: "built with care"
+
+  - block: palette-swatch
+    config:
+      label: "theme:"
+
+  - block: goodbye
+    config:
+      lines:
+        - ""
+        - "Thanks for taking a look."
+        - ""
+        - "  • 46 blocks  • 8 themes  • SMIL animation"
+        - "  • Per-block cache  • Strict zod validation"
+        - "  • SVG output works in GitHub's sandbox"
+        - ""
+        - "Read the docs, then `npx svg-terminal init`."
+        - ""

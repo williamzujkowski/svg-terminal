@@ -2,11 +2,17 @@
 
 Generate beautiful animated SVG terminals for GitHub READMEs and beyond.
 
+![svg-terminal demo](./examples/demo.svg)
+
+<sub>Demo above is the SVG that this library produces. Source: [`examples/demo.yml`](./examples/demo.yml). Regenerate with `npm run demo`.</sub>
+
 - **Declarative config** — YAML/JSON, no code needed for basic use
-- **Built-in themes** — Dracula, Nord, Monokai (more coming)
-- **Plugin blocks** — 16 built-in blocks including live API data (weather, GitHub stats, quotes)
-- **Zero-dependency SVG** — Self-contained output, works in GitHub's SVG sandbox
-- **CLI + Library** — Use from command line or import as a module
+- **46 built-in blocks** — across persona, retro, animation, practical, and meme categories
+- **8 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95
+- **Animation primitive** — multi-frame `BlockResult.animation` for spinners, clocks, mascots
+- **Cache layer** — dynamic blocks cache to disk for reproducible CI; `--frozen-cache` for fully offline builds
+- **Zero-runtime-deps SVG output** — works in GitHub's sandbox, no script, no external fonts
+- **CLI + Library** — use from command line or import as a module with strict zod-validated configs
 
 ## Quick Start
 
