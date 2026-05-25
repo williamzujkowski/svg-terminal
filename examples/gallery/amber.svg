@@ -43,6 +43,12 @@ Editor:    neovim
       <rect width="1" height="1" fill="transparent"/>
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
+
+    <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="black" stop-opacity="0"/>
+      <stop offset="60%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.25"/>
+    </radialGradient>
     
     <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
@@ -216,6 +222,7 @@ Editor:    neovim
     </g>
       </g>
     </g>
+    <rect x="0" y="40" width="720" height="517" fill="url(#vignette)" pointer-events="none"/>
     <rect x="0" y="40" width="720" height="517" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>

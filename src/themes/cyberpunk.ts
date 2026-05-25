@@ -8,7 +8,11 @@ export const cyberpunk: Theme = {
     comment: '#6060a0',
     background: '#0a0014',
     titleBarBackground: '#150028',
-    titleBarText: '#ff0080',
+    // Switched from canonical hot-pink #ff0080 to body text color. Saturated
+    // hot-pink on deep violet passes WCAG AA (~5.24:1) but visually buzzes
+    // (perceptual vibration on the saturated boundary). Body color reads as
+    // part of the chrome instead of a glow accent.
+    titleBarText: '#e0e0ff',
     prompt: '#ff0080',
     cursor: '#00ffff',
     red: '#ff0055',

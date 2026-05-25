@@ -123,12 +123,19 @@ export interface AccessibilityConfig {
 
 /** SVG visual effects toggles. */
 export interface EffectsConfig {
-  /** Enable phosphor text glow (default: true) */
+  /** Enable phosphor text glow (default: false) */
   textGlow: boolean;
   /** Enable window drop shadow (default: true) */
   shadow: boolean;
   /** Enable CRT scanline effect (default: true) */
   scanlines: boolean;
+  /**
+   * Subtle radial vignette over the terminal background (default: false).
+   * Auto-enabled for the three CRT-aesthetic themes (amber, green-phosphor,
+   * cyberpunk) via mergeConfig when the user hasn't set it. Mimics a real
+   * CRT's center-hot phosphor falloff.
+   */
+  vignette: boolean;
 }
 
 /** Animation timing configuration. */

@@ -77,7 +77,7 @@ Editor:    neovim
     </g>
     <text x="360" y="24.55"
           font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"
-          fill="#f8f8f2" text-anchor="middle">
+          fill="#75715e" text-anchor="middle">
       user@monokai:~
     </text>
     
@@ -216,6 +216,7 @@ Editor:    neovim
     </g>
       </g>
     </g>
+    
     <rect x="0" y="40" width="720" height="517" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>

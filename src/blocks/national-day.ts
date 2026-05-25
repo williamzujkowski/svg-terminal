@@ -48,8 +48,13 @@ export const nationalDayBlock: Block = {
       return { command: 'curl -s whatday.today/api | jq .today', lines: ['No days configured'] };
     }
 
-    const name = day.name.length > 32 ? day.name.substring(0, 29) + '...' : day.name;
-    const desc = day.desc.length > 38 ? day.desc.substring(0, 35) + '...' : day.desc;
+    // Truncate to fit the box's interior width (box overhead: "│ " + " │" + the
+    // emoji+spacing prefix on the name line, "│   \"...\" │" on the desc line).
+    // Previously hardcoded at 32/38 chars regardless of the box width config.
+    const nameMax = Math.max(10, width - 14); // "│ {emoji} Today is " + " │"
+    const descMax = Math.max(10, width - 8);  // "│   \"...\" │"
+    const name = day.name.length > nameMax ? day.name.substring(0, nameMax - 3) + '...' : day.name;
+    const desc = day.desc.length > descMax ? day.desc.substring(0, descMax - 3) + '...' : day.desc;
 
     const lines = ['', `${day.emoji} Today is ${name}`, `  "${desc}"`, ''];
     const box = createRoundedBox(lines, width);

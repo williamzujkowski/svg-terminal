@@ -216,6 +216,7 @@ Editor:    neovim
     </g>
       </g>
     </g>
+    
     <rect x="0" y="40" width="720" height="517" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>

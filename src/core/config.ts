@@ -107,7 +107,7 @@ const KNOWN_KEYS: Record<string, readonly string[]> = {
   '<root>': ['theme', 'window', 'terminal', 'effects', 'animation', 'chrome', 'accessibility', 'blocks', 'variables', 'maxDuration', 'scrollDuration', 'accessibilityLabel', 'fetchTimeout', 'cacheTTL', 'cachePath'],
   window: ['width', 'height', 'borderRadius', 'titleBarHeight', 'title', 'style', 'autoHeight', 'minHeight', 'maxHeight'],
   terminal: ['fontFamily', 'fontSize', 'lineHeight', 'padding', 'paddingTop', 'prompt'],
-  effects: ['textGlow', 'shadow', 'scanlines'],
+  effects: ['textGlow', 'shadow', 'scanlines', 'vignette'],
   animation: ['cursorBlinkCycle', 'charAppearDuration', 'outputLineStagger', 'commandOutputPause', 'scrollDelay', 'outputEndPause', 'defaultTypingDuration', 'defaultSequencePause', 'loop'],
   chrome: ['titleFontSize', 'buttonRadius', 'buttonSpacing', 'dimOpacity', 'buttonY'],
   accessibility: ['describe'],
@@ -188,8 +188,16 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
   const autoStyle = isWin95 && !userConfig.window?.style ? 'win95' : undefined;
   // Real Win95 title bars are ~18-22px, not the 40px macOS-chrome default.
   const autoTitleBarHeight = isWin95 && userConfig.window?.titleBarHeight === undefined ? 22 : undefined;
+
+  // CRT-aesthetic themes default to vignette ON (mimics a real CRT's
+  // center-hot phosphor falloff). Users opt out via `effects.vignette: false`.
+  const isCrt = theme.name === 'amber' || theme.name === 'green-phosphor' || theme.name === 'cyberpunk';
+  const userVignetteSet = userConfig.effects?.vignette !== undefined;
+
   const autoEffects = isWin95 && !userConfig.effects
     ? { textGlow: false, scanlines: false, shadow: true }
+    : isCrt && !userVignetteSet
+    ? { vignette: true }
     : undefined;
 
   return {

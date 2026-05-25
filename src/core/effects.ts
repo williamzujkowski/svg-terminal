@@ -25,6 +25,20 @@ export function generateDefs(effects: EffectsConfig, windowStyle?: WindowStyle):
     </linearGradient>`);
   }
 
+  if (effects.vignette) {
+    // Center-hot CRT phosphor falloff. Transparent at center → ~25% black at
+    // corners. cx/cy 50% and r 75% means the darkening starts ~halfway out
+    // and peaks at the corners; subtle, not heavy-handed. Painted as an
+    // overlay rect over the terminal content area (see renderVignetteOverlay
+    // in svg-generator.ts).
+    parts.push(`
+    <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="black" stop-opacity="0"/>
+      <stop offset="60%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.25"/>
+    </radialGradient>`);
+  }
+
   return parts.join('\n');
 }
 

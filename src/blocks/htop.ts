@@ -27,6 +27,10 @@ const htopConfigSchema = z.object({
   cpu: z.number().min(0).max(100).optional(),
   mem: z.number().min(0).max(100).optional(),
   processes: z.array(processSchema).optional(),
+  /** Total task count. Defaults to processes.length + 10 (some not in the displayed table). */
+  tasks: z.number().int().min(0).optional(),
+  /** Load average shown next to memory bar. Defaults to "0.42 0.37 0.31". */
+  load: z.string().optional(),
   command: z.string().optional(),
 }).strict();
 
@@ -47,10 +51,17 @@ export const htopBlock: Block = {
 
     const cpuBar = makeBar(cpuPercent);
     const memBar = makeBar(memPercent);
+    // Derive running-count from the table state ('R' running, 'S' sleeping)
+    // so customized process lists stay internally consistent. Total tasks
+    // defaults to processes.length + 10 (some tasks aren't in the displayed
+    // table); users can override either.
+    const runningCount = processes.filter(p => (p.state ?? 'S') === 'R').length;
+    const totalTasks = (config['tasks'] as number) ?? processes.length + 10;
+    const loadStr = (config['load'] as string) ?? '0.42 0.37 0.31';
 
     const lines: string[] = [
-      `  [[fg:cyan]]CPU[[/fg]][${colorBar(cpuBar, 'green')}  [[fg:white]]${cpuPercent.toFixed(1)}%[[/fg]]]   [[fg:yellow]]Tasks:[[/fg]] ${processes.length + 10}, [[fg:green]]${processes.length} running[[/fg]]`,
-      `  [[fg:cyan]]Mem[[/fg]][${colorBar(memBar, 'blue')}  [[fg:white]]${memPercent.toFixed(1)}%[[/fg]]]   [[fg:yellow]]Load:[[/fg]] 0.42 0.37 0.31`,
+      `  [[fg:cyan]]CPU[[/fg]][${colorBar(cpuBar, 'green')}  [[fg:white]]${cpuPercent.toFixed(1)}%[[/fg]]]   [[fg:yellow]]Tasks:[[/fg]] ${totalTasks}, [[fg:green]]${runningCount} running[[/fg]]`,
+      `  [[fg:cyan]]Mem[[/fg]][${colorBar(memBar, 'blue')}  [[fg:white]]${memPercent.toFixed(1)}%[[/fg]]]   [[fg:yellow]]Load:[[/fg]] ${loadStr}`,
       '',
       `  [[fg:cyan]]PID[[/fg]]  [[fg:cyan]]USER[[/fg]]     [[fg:cyan]]S[[/fg]] [[fg:cyan]]CPU%[[/fg]] [[fg:cyan]]MEM%[[/fg]]  [[fg:cyan]]Command[[/fg]]`,
     ];

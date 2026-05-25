@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.14.0 — 2026-05-25
+
+Visual polish + correctness + DX. 7 backlog items closed (`#86`, `#87`, `#90`, `#94`, `#96`, `#106`, `#107`).
+
+### Effects
+
+- **`effects.vignette` (closes #94):** subtle radial darkening from center to corners (0 → 25% black at the corner). New `EffectsConfig.vignette` field defaulting to `false`. Auto-enabled for the three CRT-aesthetic themes (`amber`, `green-phosphor`, `cyberpunk`) via the same `mergeConfig` pattern that auto-applies the win95 chrome. Mimics a real CRT's center-hot phosphor falloff; lifts those gallery thumbnails out of papercraft-flat without changing the standard themes.
+
+### Themes
+
+- **`monokai` titleBarText quieted (closes #87)** from body color (`#f8f8f2`) to canonical comment color (`#75715e`). At gallery-thumbnail size monokai was visually indistinguishable from dracula (same macOS chrome + warm-dark bg + similar accent palette); the dim title is the cheapest place to differentiate.
+- **`cyberpunk` titleBarText switched (closes #86)** from hot-pink `#ff0080` to body color `#e0e0ff`. The saturated pink-on-violet boundary passed WCAG AA (5.24:1) but visually buzzed (perceptual vibration). Body color reads as part of the chrome instead of a glow accent.
+
+### Blocks (correctness)
+
+- **`htop` task count + load are now configurable (closes #106).** Previously hardcoded as `processes.length + 10` total tasks and `processes.length` running — both lied when users customized the process list. New `tasks` and `load` config fields; running count now derives from the table state (`p.state === 'R'`) so internally consistent.
+- **`national-day` truncation honors `width` (closes #107).** Was hardcoded at 32/38 chars regardless of the box width config; a user setting `width: 100` to fit a long name still got truncated. Now derives from `width - 14` (name) and `width - 8` (desc) with a 10-char floor.
+
+### Chrome
+
+- **win95 caption buttons are now 16×14, not 16×16 (closes #90).** Authentic Windows 95 caption-button glyphs were slightly wider than tall. Refactored from a single `btnSize` to separate `btnW`/`btnH`; height is `round(width × 14/16)`.
+
+### DX
+
+- **Pre-commit git hook (closes #96)** installed by `npm install` (via the `prepare` script). When staged changes touch rendering-affecting paths (`src/core/`, `src/themes/`, `src/blocks/`, `src/cli.ts`, etc.), the hook runs `npm run demo:regen` and refuses the commit if `examples/` ends up out of date. Saves the round-trip of finding out at PR time after ~90 s of CI. Bypass with `git commit --no-verify`. Hook is idempotent + won't clobber a hand-customized hook (script lives at `scripts/install-hooks.mjs`).
+
+### Tests
+
+- 353 → 353 (no new tests this release). All snapshot fixtures refreshed for the vignette + monokai + cyberpunk + win95 button changes.
+
+### Filed for follow-up (carried)
+
+- `#69` (multi-spinner DOM bloat), `#71` (full SMIL reduced-motion), `#72`/`#95` (snapshot split), `#85` (output textLength), `#91` (full ARIA box-drawing), `#100` (CLI block schema), `#101` (CLI timings/explain), `#102` (cache hit/miss visibility), `#103` (schema memoization), `#104` (quote/fortune redundancy), `#105` (4-persona overlap).
+
 ## v0.13.0 — 2026-05-25
 
 CLI ergonomics + correctness + DX release. Round 5 discovery (3 parallel agents — CLI / blocks / perf) surfaced 18 findings; 9 shipped here, 8 filed for future rounds (`#100`–`#107`).

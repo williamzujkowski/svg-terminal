@@ -120,9 +120,19 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
     ${renderWindow(window, theme)}
     ${renderTitleBarForStyle(window, terminal, theme, chrome)}
     ${renderTerminalContent(window, terminal, theme, effects, chrome, animation, frames, lineHeight)}
+    ${renderVignetteOverlay(effects, window)}
     ${renderScanlineOverlay(effects, window)}
   </g>
 </svg>`;
+}
+
+/** Render the CRT-vignette overlay over the terminal content area. Order:
+ *  vignette UNDER scanlines so the scanline pattern still reads at the edges. */
+function renderVignetteOverlay(effects: EffectsConfig, window: WindowConfig): string {
+  if (!effects.vignette) return '';
+  const titleBarHeight = getTitleBarHeight(window);
+  const contentHeight = window.height - titleBarHeight;
+  return `<rect x="0" y="${titleBarHeight}" width="${window.width}" height="${contentHeight}" fill="url(#vignette)" pointer-events="none"/>`;
 }
 
 /** Render the CRT scanline overlay constrained to the terminal content area. */
@@ -230,10 +240,13 @@ function renderWin95TitleBar(window: WindowConfig): string {
   const black = '#000000';
   // Authentic Win95 caption is a horizontal navy → lighter-blue gradient.
   // The gradient def is emitted once per SVG via win95Caption id.
-  const btnSize = Math.max(12, h - 6);
-  const btnY = (h - btnSize) / 2;
+  // Authentic Win95 caption buttons were 16×14, NOT square. Width = h-6
+  // (16 for default 22px title bar); height ≈ width × 14/16 = 0.875×.
+  const btnW = Math.max(12, h - 6);
+  const btnH = Math.round(btnW * 14 / 16);
+  const btnY = (h - btnH) / 2;
   const btnGap = 2;
-  const btnsTotal = btnSize * 3 + btnGap * 2;
+  const btnsTotal = btnW * 3 + btnGap * 2;
   const btnsX = w - btnsTotal - 4;
   const captionTextY = (h + 11) / 2;
 
@@ -255,13 +268,13 @@ function renderWin95TitleBar(window: WindowConfig): string {
     </text>
     <!-- Win95 buttons: minimize, maximize, close -->
     <g transform="translate(${btnsX}, ${btnY})">
-      <rect x="0" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${black}" stroke-width="1"/>
-      <line x1="${btnSize * 0.2}" y1="${btnSize - 3}" x2="${btnSize * 0.75}" y2="${btnSize - 3}" stroke="${black}" stroke-width="1.5"/>
-      <rect x="${btnSize + btnGap}" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${black}" stroke-width="1"/>
-      <rect x="${btnSize + btnGap + 3}" y="3" width="${btnSize - 6}" height="${btnSize - 6}" fill="none" stroke="${black}" stroke-width="1.2"/>
-      <rect x="${(btnSize + btnGap) * 2}" y="0" width="${btnSize}" height="${btnSize}" fill="${silver}" stroke="${black}" stroke-width="1"/>
-      <line x1="${(btnSize + btnGap) * 2 + 3}" y1="3" x2="${(btnSize + btnGap) * 2 + btnSize - 3}" y2="${btnSize - 3}" stroke="${black}" stroke-width="1.2"/>
-      <line x1="${(btnSize + btnGap) * 2 + btnSize - 3}" y1="3" x2="${(btnSize + btnGap) * 2 + 3}" y2="${btnSize - 3}" stroke="${black}" stroke-width="1.2"/>
+      <rect x="0" y="0" width="${btnW}" height="${btnH}" fill="${silver}" stroke="${black}" stroke-width="1"/>
+      <line x1="${btnW * 0.2}" y1="${btnH - 3}" x2="${btnW * 0.75}" y2="${btnH - 3}" stroke="${black}" stroke-width="1.5"/>
+      <rect x="${btnW + btnGap}" y="0" width="${btnW}" height="${btnH}" fill="${silver}" stroke="${black}" stroke-width="1"/>
+      <rect x="${btnW + btnGap + 3}" y="3" width="${btnW - 6}" height="${btnH - 6}" fill="none" stroke="${black}" stroke-width="1.2"/>
+      <rect x="${(btnW + btnGap) * 2}" y="0" width="${btnW}" height="${btnH}" fill="${silver}" stroke="${black}" stroke-width="1"/>
+      <line x1="${(btnW + btnGap) * 2 + 3}" y1="3" x2="${(btnW + btnGap) * 2 + btnW - 3}" y2="${btnH - 3}" stroke="${black}" stroke-width="1.2"/>
+      <line x1="${(btnW + btnGap) * 2 + btnW - 3}" y1="3" x2="${(btnW + btnGap) * 2 + 3}" y2="${btnH - 3}" stroke="${black}" stroke-width="1.2"/>
     </g>`;
 }
 
@@ -625,6 +638,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
         ${lineElements}
       </g>
     </g>
+    ${renderVignetteOverlay(effects, window)}
     ${renderScanlineOverlay(effects, window, false)}
   </g>
 </svg>`;

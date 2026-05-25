@@ -104,6 +104,7 @@ hi</desc>
     </g>
       </g>
     </g>
+    
     <rect x="0" y="0" width="1000" height="560" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>"
@@ -228,6 +229,7 @@ hi</desc>
     </g>
       </g>
     </g>
+    
     <rect x="0" y="40" width="1000" height="520" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>"
@@ -359,6 +361,7 @@ hi</desc>
       </g>
     </g>
     
+    
   </g>
 </svg>"
 `;
@@ -426,6 +429,7 @@ world</desc>
       </text>
       </g>
     </g>
+    
     <rect x="0" y="40" width="1000" height="520" fill="url(#scanlines)" pointer-events="none" opacity="0.5"/>
   </g>
 </svg>"

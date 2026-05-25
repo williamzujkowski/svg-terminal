@@ -8,7 +8,11 @@ export const monokai: Theme = {
     comment: '#75715e',
     background: '#272822',
     titleBarBackground: '#1e1f1c',
-    titleBarText: '#f8f8f2',
+    // Quieter title text (canonical Monokai comment color) so the chrome
+    // reads differently from dracula at gallery-thumbnail size. Both themes
+    // ship with the same macOS chrome + similar warm-dark backgrounds; the
+    // title color is the cheapest place to differentiate.
+    titleBarText: '#75715e',
     prompt: '#a6e22e',
     cursor: '#f8f8f2',
     red: '#f92672',

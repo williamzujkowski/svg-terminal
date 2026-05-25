@@ -38,6 +38,7 @@ export const DEFAULT_EFFECTS: EffectsConfig = {
   textGlow: false,
   shadow: true,
   scanlines: true,
+  vignette: false,
 };
 
 export const DEFAULT_ANIMATION: AnimationConfig = {

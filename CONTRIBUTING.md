@@ -29,6 +29,8 @@ watchexec -w terminal.yml -- node dist/cli.js generate --config terminal.yml
 
 CI runs typecheck + lint + test + build + a smoke generate on every PR (`.github/workflows/ci.yml`).
 
+A pre-commit git hook is installed by `npm install` (via the `prepare` script). When you stage changes to `src/core/`, `src/themes/`, `src/blocks/`, `src/cli.ts`, `src/index.ts`, `src/types.ts`, or the demo template files, the hook runs `npm run demo:regen` and refuses the commit if `examples/` ends up out of date — saves the round-trip of finding out at PR time. Bypass with `git commit --no-verify` when you genuinely need to. The hook is idempotent and won't clobber a hand-customized `.git/hooks/pre-commit`.
+
 ## Adding a new block
 
 A block is a small TypeScript module that exports an object implementing the `Block` interface from `src/types.ts`.

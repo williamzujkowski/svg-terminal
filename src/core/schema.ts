@@ -40,6 +40,7 @@ const EffectsSchema = z.object({
   textGlow: z.boolean().optional(),
   shadow: z.boolean().optional(),
   scanlines: z.boolean().optional(),
+  vignette: z.boolean().optional(),
 }).strict().optional();
 
 const AnimationSchema = z.object({

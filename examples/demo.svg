@@ -275,6 +275,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </g>
       </g>
     </g>
+    
     <rect x="0" y="40" width="960" height="668" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>
