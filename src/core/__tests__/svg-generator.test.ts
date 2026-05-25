@@ -177,6 +177,38 @@ describe('generateStaticSvg', () => {
   });
 });
 
+describe('prompt + typed-text width pinning', () => {
+  // Regression: without textLength, prompt's actual rendered width depends on
+  // whichever monospace font the viewer's browser falls back to. If that font's
+  // advance is wider than CHAR_WIDTH_RATIO * fontSize, the prompt overlaps the
+  // typed text (which is positioned at x=promptWidth). Pinning via textLength +
+  // lengthAdjust=spacingAndGlyphs guarantees the rendered geometry matches our
+  // internal math regardless of font.
+  it('prompt <text> carries textLength = computed promptWidth', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'whoami', typingDuration: 200 }];
+    const svg = generateSvg(seq, makeConfig());
+    // Find the prompt text element (the one with opacity="0" wrapping the prompt fade-in).
+    const promptText = /<text class="tt" fill="[^"]+" opacity="0" textLength="(\d+)" lengthAdjust="spacingAndGlyphs">/.exec(svg);
+    expect(promptText).not.toBeNull();
+    expect(parseInt(promptText![1]!, 10)).toBeGreaterThan(0);
+  });
+
+  it('typed-command <text> carries textLength matching cursor walk math', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'whoami', typingDuration: 200 }];
+    const svg = generateSvg(seq, makeConfig());
+    // whoami is 6 chars × charWidth=8 (fontSize 14 × 0.6 rounded) = 48
+    expect(svg).toContain('textLength="48"');
+  });
+
+  it('empty command does not emit textLength (no typed text to pin)', () => {
+    const seq: Sequence[] = [{ type: 'command', content: '', typingDuration: 100 }];
+    const svg = generateSvg(seq, makeConfig());
+    // The prompt still has textLength; the typed-text element wouldn't.
+    const matches = svg.match(/textLength=/g) ?? [];
+    expect(matches.length).toBe(1); // prompt only
+  });
+});
+
 describe('cursor positioning edge cases', () => {
   it('single-character command — cursor stays at column 0 (values[0] === values[1])', () => {
     const seq: Sequence[] = [{ type: 'command', content: 'a', typingDuration: 100 }];

@@ -118,14 +118,21 @@ function generateCommandLine(
     ? buildRevealClip(clipId, promptWidth, charWidth, command.length, terminal.fontSize, startTime, typingDuration)
     : '';
 
+  // textLength + lengthAdjust pin the rendered width to our getTextWidth math.
+  // Without this, the prompt and typed text use whatever monospace fallback
+  // the viewer's browser picks — and if its advance ≠ CHAR_WIDTH_RATIO (0.6),
+  // the prompt's actual glyphs extend past x=promptWidth and overlap the
+  // typed text (which is positioned AT promptWidth). spacingAndGlyphs scales
+  // glyphs minutely (~5%) to make total width match exactly.
+  const cmdWidth = command.length * charWidth;
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})">
       ${revealClip}
-      <text class="tt" fill="${promptColor}" opacity="0">
+      <text class="tt" fill="${promptColor}" opacity="0" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">
         ${escapeXml(prompt)}
         <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       </text>
-      <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
+      <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` textLength="${cmdWidth}" lengthAdjust="spacingAndGlyphs" clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
       ${generateCursor(prompt, command, startTime, typingDuration, terminal, cursorColor, cursorBlinkCycle, charAppearDuration)}
     </g>`;
 }

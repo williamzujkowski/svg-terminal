@@ -87,11 +87,11 @@ Editor:    neovim
         
     <g id="line-0" transform="translate(0, 0)">
       <defs><clipPath id="cmdrev-0"><rect x="17" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104" keyTimes="0.0000;0.0769;0.1538;0.2308;0.3077;0.3846;0.4615;0.5385;0.6154;0.6923;0.7692;0.8462;0.9231;1.0000" calcMode="discrete" begin="0ms" dur="500ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0">
+      <text class="tt" fill="#00ff9f" opacity="0" textLength="17" lengthAdjust="spacingAndGlyphs">
         $ 
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="17" fill="#00ff9f" clip-path="url(#cmdrev-0)">cat /etc/motd</text>
+      <text class="tt" x="17" fill="#00ff9f" textLength="104" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">cat /etc/motd</text>
       
     <rect x="17" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
@@ -145,11 +145,11 @@ Editor:    neovim
 
     <g id="line-7" transform="translate(0, 176)">
       <defs><clipPath id="cmdrev-7"><rect x="17" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128;136;144;152;160;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288" keyTimes="0.0000;0.0278;0.0556;0.0833;0.1111;0.1389;0.1667;0.1944;0.2222;0.2500;0.2778;0.3056;0.3333;0.3611;0.3889;0.4167;0.4444;0.4722;0.5000;0.5278;0.5556;0.5833;0.6111;0.6389;0.6667;0.6944;0.7222;0.7500;0.7778;0.8056;0.8333;0.8611;0.8889;0.9167;0.9444;0.9722;1.0000" calcMode="discrete" begin="2100ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0">
+      <text class="tt" fill="#00ff9f" opacity="0" textLength="17" lengthAdjust="spacingAndGlyphs">
         $ 
         <animate attributeName="opacity" from="0" to="1" begin="2100ms" dur="10ms" fill="freeze"/>
       </text>
-      <text class="tt" x="17" fill="#00ff9f" clip-path="url(#cmdrev-7)">neofetch --ascii_distro svg-terminal</text>
+      <text class="tt" x="17" fill="#00ff9f" textLength="288" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-7)">neofetch --ascii_distro svg-terminal</text>
       
     <rect x="17" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">

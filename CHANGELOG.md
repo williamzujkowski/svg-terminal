@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.8.2 — 2026-05-25
+
+Single-issue fix release.
+
+### Fix
+
+- **Typed command no longer overlaps the prompt.** The animated path emits the prompt and the typed text as two separate `<text>` elements, with the typed one positioned at `x = getTextWidth(prompt) = prompt.length × fontSize × 0.6`. If the viewer's browser falls back to a monospace font whose advance is wider than that 0.6 ratio (some default `monospace` aliases on Firefox/Safari), the prompt's rendered glyphs extend past `x=promptWidth` and visually overlap the first characters of the typed command.
+
+  Fix: both elements now carry `textLength` + `lengthAdjust="spacingAndGlyphs"` so the rendered width is pinned to the computed math regardless of which monospace font the viewer's browser picks. Glyphs scale ~5% in the worst case — well under the perceptual floor for typing animation. The cursor walk and clip-path reveal math is unchanged; it was always self-consistent, the only inconsistent piece was the prompt's free-floating render width.
+
+### Tests
+
+- 281 → 284 (+3): assert prompt + typed-text carry `textLength`; assert empty command emits only the prompt's `textLength`.
+
 ## v0.8.1 — 2026-05-25
 
 Polish release surfaced by a three-agent full-repo review (docs accuracy / source QA / repo hygiene). One issue filed for follow-up (`#84`, symlinked-configDir cachePath escape — real but rare + has TOCTOU caveats); 15 findings fixed inline.
