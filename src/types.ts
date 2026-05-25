@@ -199,6 +199,8 @@ export interface TerminalConfig {
   cacheTTL: number;
   /** Cache file path, relative to the config file (default: `.svg-terminal-cache.json`) */
   cachePath: string;
+  /** Custom aria-label for the root SVG. Overrides the auto-generated command summary. */
+  accessibilityLabel?: string;
 }
 
 // ============================================================================

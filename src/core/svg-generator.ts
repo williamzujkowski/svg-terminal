@@ -79,8 +79,8 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
     console.warn(`[svg-terminal] Animation duration (${(totalDuration / 1000).toFixed(1)}s) exceeds maxDuration (${config.maxDuration}s)`);
   }
 
-  // Build accessibility label from block commands
-  const accessibilityLabel = buildAccessibilityLabel(sequences);
+  // Honor user-supplied label; fall back to a command-summary built from sequences.
+  const accessibilityLabel = config.accessibilityLabel ?? buildAccessibilityLabel(sequences);
   const showShadow = effects.shadow && window.style !== 'none';
   const a11yChildren = renderAccessibilityChildren(accessibilityLabel, sequences, terminal.prompt, config.accessibility);
 
@@ -529,7 +529,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   const titleBarHeight = getTitleBarHeight(window);
   const contentY = titleBarHeight + terminal.paddingTop;
   const viewportHeight = window.height - titleBarHeight;
-  const accessibilityLabel = `Static terminal showing ${lines.length} lines`;
+  const accessibilityLabel = config.accessibilityLabel ?? `Static terminal showing ${lines.length} lines`;
   const a11yChildren = renderStaticAccessibilityChildren(accessibilityLabel, lines, config.accessibility);
   const colorMap = buildColorMap(theme.colors);
   const glow = effects.textGlow ? ' filter="url(#textGlow)"' : '';

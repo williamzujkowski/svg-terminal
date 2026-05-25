@@ -147,5 +147,8 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
     fetchTimeout: userConfig.fetchTimeout ?? DEFAULT_CONFIG.fetchTimeout,
     cacheTTL: userConfig.cacheTTL ?? DEFAULT_CONFIG.cacheTTL,
     cachePath: userConfig.cachePath ?? DEFAULT_CONFIG.cachePath,
+    ...(userConfig.accessibilityLabel !== undefined
+      ? { accessibilityLabel: userConfig.accessibilityLabel }
+      : {}),
   };
 }

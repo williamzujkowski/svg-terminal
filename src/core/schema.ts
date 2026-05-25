@@ -59,6 +59,7 @@ const AccessibilitySchema = z.object({
 }).optional();
 
 const ChromeSchema = z.object({
+  titleFontFamily: z.string().min(1).optional(),
   titleFontSize: z.number().positive('titleFontSize must be positive').optional(),
   buttonRadius: z.number().min(0).optional(),
   buttonSpacing: z.number().positive().optional(),

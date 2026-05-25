@@ -31,6 +31,20 @@ describe('generateSvg', () => {
     expect(svg).toContain('echo hello');
   });
 
+  it('honors user-supplied accessibilityLabel when set', () => {
+    const config = makeConfig({ accessibilityLabel: 'Persona-first label' });
+    const svg = generateSvg(basicSequences, config);
+    expect(svg).toContain('aria-label="Persona-first label"');
+    expect(svg).not.toContain('aria-label="Animated terminal showing');
+  });
+
+  it('honors user-supplied accessibilityLabel on static SVG too', () => {
+    const config = makeConfig({ accessibilityLabel: 'Persona-first label' });
+    const svg = generateStaticSvg(['line 1', 'line 2'], config);
+    expect(svg).toContain('aria-label="Persona-first label"');
+    expect(svg).not.toContain('Static terminal showing');
+  });
+
   it('renders shadow filter when effects.shadow is true', () => {
     const svg = generateSvg(basicSequences, makeConfig());
     expect(svg).toContain('filter="url(#shadow)"');

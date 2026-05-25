@@ -109,6 +109,14 @@ describe('mergeConfig', () => {
     expect(config.chrome.buttonRadius).toBe(6); // default preserved
   });
 
+  it('accepts chrome.titleFontFamily', () => {
+    const config = mergeConfig({
+      ...minimal,
+      chrome: { titleFontFamily: 'system-ui, sans-serif' },
+    });
+    expect(config.chrome.titleFontFamily).toBe('system-ui, sans-serif');
+  });
+
   it('defaults window style to macos', () => {
     const config = mergeConfig(minimal);
     expect(config.window.style).toBe('macos');
