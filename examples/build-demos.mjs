@@ -52,7 +52,15 @@ async function buildGallery() {
   const tplPath = resolve(HERE, 'gallery', '_template.yml');
   const tplConfig = yaml.load(readFileSync(tplPath, 'utf-8'));
   for (const theme of THEMES) {
-    const cfg = { ...tplConfig, theme };
+    // Per-theme title bar so the gallery thumbnail at-a-glance shows which
+    // theme it is — was `user@svg-terminal:~` for every theme, now
+    // `user@<theme>:~` so the thumbnail reads as a labeled card without
+    // needing the filename.
+    const cfg = {
+      ...tplConfig,
+      theme,
+      window: { ...tplConfig.window, title: `user@${theme}:~` },
+    };
     // The win95 mergeConfig path auto-applies its chrome — no per-theme override needed.
     const opts = { configPath: tplPath, cacheMode: 'off', now: FIXED_NOW };
     await writeSvg(await generate(cfg, opts), `examples/gallery/${theme}.svg`);

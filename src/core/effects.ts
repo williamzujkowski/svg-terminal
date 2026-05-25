@@ -50,7 +50,7 @@ export function generateFilters(effects: EffectsConfig, _glowColor?: string): st
 
   if (effects.shadow) {
     parts.push(`
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="${SHADOW_PARAMS.blur}"/>
       <feOffset dx="0" dy="${SHADOW_PARAMS.dy}" result="offsetblur"/>
       <feFlood flood-color="#000000" flood-opacity="${SHADOW_PARAMS.opacity}"/>

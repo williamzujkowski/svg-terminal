@@ -37,7 +37,7 @@ hi</desc>
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
       <feOffset dx="0" dy="6" result="offsetblur"/>
       <feFlood flood-color="#000000" flood-opacity="0.55"/>
@@ -146,7 +146,7 @@ hi</desc>
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
       <feOffset dx="0" dy="6" result="offsetblur"/>
       <feFlood flood-color="#000000" flood-opacity="0.55"/>
@@ -276,7 +276,7 @@ hi</desc>
       </feMerge>
     </filter>
 
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
       <feOffset dx="0" dy="6" result="offsetblur"/>
       <feFlood flood-color="#000000" flood-opacity="0.55"/>
@@ -377,7 +377,7 @@ world</desc>
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
       <feOffset dx="0" dy="6" result="offsetblur"/>
       <feFlood flood-color="#000000" flood-opacity="0.55"/>
