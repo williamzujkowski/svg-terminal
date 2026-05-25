@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.14.1 — 2026-05-25
+
+Single-feature patch release. Closes `#100` — discoverability win for the 47-block library without grepping the source.
+
+### CLI
+
+- **`svg-terminal blocks <name>`** prints a single block's config schema. Walks the zod schema via `formatZodType` (handles string/number/boolean/enum/array/optional/nullable; unwraps `.optional()` automatically; renders enums as `"a" | "b" | "c"`). Cacheable blocks are tagged. Unknown block names print an actionable error and exit 1.
+- **`svg-terminal blocks`** (unfiltered) now tags cacheable blocks with `*` so users can tell at a glance which need network/cache management.
+- Help text + README updated to mention the new `[<name>]` argument.
+
+### Tests
+
+- 353 → 359 (+6): `formatZodType` covers primitive/enum/array/optional/nullable cases + null/undefined fallback; `isZodOptional` distinguishes wrapped vs bare.
+
 ## v0.14.0 — 2026-05-25
 
 Visual polish + correctness + DX. 7 backlog items closed (`#86`, `#87`, `#90`, `#94`, `#96`, `#106`, `#107`).

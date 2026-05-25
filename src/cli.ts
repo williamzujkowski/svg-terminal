@@ -13,10 +13,10 @@
 
 import { existsSync, writeFileSync, watch as fsWatch } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
-import { generate, generateStatic, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
+import { generate, generateStatic, getBlock, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
-import { formatModeTag, humanAge, minifySvg, resolveCacheMode } from './core/cli-helpers.js';
+import { formatModeTag, formatZodType, humanAge, isZodOptional, minifySvg, resolveCacheMode } from './core/cli-helpers.js';
 
 // Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
 declare const __PKG_VERSION__: string;
@@ -264,10 +264,48 @@ blocks:
     }
 
     case 'blocks': {
-      console.log('Available blocks:');
-      for (const name of listBlocks()) {
-        console.log(`  - ${name}`);
+      const target = args[1];
+      if (target) {
+        // Single-block inspection: print description, cacheable tag, and the
+        // config schema's fields. Each field as `name: type` with (required)
+        // marker if the field isn't .optional()-wrapped. Best-effort — exotic
+        // zod constructs print their bare type name (see formatZodType).
+        const block = getBlock(target);
+        if (!block) {
+          console.error(`Unknown block "${target}". Run: svg-terminal blocks`);
+          process.exit(1);
+        }
+        console.log(`${block.name} — ${block.description}`);
+        if (block.cacheable) console.log('  cacheable: yes (participates in .svg-terminal-cache.json)');
+        const schema = block.configSchema as { shape?: Record<string, unknown> } | undefined;
+        const shape = schema?.shape;
+        if (!shape || Object.keys(shape).length === 0) {
+          console.log('  Config: (no fields)');
+          break;
+        }
+        // Pad field names to a uniform column width for legibility.
+        const names = Object.keys(shape);
+        const w = Math.max(...names.map(n => n.length));
+        console.log('  Config:');
+        for (const name of names) {
+          const t = shape[name];
+          const tag = isZodOptional(t) ? '' : '  (required)';
+          console.log(`    ${name.padEnd(w)}  ${formatZodType(t)}${tag}`);
+        }
+        console.log('');
+        console.log(`  Plus the universal entry-level keys: command, color, typing, pause`);
+        break;
       }
+      // Unfiltered list — keep concise but tag cacheable blocks so users can
+      // tell at a glance which need network / cache management.
+      console.log('Available blocks (cacheable blocks marked *):');
+      for (const name of listBlocks()) {
+        const block = getBlock(name);
+        const mark = block?.cacheable ? ' *' : '';
+        console.log(`  - ${name}${mark}`);
+      }
+      console.log('');
+      console.log('Run `svg-terminal blocks <name>` to see a block\'s config schema.');
       break;
     }
 
@@ -310,7 +348,7 @@ Commands:
   generate           Generate SVG from config file
   init               Create a starter terminal.yml (refuses to overwrite without --force)
   themes             List available themes
-  blocks             List available block types
+  blocks [<name>]    List available block types, or print one block's config schema
   cache check        Verify dynamic-block cache freshness (exit 1 on stale/missing)
 
 Generate options:

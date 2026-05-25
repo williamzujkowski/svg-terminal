@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest';
+import { z } from 'zod';
 import {
   formatModeTag,
+  formatZodType,
   humanAge,
+  isZodOptional,
   minifySvg,
   resolveCacheMode,
   parseFlags,
@@ -233,5 +236,41 @@ describe('parseFlags', () => {
     const r = parseFlags(['--static', 'generate'], { boolean: ['static'] });
     expect(r.booleans.has('static')).toBe(true);
     expect(r.positional).toEqual(['generate']);
+  });
+});
+
+describe('formatZodType + isZodOptional (#100)', () => {
+  it('formats primitive types', () => {
+    expect(formatZodType(z.string())).toBe('string');
+    expect(formatZodType(z.number())).toBe('number');
+    expect(formatZodType(z.boolean())).toBe('boolean');
+  });
+
+  it('unwraps .optional() to format the inner type', () => {
+    expect(formatZodType(z.string().optional())).toBe('string');
+    expect(formatZodType(z.number().optional())).toBe('number');
+  });
+
+  it('formats enums as quoted union', () => {
+    expect(formatZodType(z.enum(['imperial', 'metric', 'both']))).toBe('"imperial" | "metric" | "both"');
+    // .optional() wrapper is transparent
+    expect(formatZodType(z.enum(['a', 'b']).optional())).toBe('"a" | "b"');
+  });
+
+  it('formats arrays with element type', () => {
+    expect(formatZodType(z.array(z.string()))).toBe('array of string');
+    expect(formatZodType(z.array(z.object({})))).toBe('array of object');
+  });
+
+  it('isZodOptional detects .optional() wrapper', () => {
+    expect(isZodOptional(z.string().optional())).toBe(true);
+    expect(isZodOptional(z.string())).toBe(false);
+    expect(isZodOptional(z.number().nullable())).toBe(true); // .nullable() too
+  });
+
+  it('falls back gracefully on unknown / null inputs', () => {
+    expect(formatZodType(null)).toBe('unknown');
+    expect(formatZodType(undefined)).toBe('unknown');
+    expect(isZodOptional(null)).toBe(false);
   });
 });

@@ -96,6 +96,8 @@ Each is the same 2-block config (motd + neofetch) rendered against the named the
 
 ## Blocks
 
+Run `svg-terminal blocks` to list all 47 (cacheable ones marked `*`), or `svg-terminal blocks <name>` to print one block's config schema directly without grepping the source.
+
 | Block | Description |
 |-------|-------------|
 | `neofetch` | System-info display with configurable fields |

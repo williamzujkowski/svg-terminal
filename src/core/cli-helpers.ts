@@ -138,6 +138,52 @@ export interface ParsedFlags {
   unknown: string[];
 }
 
+/**
+ * Format a zod type as a single short human-readable string, e.g. "string",
+ * "number", `"'metric' | 'imperial' | 'both'"`, `"array of string"`.
+ *
+ * Best-effort: handles the leaf types that actually appear in built-in block
+ * configSchemas (string, number, boolean, enum, array, record, optional
+ * wrapper). Anything fancier prints the raw constructor name as a fallback.
+ * Number constraints (`.min`/`.max`/`.int`) aren't surfaced — they're behind
+ * zod's `_def.checks` which is internal and not version-stable.
+ */
+export function formatZodType(t: unknown): string {
+  if (!t || typeof t !== 'object') return 'unknown';
+  const ctor = (t as { constructor?: { name?: string } }).constructor?.name ?? 'unknown';
+  const def = (t as { _def?: { innerType?: unknown; values?: readonly string[]; valueType?: unknown; type?: unknown } })._def ?? {};
+  // ZodOptional / ZodNullable wrap the actual type — unwrap before formatting.
+  if (ctor === 'ZodOptional' || ctor === 'ZodNullable') {
+    return def.innerType ? formatZodType(def.innerType) : 'unknown';
+  }
+  switch (ctor) {
+    case 'ZodString':  return 'string';
+    case 'ZodNumber':  return 'number';
+    case 'ZodBoolean': return 'boolean';
+    case 'ZodEnum': {
+      const opts = (t as { options?: readonly string[] }).options
+        ?? def.values
+        ?? [];
+      return opts.map(v => `"${v}"`).join(' | ') || 'enum';
+    }
+    case 'ZodArray': {
+      const elt = (t as { element?: unknown }).element ?? def.type;
+      return `array of ${formatZodType(elt)}`;
+    }
+    case 'ZodRecord':  return `record<string, ${def.valueType ? formatZodType(def.valueType) : 'unknown'}>`;
+    case 'ZodObject':  return 'object';
+    case 'ZodLiteral': return JSON.stringify((t as { value?: unknown }).value);
+    case 'ZodUnion':   return 'union';
+    default: return ctor.replace(/^Zod/, '').toLowerCase();
+  }
+}
+
+/** Return true if a zod field is wrapped in `.optional()` (or `.nullable()`). */
+export function isZodOptional(t: unknown): boolean {
+  const ctor = (t as { constructor?: { name?: string } } | null)?.constructor?.name;
+  return ctor === 'ZodOptional' || ctor === 'ZodNullable';
+}
+
 export function parseFlags(args: readonly string[], spec: FlagSpec): ParsedFlags {
   const booleanSet = new Set(spec.boolean ?? []);
   const valueSet = new Set(spec.value ?? []);
