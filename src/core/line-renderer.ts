@@ -8,6 +8,35 @@ import { buildColorMap, hasMarkup, parseMarkup } from './markup-parser.js';
 import { escapeXml, getTextWidth, roundCoord } from './xml.js';
 import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHROME } from './defaults.js';
 
+/**
+ * SMIL `<set>` that holds an attribute at a value until `untilMs`, then
+ * releases. Paired with a subsequent `<animate begin="untilMs">`, this lets
+ * us drop the element's static initial attribute and rely on the underlying
+ * value being the FINAL state instead. Why: SMIL-stripping renderers
+ * (npm-readme, OG/social card scrapers, RSS) ignore both `<set>` and
+ * `<animate>` but DO honor the element's static attributes. By making the
+ * static attribute hold the final value, those renderers see fully-rendered
+ * content; SMIL-honoring renderers see the set hold the start value until
+ * the animate takes over.
+ *
+ * When `untilMs === 0` there's nothing to hold — the animate fires at t=0
+ * and SMIL viewers see a brief 1-frame flash from underlying→from. The flash
+ * is at SVG start so most users won't perceive it; non-SMIL viewers still
+ * win.
+ */
+function setHold(attr: string, value: string | number, untilMs: number): string {
+  if (untilMs <= 0) return '';
+  return `<set attributeName="${attr}" to="${value}" begin="0s" end="${untilMs}ms"/>`;
+}
+
+/** Round a line-position y to 1 decimal place to avoid the +1px wobble on
+ *  every 5th row that `roundCoord(i * 25.2)` produced. Fractional y values
+ *  are anti-aliased fine by every SVG renderer; saving 0–2 bytes per line
+ *  via integer truncation wasn't worth the visible jitter. */
+function roundLineY(n: number): number {
+  return +(n.toFixed(1));
+}
+
 /** Generate SVG tspan elements from styled spans. */
 function generateStyledText(
   spans: StyledSpan[],
@@ -125,11 +154,14 @@ function generateCommandLine(
   // typed text (which is positioned AT promptWidth). spacingAndGlyphs scales
   // glyphs minutely (~5%) to make total width match exactly.
   const cmdWidth = command.length * charWidth;
+  // Prompt: no static opacity → underlying is 1, so non-SMIL viewers see it.
+  // setHold pins it at 0 until startTime; animate takes over at startTime.
   return `
     <g id="line-${lineIndex}" transform="translate(0, ${y})">
       ${revealClip}
-      <text class="tt" fill="${promptColor}" opacity="0" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">
+      <text class="tt" fill="${promptColor}" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">
         ${escapeXml(prompt)}
+        ${setHold('opacity', 0, startTime)}
         <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       </text>
       <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` textLength="${cmdWidth}" lengthAdjust="spacingAndGlyphs" clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
@@ -152,7 +184,11 @@ function buildRevealClip(
     values.push(String(roundCoord(i * charWidth)));
     keyTimes.push((i / charCount).toFixed(4));
   }
-  return `<defs><clipPath id="${clipId}"><rect x="${startX}" y="${-fontSize}" width="0" height="${fontSize * 2}"><animate attributeName="width" values="${values.join(';')}" keyTimes="${keyTimes.join(';')}" calcMode="discrete" begin="${startTime}ms" dur="${typingDuration}ms" fill="freeze"/></rect></clipPath></defs>`;
+  // Static rect width = the FINAL value, not 0. SMIL-stripping renderers
+  // see the rect at full width → typed text fully revealed. SMIL viewers see
+  // the setHold pin width to 0 until startTime, then the animate steps it up.
+  const finalWidth = roundCoord(charCount * charWidth);
+  return `<defs><clipPath id="${clipId}"><rect x="${startX}" y="${-fontSize}" width="${finalWidth}" height="${fontSize * 2}">${setHold('width', 0, startTime)}<animate attributeName="width" values="${values.join(';')}" keyTimes="${keyTimes.join(';')}" calcMode="discrete" begin="${startTime}ms" dur="${typingDuration}ms" fill="freeze"/></rect></clipPath></defs>`;
 }
 
 /** Generate an output line with fade-in animation. */
@@ -195,7 +231,8 @@ function generateAnimatedOutputLine(
   }).join('');
 
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})" opacity="0">
+    <g id="line-${lineIndex}" transform="translate(0, ${y})">
+      ${setHold('opacity', 0, startTime)}
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       ${textElements}
     </g>`;
@@ -218,7 +255,8 @@ function generateOutputLine(
   const textFill = styled ? '' : ` fill="${color}"`;
 
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})" opacity="0">
+    <g id="line-${lineIndex}" transform="translate(0, ${y})">
+      ${setHold('opacity', 0, startTime)}
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       <text class="tt"${textFill}>
         ${textContent}
@@ -242,7 +280,7 @@ export function generateAllLines(
 
   for (const frame of frames) {
     if (frame.type === 'add-command' && frame.lineIndex !== undefined) {
-      const y = roundCoord(frame.lineIndex * lineHeight);
+      const y = roundLineY(frame.lineIndex * lineHeight);
       processedLines.set(
         frame.lineIndex,
         generateCommandLine(
@@ -256,7 +294,7 @@ export function generateAllLines(
         ),
       );
     } else if (frame.type === 'add-output' && frame.lineIndex !== undefined) {
-      const y = roundCoord(frame.lineIndex * lineHeight);
+      const y = roundLineY(frame.lineIndex * lineHeight);
       if (frame.frames && frame.frames.length > 0) {
         processedLines.set(
           frame.lineIndex,

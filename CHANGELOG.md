@@ -1,5 +1,36 @@
 # Changelog
 
+## v0.9.0 — 2026-05-25
+
+UX polish release driven by a frontend-design audit + backlog rerank. Substantial visible changes to rendered output: SVGs now render meaningful content even when SMIL is stripped (social-card scrapers, npm-readme, RSS); three themes had concrete bugs fixed; the heart in `heartbeat` no longer reads as a punctuation glitch; line spacing no longer wobbles every 5th row. The `cache.ts` symlink-escape (`#84`) is closed.
+
+### SVG output
+
+- **Non-SMIL fallback (`#85`).** Every line group used to carry `opacity="0"` and every typing clip-rect used to carry `width="0"`, with SMIL `<animate>` elements driving them to visible. Renderers that strip SMIL (OG/social-card scrapers, npm-readme cards, some RSS readers, screenshot tools) saw a blank navy rectangle as the first frame — only the title bar showed. The fix: drop the initial `opacity="0"` / `width="0"` so the element's underlying value is the final state (visible); a new `<set>` element pins the start value until the existing `<animate>` takes over. SMIL viewers see exactly the same animation as before; non-SMIL viewers see the fully-rendered final frame. New helper `setHold(attr, value, untilMs)` in `src/core/line-renderer.ts`. Applies to: prompt opacity, typed-text clip-rect width, output-line group opacity, animated-frame-cycle line group opacity.
+- **Line-spacing wobble fixed.** With default `lineHeight = 14 × 1.8 = 25.2`, `roundCoord(i × 25.2)` produced gap pattern `25, 25, 26, 25, 25, 25, 25, 26, …` — a visible +1 px jog every 5 rows on dense neofetch output. Now y emits fractional (`.toFixed(1)`) → uniform 25.2 gaps. Fractional y values are anti-aliased fine by every SVG renderer.
+- **Static SVG drops dead `.scanline-overlay` class.** The static path emitted the overlay with a CSS class that has no matching rule (the keyframes only exist on the animated path). Class attribute now omitted on the static path; the rect still renders as a static scanline overlay, just without the dead reference.
+
+### Themes
+
+- **Amber + green-phosphor: restored canonical macOS triad.** Both themes' "traffic light" buttons were monochromatic (amber: three oranges; green-phosphor: three greens), which broke the red/yellow/green metaphor — viewers couldn't tell they were window controls. Both now use the canonical `#ff5f57` / `#ffbd2e` / `#28ca42`.
+- **Solarized-dark: prompt + comment colors lifted for WCAG AA.** Canonical Solarized's `prompt: #268bd2` was 4.08:1 on `background: #002b36` (fails AA, requires 4.5:1); `comment: #586e75` was 2.79:1 (well below AA). Lifted to `prompt: #4eb3e8` and `comment: #7d9499` — both clear AA while staying in the Solarized hue family. Note: this deviates from Ethan Schoonover's canonical palette; the deviation is a deliberate accessibility tradeoff.
+
+### Blocks
+
+- **`heartbeat` off-frame uses spaces, not `'.'`.** The 2 "off" frames in the beat cycle rendered as `' . '` — read as a punctuation glitch, not as the heart's quiet phase. Now `'   '` (3 spaces) so the heart simply disappears in the gaps. Width-preserving (still 3 chars) so the surrounding label doesn't shift.
+
+### Security
+
+- **`cachePath` symlink-escape closed (`#84`).** `resolveCachePath` was string-based: a symlinked configDir pointing outside its apparent parent could be used to write the cache file outside the intended tree while passing the textual `startsWith` guard. Both paths now go through `fs.realpathSync` before comparison; symlinked configDirs are unwrapped to their real target. TOCTOU caveat documented in the JSDoc — the threat model is narrow (attacker needs write access to the config dir to swap symlinks).
+
+### Tests
+
+- 284 → 291 (+7): symlink-escape regression for `#84`; SMIL-stripped fallback (4 tests: line groups, clip-rect width, prompt text, animated-output frame 0); line-position fractional-y rounding; first-sequence command has no setHold.
+
+### Filed for follow-up
+
+7 issues filed from the UX audit (`#85`–`#91`): output-line textLength pinning, cyberpunk titleBarText buzz, dracula/monokai thumbnail similarity, shadow filter region tightness, generic gallery title bar, win95 caption-button aspect, `<desc>` box-drawing chars for screen readers. None block this release.
+
 ## v0.8.2 — 2026-05-25
 
 Single-issue fix release.

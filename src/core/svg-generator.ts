@@ -119,11 +119,15 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
 }
 
 /** Render the CRT scanline overlay constrained to the terminal content area. */
-function renderScanlineOverlay(effects: EffectsConfig, window: WindowConfig): string {
+function renderScanlineOverlay(effects: EffectsConfig, window: WindowConfig, animated = true): string {
   if (!effects.scanlines) return '';
   const titleBarHeight = getTitleBarHeight(window);
   const contentHeight = window.height - titleBarHeight;
-  return `<rect x="0" y="${titleBarHeight}" width="${window.width}" height="${contentHeight}" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>`;
+  // The `scanline-overlay` class drives a CSS @keyframes scroll. The static
+  // path has no animation, so the class would be a dead reference — omit it
+  // to keep the static markup honest.
+  const classAttr = animated ? ' class="scanline-overlay"' : '';
+  return `<rect x="0" y="${titleBarHeight}" width="${window.width}" height="${contentHeight}" fill="url(#scanlines)" pointer-events="none" opacity="0.5"${classAttr}/>`;
 }
 
 /** Build an accessibility label from the sequence commands. */
@@ -570,7 +574,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
         ${lineElements}
       </g>
     </g>
-    ${renderScanlineOverlay(effects, window)}
+    ${renderScanlineOverlay(effects, window, false)}
   </g>
 </svg>`;
 }

@@ -187,8 +187,10 @@ describe('prompt + typed-text width pinning', () => {
   it('prompt <text> carries textLength = computed promptWidth', () => {
     const seq: Sequence[] = [{ type: 'command', content: 'whoami', typingDuration: 200 }];
     const svg = generateSvg(seq, makeConfig());
-    // Find the prompt text element (the one with opacity="0" wrapping the prompt fade-in).
-    const promptText = /<text class="tt" fill="[^"]+" opacity="0" textLength="(\d+)" lengthAdjust="spacingAndGlyphs">/.exec(svg);
+    // Prompt text element no longer has a static opacity="0" — the underlying
+    // value is left as default (1) so SMIL-stripping renderers still see it
+    //. textLength must still be present.
+    const promptText = /<text class="tt" fill="[^"]+" textLength="(\d+)" lengthAdjust="spacingAndGlyphs">/.exec(svg);
     expect(promptText).not.toBeNull();
     expect(parseInt(promptText![1]!, 10)).toBeGreaterThan(0);
   });
@@ -206,6 +208,97 @@ describe('prompt + typed-text width pinning', () => {
     // The prompt still has textLength; the typed-text element wouldn't.
     const matches = svg.match(/textLength=/g) ?? [];
     expect(matches.length).toBe(1); // prompt only
+  });
+});
+
+describe('SMIL-stripped fallback', () => {
+  // Simulates what a non-SMIL renderer (OG scrapers, npm-readme, RSS) sees:
+  // strip every <animate>, <animateTransform>, and <set>, then check that
+  // the final-frame content is still visible. Before #85, line groups carried
+  // opacity="0" and clip rects carried width="0" — stripping SMIL left the
+  // terminal blank.
+  function stripSmil(svg: string): string {
+    return svg
+      .replace(/<animate[^>]*\/>/g, '')
+      .replace(/<animateTransform[^>]*\/>/g, '')
+      .replace(/<set[^>]*\/>/g, '');
+  }
+
+  it('line groups have no static opacity="0" — visible without SMIL', () => {
+    const seq: Sequence[] = [
+      { type: 'command', content: 'echo hi' },
+      { type: 'output', content: 'hi' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    const stripped = stripSmil(svg);
+    // Every <g id="line-N"> in the output should be visible after stripping.
+    // Look for the line groups — they used to be `<g id="line-N" ... opacity="0">`.
+    expect(stripped).not.toMatch(/<g[^>]*id="line-\d+"[^>]*opacity="0"/);
+  });
+
+  it('clip-path rect has static width=final, not width=0', () => {
+    // 'whoami' is 6 chars × 8 px = cmdWidth 48. The clip rect's STATIC width
+    // attribute should now be 48 (the final reveal width). The reveal animate
+    // still steps from 0 — but only when SMIL is honored.
+    const seq: Sequence[] = [
+      { type: 'output', content: 'hello' },
+      { type: 'command', content: 'whoami', typingDuration: 200 },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).toMatch(/<rect x="\d+" y="-\d+" width="48" height="\d+">/);
+    // SMIL viewers see a setHold pinning width to 0 until startTime>0.
+    expect(svg).toContain('<set attributeName="width" to="0" begin="0s"');
+  });
+
+  it('first sequence command has no setHold (startTime=0 — nothing to hold)', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'whoami', typingDuration: 200 }];
+    const svg = generateSvg(seq, makeConfig());
+    // Still no opacity="0" on the line group / no width="0" on the clip rect.
+    expect(svg).not.toMatch(/<g[^>]*id="line-0"[^>]*opacity="0"/);
+    expect(svg).toMatch(/<rect x="\d+" y="-\d+" width="48" height="\d+">/);
+  });
+
+  it('prompt text has no static opacity="0" attribute', () => {
+    const seq: Sequence[] = [{ type: 'command', content: 'hi' }];
+    const svg = generateSvg(seq, makeConfig());
+    // The prompt <text> element used to carry opacity="0". Now it's bare so
+    // its underlying value is 1 — visible to SMIL-stripping renderers.
+    expect(svg).not.toMatch(/<text class="tt" fill="[^"]+" opacity="0" textLength=/);
+  });
+
+  it('animated-output line groups also drop opacity="0"; frame 0 stays visible after SMIL strip', () => {
+    // Animated frame-cycle output (spinners, heartbeat) renders N <text>
+    // siblings at the same y, frame 0 with opacity="1", others "0". The
+    // wrapping <g> used to have opacity="0" too — stripping SMIL hid even
+    // frame 0. Now the <g> has no opacity attribute, so frame 0 shows.
+    const seq: Sequence[] = [
+      { type: 'output', content: 'pre' },
+      { type: 'output', content: 'spin', frames: [' / ', ' - ', ' \\ ', ' | '], framesFps: 4, framesLoop: true },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).not.toMatch(/<g[^>]*id="line-1"[^>]*opacity="0"/);
+    // Frame 0 still has opacity="1" so it's the static fallback when SMIL is stripped.
+    expect(svg).toContain('opacity="1"');
+  });
+});
+
+describe('line-position rounding', () => {
+  // Default lineHeight = 14 × 1.8 = 25.2. Old roundCoord(i × 25.2) produced
+  // gap pattern 25,25,26,25,25 — a +1 px jog every 5th row, visible on dense
+  // neofetch output. Now we emit fractional y (toFixed(1)) so gaps are
+  // uniformly 25.2.
+  it('emits fractional y for evenly-spaced rows', () => {
+    const seq: Sequence[] = [
+      { type: 'output', content: 'l0' },
+      { type: 'output', content: 'l1' },
+      { type: 'output', content: 'l2' },
+      { type: 'output', content: 'l3' },
+      { type: 'output', content: 'l4' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    const ys = [...svg.matchAll(/<g[^>]*id="line-(\d+)"[^>]*translate\(0, ([\d.]+)\)/g)]
+      .map(m => +m[2]!);
+    expect(ys).toEqual([0, 25.2, 50.4, 75.6, 100.8]);
   });
 });
 

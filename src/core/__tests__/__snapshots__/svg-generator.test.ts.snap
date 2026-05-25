@@ -59,9 +59,10 @@ hi</desc>
         
         
     <g id="line-0" transform="translate(0, 0)">
-      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0" textLength="109" lengthAdjust="spacingAndGlyphs">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="48" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">
         user@host:~$ 
+        
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
       <text class="tt" x="109" fill="#00ff9f" textLength="48" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">whoami</text>
@@ -74,17 +75,19 @@ hi</desc>
     </rect>
     </g>
 
-    <g id="line-1" transform="translate(0, 25)" opacity="0">
+    <g id="line-1" transform="translate(0, 25.2)">
+      <set attributeName="opacity" to="0" begin="0s" end="1200ms"/>
       <animate attributeName="opacity" from="0" to="1" begin="1200ms" dur="10ms" fill="freeze"/>
       <text class="tt" fill="#e4e4e4">
         dev
       </text>
     </g>
 
-    <g id="line-2" transform="translate(0, 50)">
-      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0" textLength="109" lengthAdjust="spacingAndGlyphs">
+    <g id="line-2" transform="translate(0, 50.4)">
+      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="56" height="28"><set attributeName="width" to="0" begin="0s" end="2450ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">
         user@host:~$ 
+        <set attributeName="opacity" to="0" begin="0s" end="2450ms"/>
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
       <text class="tt" x="109" fill="#00ff9f" textLength="56" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-2)">echo hi</text>
@@ -97,7 +100,8 @@ hi</desc>
     </rect>
     </g>
 
-    <g id="line-3" transform="translate(0, 76)" opacity="0">
+    <g id="line-3" transform="translate(0, 75.6)">
+      <set attributeName="opacity" to="0" begin="0s" end="3650ms"/>
       <animate attributeName="opacity" from="0" to="1" begin="3650ms" dur="10ms" fill="freeze"/>
       <text class="tt">
         <tspan fill="#50fa7b">hi</tspan>
@@ -184,9 +188,10 @@ hi</desc>
         
         
     <g id="line-0" transform="translate(0, 0)">
-      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0" textLength="109" lengthAdjust="spacingAndGlyphs">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="48" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">
         user@host:~$ 
+        
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
       <text class="tt" x="109" fill="#00ff9f" textLength="48" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">whoami</text>
@@ -199,17 +204,19 @@ hi</desc>
     </rect>
     </g>
 
-    <g id="line-1" transform="translate(0, 25)" opacity="0">
+    <g id="line-1" transform="translate(0, 25.2)">
+      <set attributeName="opacity" to="0" begin="0s" end="1200ms"/>
       <animate attributeName="opacity" from="0" to="1" begin="1200ms" dur="10ms" fill="freeze"/>
       <text class="tt" fill="#e4e4e4">
         dev
       </text>
     </g>
 
-    <g id="line-2" transform="translate(0, 50)">
-      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0" textLength="109" lengthAdjust="spacingAndGlyphs">
+    <g id="line-2" transform="translate(0, 50.4)">
+      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="56" height="28"><set attributeName="width" to="0" begin="0s" end="2450ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">
         user@host:~$ 
+        <set attributeName="opacity" to="0" begin="0s" end="2450ms"/>
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
       <text class="tt" x="109" fill="#00ff9f" textLength="56" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-2)">echo hi</text>
@@ -222,7 +229,8 @@ hi</desc>
     </rect>
     </g>
 
-    <g id="line-3" transform="translate(0, 76)" opacity="0">
+    <g id="line-3" transform="translate(0, 75.6)">
+      <set attributeName="opacity" to="0" begin="0s" end="3650ms"/>
       <animate attributeName="opacity" from="0" to="1" begin="3650ms" dur="10ms" fill="freeze"/>
       <text class="tt">
         <tspan fill="#50fa7b">hi</tspan>
@@ -315,9 +323,10 @@ hi</desc>
         
         
     <g id="line-0" transform="translate(0, 0)">
-      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0" textLength="109" lengthAdjust="spacingAndGlyphs">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="48" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">
         user@host:~$ 
+        
         <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
       </text>
       <text class="tt" x="109" fill="#00ff9f" textLength="48" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">whoami</text>
@@ -330,17 +339,19 @@ hi</desc>
     </rect>
     </g>
 
-    <g id="line-1" transform="translate(0, 25)" opacity="0">
+    <g id="line-1" transform="translate(0, 25.2)">
+      <set attributeName="opacity" to="0" begin="0s" end="1200ms"/>
       <animate attributeName="opacity" from="0" to="1" begin="1200ms" dur="10ms" fill="freeze"/>
       <text class="tt" fill="#e4e4e4">
         dev
       </text>
     </g>
 
-    <g id="line-2" transform="translate(0, 50)">
-      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="0" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt" fill="#00ff9f" opacity="0" textLength="109" lengthAdjust="spacingAndGlyphs">
+    <g id="line-2" transform="translate(0, 50.4)">
+      <defs><clipPath id="cmdrev-2"><rect x="109" y="-14" width="56" height="28"><set attributeName="width" to="0" begin="0s" end="2450ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="2450ms" dur="200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">
         user@host:~$ 
+        <set attributeName="opacity" to="0" begin="0s" end="2450ms"/>
         <animate attributeName="opacity" from="0" to="1" begin="2450ms" dur="10ms" fill="freeze"/>
       </text>
       <text class="tt" x="109" fill="#00ff9f" textLength="56" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-2)">echo hi</text>
@@ -353,7 +364,8 @@ hi</desc>
     </rect>
     </g>
 
-    <g id="line-3" transform="translate(0, 76)" opacity="0">
+    <g id="line-3" transform="translate(0, 75.6)">
+      <set attributeName="opacity" to="0" begin="0s" end="3650ms"/>
       <animate attributeName="opacity" from="0" to="1" begin="3650ms" dur="10ms" fill="freeze"/>
       <text class="tt">
         <tspan fill="#50fa7b">hi</tspan>
@@ -429,7 +441,7 @@ world</desc>
       </text>
       </g>
     </g>
-    <rect x="0" y="40" width="1000" height="520" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
+    <rect x="0" y="40" width="1000" height="520" fill="url(#scanlines)" pointer-events="none" opacity="0.5"/>
   </g>
 </svg>"
 `;

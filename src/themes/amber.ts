@@ -30,9 +30,12 @@ export const amber: Theme = {
     brightWhite: '#fff0c0',
     brightBlack: '#664400',
   },
+  // Canonical macOS triad (red/yellow/green) rather than amber-tinted dots.
+  // The monochrome version read as "decorative ornament" — viewers couldn't
+  // tell they were window controls. The triad is universal language.
   buttons: {
-    close: '#ff8800',
-    minimize: '#ffaa00',
-    maximize: '#ffcc00',
+    close: '#ff5f57',
+    minimize: '#ffbd2e',
+    maximize: '#28ca42',
   },
 };

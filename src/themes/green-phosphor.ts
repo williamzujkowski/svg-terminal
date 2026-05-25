@@ -30,9 +30,11 @@ export const greenPhosphor: Theme = {
     brightWhite: '#ccffcc',
     brightBlack: '#006600',
   },
+  // Canonical macOS triad — same rationale as amber. Three slightly-
+  // different greens were unreadable as window controls.
   buttons: {
-    close: '#00ff41',
-    minimize: '#00cc33',
-    maximize: '#00ff66',
+    close: '#ff5f57',
+    minimize: '#ffbd2e',
+    maximize: '#28ca42',
   },
 };

@@ -5,11 +5,16 @@ export const solarizedDark: Theme = {
   name: 'solarized-dark',
   colors: {
     text: '#839496',
-    comment: '#586e75',
+    // Solarized's canonical base01 (#586e75) fails WCAG AA on base03 by a
+    // wide margin (2.79:1; need 4.5). Lifted to a slightly brighter base01-ish
+    // value that clears AA while staying in the Solarized hue family.
+    comment: '#7d9499',
     background: '#002b36',
     titleBarBackground: '#073642',
     titleBarText: '#93a1a1',
-    prompt: '#268bd2',
+    // Solarized's canonical blue (#268bd2) also fails AA on base03 (4.08:1).
+    // Lifted to a brighter Solarized-family blue.
+    prompt: '#4eb3e8',
     cursor: '#2aa198',
     red: '#dc322f',
     green: '#859900',

@@ -5,8 +5,12 @@
 import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 
-// 5 frames: small → med → BIG → med → small. Beat rhythm = systole + diastole.
-const HEART_FRAMES = [' . ', ' ♥ ', ' ♥ ', ' ♥ ', ' . '];
+// 5 frames: 3 beats + 2 "off" frames for the gap between beats. The off
+// frames use a plain space so the heart simply disappears in the gaps —
+// before this they were '.' which read as a punctuation glitch, not as the
+// heart's quiet phase. Width-preserving (3 chars) so the surrounding label
+// doesn't shift.
+const HEART_FRAMES = ['   ', ' ♥ ', ' ♥ ', ' ♥ ', '   '];
 
 const heartbeatSchema = z.object({
   label: z.string().optional(),
