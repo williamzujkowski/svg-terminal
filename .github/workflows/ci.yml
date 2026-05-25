@@ -40,6 +40,20 @@ jobs:
           test -s /tmp/sample.svg
           test -s /tmp/sample.min.svg
 
+      - name: verify demo SVGs are up to date
+        # `npm run demo` regenerates examples/demo.svg + the per-theme gallery.
+        # If the diff is non-empty, the rendering changed and the committed
+        # demo SVGs are stale — fail with an actionable message rather than
+        # auto-committing.
+        run: |
+          set -euo pipefail
+          npm run demo > /dev/null
+          if ! git diff --quiet -- examples/; then
+            echo "::error::examples/ is out of date — run \`npm run demo\` locally and commit the regenerated SVGs"
+            git diff --stat -- examples/
+            exit 1
+          fi
+
       - name: smoke cache (refresh + frozen + check)
         run: |
           set -euo pipefail

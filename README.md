@@ -71,6 +71,20 @@ blocks:
 
 Special value: `theme: random` rotates through all themes deterministically by day of year — gives you a different look every day without committing to one.
 
+<details>
+<summary>Theme gallery — click to expand all 8</summary>
+
+Each is the same 2-block config (motd + neofetch) rendered against the named theme. Source in [`examples/gallery/_template.yml`](./examples/gallery/_template.yml).
+
+| | |
+|---|---|
+| **dracula**<br><img src="./examples/gallery/dracula.svg" width="380" alt="dracula theme preview"/> | **nord**<br><img src="./examples/gallery/nord.svg" width="380" alt="nord theme preview"/> |
+| **monokai**<br><img src="./examples/gallery/monokai.svg" width="380" alt="monokai theme preview"/> | **amber**<br><img src="./examples/gallery/amber.svg" width="380" alt="amber theme preview"/> |
+| **green-phosphor**<br><img src="./examples/gallery/green-phosphor.svg" width="380" alt="green-phosphor theme preview"/> | **cyberpunk**<br><img src="./examples/gallery/cyberpunk.svg" width="380" alt="cyberpunk theme preview"/> |
+| **solarized-dark**<br><img src="./examples/gallery/solarized-dark.svg" width="380" alt="solarized-dark theme preview"/> | **win95**<br><img src="./examples/gallery/win95.svg" width="380" alt="win95 theme preview"/> |
+
+</details>
+
 ## Blocks
 
 | Block | Description |

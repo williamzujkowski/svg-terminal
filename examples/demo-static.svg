@@ -1,6 +1,6 @@
-<svg width="960" height="1011" viewBox="0 0 960 1011" xmlns="http://www.w3.org/2000/svg"
-  role="img" aria-label="Static terminal showing 37 lines">
-  <title>Static terminal showing 37 lines</title>
+<svg width="960" height="708" viewBox="0 0 960 708" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Static terminal showing 25 lines">
+  <title>Static terminal showing 25 lines</title>
   <desc>you@svg-terminal:~$ cat /etc/motd
 ╔════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                                                        ║
@@ -21,23 +21,11 @@ Editor:    vim (still trying to exit)
 
 ● ● ● ● ● ● ● ●
 you@svg-terminal:~$ date +%H:%M:%S
-uptime  04:34:27
+uptime  09:37:00
 you@svg-terminal:~$ made-with --love
  .  built with care
 you@svg-terminal:~$ palette
-theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
-you@svg-terminal:~$ cat /etc/goodbye.txt
-╔════════════════════════════════════════════════════════════════════════════════════════╗
-║                                                                                        ║
-║ Thanks for taking a look.                                                              ║
-║                                                                                        ║
-║   • 46 blocks  • 8 themes  • SMIL animation                                            ║
-║   • Per-block cache  • Strict zod validation                                           ║
-║   • SVG output works in GitHub&apos;s sandbox                                               ║
-║                                                                                        ║
-║ Read the docs, then `npx svg-terminal init`.                                           ║
-║                                                                                        ║
-╚════════════════════════════════════════════════════════════════════════════════════════╝</desc>
+theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
   <style>.tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }</style>
   <defs>
     
@@ -46,16 +34,6 @@ you@svg-terminal:~$ cat /etc/goodbye.txt
       <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
     </pattern>
     
-    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="core"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="halo"/>
-      <feMerge>
-        <feMergeNode in="halo"/>
-        <feMergeNode in="core"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
       <feOffset dx="0" dy="6" result="offsetblur"/>
@@ -67,13 +45,13 @@ you@svg-terminal:~$ cat /etc/goodbye.txt
       </feMerge>
     </filter>
     <clipPath id="terminalViewport">
-      <rect x="0" y="40" width="960" height="971"/>
+      <rect x="0" y="40" width="960" height="668"/>
     </clipPath>
   </defs>
 
   <g filter="url(#shadow)">
     
-    <rect x="0" y="0" width="960" height="1011"
+    <rect x="0" y="0" width="960" height="708"
           rx="12" ry="12"
           fill="#0a0e27"/>
     
@@ -93,9 +71,9 @@ you@svg-terminal:~$ cat /etc/goodbye.txt
       svg-terminal — demo
     </text>
     <rect x="0" y="40" width="960"
-          height="971" fill="#0a0e27"/>
+          height="668" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
-      <g transform="translate(12, 54)" filter="url(#textGlow)">
+      <g transform="translate(12, 54)">
         
       <text class="tt" y="0" fill="#e4e4e4">
         you@svg-terminal:~$ cat /etc/motd
@@ -158,7 +136,7 @@ you@svg-terminal:~$ cat /etc/goodbye.txt
         you@svg-terminal:~$ date +%H:%M:%S
       </text>
       <text class="tt" y="504">
-        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">04:34:27</tspan>
+        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09:37:00</tspan>
       </text>
       <text class="tt" y="529" fill="#e4e4e4">
         you@svg-terminal:~$ made-with --love
@@ -172,44 +150,8 @@ you@svg-terminal:~$ cat /etc/goodbye.txt
       <text class="tt" y="605">
         <tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan>
       </text>
-      <text class="tt" y="630" fill="#e4e4e4">
-        you@svg-terminal:~$ cat /etc/goodbye.txt
-      </text>
-      <text class="tt" y="655" fill="#e4e4e4">
-        ╔════════════════════════════════════════════════════════════════════════════════════════╗
-      </text>
-      <text class="tt" y="680" fill="#e4e4e4">
-        ║                                                                                        ║
-      </text>
-      <text class="tt" y="706" fill="#e4e4e4">
-        ║ Thanks for taking a look.                                                              ║
-      </text>
-      <text class="tt" y="731" fill="#e4e4e4">
-        ║                                                                                        ║
-      </text>
-      <text class="tt" y="756" fill="#e4e4e4">
-        ║   • 46 blocks  • 8 themes  • SMIL animation                                            ║
-      </text>
-      <text class="tt" y="781" fill="#e4e4e4">
-        ║   • Per-block cache  • Strict zod validation                                           ║
-      </text>
-      <text class="tt" y="806" fill="#e4e4e4">
-        ║   • SVG output works in GitHub&apos;s sandbox                                               ║
-      </text>
-      <text class="tt" y="832" fill="#e4e4e4">
-        ║                                                                                        ║
-      </text>
-      <text class="tt" y="857" fill="#e4e4e4">
-        ║ Read the docs, then `npx svg-terminal init`.                                           ║
-      </text>
-      <text class="tt" y="882" fill="#e4e4e4">
-        ║                                                                                        ║
-      </text>
-      <text class="tt" y="907" fill="#e4e4e4">
-        ╚════════════════════════════════════════════════════════════════════════════════════════╝
-      </text>
       </g>
     </g>
-    <rect x="0" y="40" width="960" height="971" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
+    <rect x="0" y="40" width="960" height="668" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>

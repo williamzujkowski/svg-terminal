@@ -1,0 +1,24 @@
+# Generated per-theme gallery item. DO NOT EDIT individual yml siblings;
+# regenerate via npm run demo (which loops the template across all 8 themes).
+# Theme is injected; everything else stays the same.
+window:
+  width: 720
+  title: "user@svg-terminal:~"
+  autoHeight: true
+  maxHeight: 600
+terminal:
+  prompt: "$ "
+effects:
+  shadow: true
+  scanlines: true
+blocks:
+  - block: motd
+    config:
+      title: "DEV TERMINAL"
+      subtitle: "Theme preview"
+  - block: neofetch
+    config:
+      username: dev
+      hostname: svg-terminal
+      role: Author
+      languages: TypeScript

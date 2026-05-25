@@ -32,6 +32,13 @@ export interface GenerateOptions {
   configPath?: string;
   /** Cache mode (default: 'normal'). Set via CLI flags --no-cache / --refresh-cache / --frozen-cache. */
   cacheMode?: CacheMode;
+  /**
+   * Override the `context.now` passed to each block. Defaults to `new Date()`.
+   * Useful for reproducible demos + tests: pass a fixed Date so time-dependent
+   * blocks (ascii-clock, ascii-calendar, dice-roll's per-day seed, etc.)
+   * produce deterministic output.
+   */
+  now?: Date;
 }
 
 // Register built-in blocks on import
@@ -106,7 +113,7 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
 
   const cacheRuntime = makeCacheRuntime(config, options);
   const context: BlockContext = {
-    now: new Date(),
+    now: options.now ?? new Date(),
     config,
     variables: userConfig.variables ?? {},
     useCache: cacheRuntime ? makeUseCache(cacheRuntime) : undefined,
@@ -209,7 +216,7 @@ export async function generateStatic(userConfig: UserConfig, options: GenerateOp
 
   const cacheRuntime = makeCacheRuntime(config, options);
   const context: BlockContext = {
-    now: new Date(),
+    now: options.now ?? new Date(),
     config,
     variables: userConfig.variables ?? {},
     useCache: cacheRuntime ? makeUseCache(cacheRuntime) : undefined,

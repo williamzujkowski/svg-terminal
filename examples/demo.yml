@@ -1,15 +1,17 @@
-# README hero demo. Exercises every visual config knob the library exposes
-# (shadow + scanlines + glow + auto-height + custom chrome) plus a curated
-# set of blocks that show the v0.6/v0.7/v0.8 capabilities:
-#   - motd            — welcome banner + dynamic block fallback path
-#   - neofetch        — color palette demo via [[fg:color]] markup
-#   - ascii-clock     — v0.8 animated block (pulsing colon, single-line frames)
-#   - heartbeat       — v0.7 animation primitive (multi-frame opacity cycle)
-#   - palette-swatch  — proves all 16 theme palette colors render
-#   - goodbye         — ASCII box rendering + farewell flourish
+# README hero demo. Curated to be above-the-fold-friendly on most screens.
+# Exercises chrome + scanlines + shadow + auto-height + the v0.7/v0.8 animation
+# primitive, without going full CRT (textGlow off — it's an opt-in for amber /
+# green-phosphor / cyberpunk, where the glow makes sense as an aesthetic).
 #
-# Regenerate with `npm run demo`. CI does not currently regenerate this file —
-# we commit the rendered SVG so the README link doesn't depend on a CI step.
+# Five blocks, each pulling its weight:
+#   - motd            — chrome + ASCII double-box + colored subtitle
+#   - neofetch        — full color palette via [[fg:color]] markup
+#   - ascii-clock     — v0.8 animation: 1 fps pulsing colon
+#   - heartbeat       — v0.7 animation: multi-frame opacity cycle
+#   - palette-swatch  — confirms all 16 named theme colors
+#
+# Regenerate with `npm run demo`. CI verifies this file's rendering is
+# committed up to date (see .github/workflows/ci.yml).
 
 theme: dracula
 
@@ -17,14 +19,13 @@ window:
   width: 960
   title: "svg-terminal — demo"
   autoHeight: true
-  maxHeight: 1200
+  maxHeight: 1000
 
 terminal:
   prompt: "you@svg-terminal:~$ "
-  fontSize: 14
 
 effects:
-  textGlow: true   # opt-in CRT phosphor halo (off by default since v0.6)
+  textGlow: false   # off for the hero — opt-in for CRT/phosphor themes
   shadow: true
   scanlines: true
 
@@ -54,16 +55,3 @@ blocks:
   - block: palette-swatch
     config:
       label: "theme:"
-
-  - block: goodbye
-    config:
-      lines:
-        - ""
-        - "Thanks for taking a look."
-        - ""
-        - "  • 46 blocks  • 8 themes  • SMIL animation"
-        - "  • Per-block cache  • Strict zod validation"
-        - "  • SVG output works in GitHub's sandbox"
-        - ""
-        - "Read the docs, then `npx svg-terminal init`."
-        - ""
