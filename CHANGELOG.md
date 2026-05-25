@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.13.0 — 2026-05-25
+
+CLI ergonomics + correctness + DX release. Round 5 discovery (3 parallel agents — CLI / blocks / perf) surfaced 18 findings; 9 shipped here, 8 filed for future rounds (`#100`–`#107`).
+
+### CLI ergonomics
+
+- **`init` refuses to overwrite an existing `terminal.yml`** without `--force`. The prior silent clobber was the worst class of CLI bug — losing 30 minutes of YAML tuning to a stray ↑-enter on the entry-point command was unforgivable.
+- **Watch mode prints `[HH:MM:SS]` timestamps + render duration** (`Generated terminal.svg (13.1 KB, 87ms)`) so users can see *when* each re-render happened and how long it took. Previously the log line was indistinguishable across re-renders.
+- **Unknown `--flag` tokens now warn** instead of silently being ignored. A typo like `--no-chache` previously fell back to normal cache mode while the user thought they bypassed it.
+- **Help text grouped** into Commands / Generate options / Cache modes (mutually exclusive) / Init options / Global. `--force` and `--cache-mode <m>` documented. Examples expanded.
+- **`init` template fixes:** added `win95` to the style options comment (was missing); added a commented-out `loading-spinner` block to show the library's signature animation feature in the starter file.
+
+### Blocks (correctness)
+
+- **`weather` block: consolidated space-encoding.** The standalone `weather` block encoded spaces in location names as `_` while the `motd`-embedded `fetchWeatherSummary` used `~` — two adjacent functions in the same file, each with a comment claiming the OTHER was wrong. Both go through a new `encodeWttrLocation` helper that standardizes on `+` (wttr.in's most-documented variant). Multi-word locations (`"San Francisco"`) now hit the same URL regardless of which entrypoint serves the data.
+- **`spinning-gear` glyph fix:** frame 3 was `─` (U+2500 BOX DRAWING) mixed with ASCII `|/\` — the box-drawing char is visibly wider in most monospace fonts, making the animation read as flicker rather than rotation. Now pure ASCII `|/-\`.
+
+### SVG output
+
+- **Dropped dead `id="line-N"` attributes** from every output `<g>`. They were emitted by `line-renderer.ts` but referenced nowhere (the typing reveal uses `cmdrev-N` clipPaths, fade-ins use the CSS class, scroll targets `#scrollContainer`). Saves ~315 bytes per typical hero scene; ~13% of gallery SVG payload at the tail. `lineIndex` parameter dropped from the two output-line generators since it had no other use.
+
+### CI / DX
+
+- **Split `npm run demo`** into `demo` (build + regen) and `demo:regen` (regen only). CI's "verify demo SVGs are up to date" step now uses `demo:regen` since `build` already ran — saves ~9 s per CI run (the prior step rebuilt tsup + DTS redundantly).
+
+### Tests
+
+- **310 → 353 (+43).** Extracted `formatModeTag`, `humanAge`, `minifySvg`, `resolveCacheMode`, `parseFlags` from `src/cli.ts` into `src/core/cli-helpers.ts` so they can be unit-tested without spawning a subprocess. The helpers' ~45 LOC of logic is now 100% covered; the entry script `src/cli.ts` itself stays unmeasured (CLI never runs in unit tests). Overall project coverage 89.99% → 90.15%. New `src/core/__tests__/cli-helpers.test.ts` with comprehensive edge cases (`resolveCacheMode` conflict detection across all combinations, `minifySvg` whitespace boundaries with `white-space: pre` guards, etc.). `@vitest/coverage-v8` added to devDependencies.
+
+### Filed for future rounds (round-5 discovery)
+
+- `#100` (CLI: inspect single block's schema), `#101` (CLI: `--timings`/`--explain`), `#102` (cache hit/miss visibility), `#103` (zod schema memoization for `--watch`), `#104` (quote/fortune redundancy), `#105` (4-persona overlap), `#106` (htop hardcoded task count), `#107` (national-day truncation).
+
 ## v0.12.0 — 2026-05-25
 
 New block + new theme. Closes `#92` (github-languages block) and `#93` (high-contrast theme — first new theme aimed at WCAG AAA / accessibility-first use).

@@ -172,7 +172,7 @@ function generateCommandLine(
   // honors it. charAppearDuration is no longer the duration (CSS uses the
   // .fade-in rule's 10ms) — kept in the schema for back-compat.
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})">
+    <g transform="translate(0, ${y})">
       ${revealClip}
       <text class="tt fade-in" style="animation-delay: ${startTime}ms" fill="${promptColor}" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">${escapeXml(prompt)}</text>
       <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` textLength="${cmdWidth}" lengthAdjust="spacingAndGlyphs" clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
@@ -210,7 +210,6 @@ function buildRevealClip(
  * transition is instantaneous like a sprite swap.
  */
 function generateAnimatedOutputLine(
-  lineIndex: number,
   y: number,
   frames: string[],
   color: string,
@@ -241,13 +240,12 @@ function generateAnimatedOutputLine(
   }).join('');
 
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})"${fadeInStyle(startTime)}>
+    <g transform="translate(0, ${y})"${fadeInStyle(startTime)}>
       ${textElements}
     </g>`;
 }
 
 function generateOutputLine(
-  lineIndex: number,
   y: number,
   content: string,
   color: string,
@@ -262,7 +260,7 @@ function generateOutputLine(
   const textFill = styled ? '' : ` fill="${color}"`;
 
   return `
-    <g id="line-${lineIndex}" transform="translate(0, ${y})"${fadeInStyle(startTime)}>
+    <g transform="translate(0, ${y})"${fadeInStyle(startTime)}>
       <text class="tt"${textFill}>
         ${textContent}
       </text>
@@ -304,7 +302,7 @@ export function generateAllLines(
         processedLines.set(
           frame.lineIndex,
           generateAnimatedOutputLine(
-            frame.lineIndex, y,
+            y,
             frame.frames,
             frame.color ?? colors.text,
             frame.time,
@@ -318,7 +316,7 @@ export function generateAllLines(
         processedLines.set(
           frame.lineIndex,
           generateOutputLine(
-            frame.lineIndex, y,
+            y,
             frame.content ?? '',
             frame.color ?? colors.text,
             frame.time,

@@ -11,11 +11,12 @@
  *   svg-terminal blocks
  */
 
-import { writeFileSync, watch as fsWatch } from 'node:fs';
+import { existsSync, writeFileSync, watch as fsWatch } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { generate, generateStatic, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
+import { formatModeTag, humanAge, minifySvg, resolveCacheMode } from './core/cli-helpers.js';
 
 // Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
 declare const __PKG_VERSION__: string;
@@ -34,14 +35,26 @@ function hasFlag(name: string): boolean {
   return args.includes(`--${name}`);
 }
 
-/** Format the "(static, minified, cache:frozen)" suffix on the generate log line. */
-function formatModeTag(opts: { isStatic: boolean; minify: boolean; cacheMode: string }): string {
-  const parts = [
-    opts.isStatic && 'static',
-    opts.minify && 'minified',
-    opts.cacheMode !== 'normal' && `cache:${opts.cacheMode}`,
-  ].filter(Boolean);
-  return parts.length ? ` (${parts.join(', ')})` : '';
+/** Flags accepted by `svg-terminal generate`. Any `--foo` not in this set
+ *  triggers a stderr warning so users catch typos like `--no-chache`. */
+const GENERATE_KNOWN_FLAGS = new Set([
+  'config', 'output', 'static', 'minify', 'strict', 'watch',
+  'no-cache', 'refresh-cache', 'frozen-cache', 'cache-mode',
+]);
+
+/** Warn (don't fail) on unknown `--flag` tokens. Skips value-position tokens
+ *  by tracking which flags take a value. */
+function warnUnknownFlags(tokens: readonly string[], known: ReadonlySet<string>): void {
+  const valueFlags = new Set(['config', 'output', 'cache-mode']);
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i]!;
+    if (!tok.startsWith('--')) continue;
+    const name = tok.slice(2);
+    if (!known.has(name)) {
+      console.error(`\x1b[33m[svg-terminal] warning: unknown flag "${tok}" — ignoring\x1b[0m`);
+    }
+    if (valueFlags.has(name)) i++; // skip the value token
+  }
 }
 
 /** Pretty-print an error inside the watch loop without crashing the watcher. */
@@ -53,34 +66,6 @@ function formatWatchError(err: unknown): void {
   }
 }
 
-/** Human-readable age string for the cache check output. */
-function humanAge(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
-  return `${Math.floor(seconds / 86400)}d`;
-}
-
-/** Map mutually-exclusive cache flags to a CacheMode. Last flag wins. */
-function resolveCacheMode(): 'normal' | 'refresh' | 'frozen' | 'off' {
-  if (hasFlag('no-cache')) return 'off';
-  if (hasFlag('refresh-cache')) return 'refresh';
-  if (hasFlag('frozen-cache')) return 'frozen';
-  return 'normal';
-}
-
-/**
- * Collapse inter-element whitespace in an SVG string.
- * Conservative — leaves attribute values and text-node content alone, only
- * strips whitespace that sits between tags.
- */
-function minifySvg(svg: string): string {
-  return svg
-    .replace(/>\s+</g, '><')
-    .replace(/\n\s+/g, '\n')
-    .replace(/^\s+|\s+$/g, '');
-}
-
 async function main(): Promise<void> {
   if (hasFlag('version') || command === '--version') {
     console.log(`svg-terminal ${VERSION}`);
@@ -89,13 +74,17 @@ async function main(): Promise<void> {
 
   switch (command) {
     case 'generate': {
+      // Warn early on typo'd flags. Silent flag-ignore is the worst class of
+      // CLI bug — `--no-chache` would silently fall back to normal cache mode
+      // while the user thinks they bypassed it.
+      warnUnknownFlags(args.slice(1), GENERATE_KNOWN_FLAGS);
       const configPath = getFlag('config') ?? 'terminal.yml';
       const outputPath = getFlag('output') ?? 'terminal.svg';
       const isStatic = hasFlag('static');
       const minify = hasFlag('minify');
       const strict = hasFlag('strict');
       const watch = hasFlag('watch');
-      const cacheMode = resolveCacheMode();
+      const cacheMode = resolveCacheMode(args);
 
       setStrictBlockConfig(strict);
       const resolvedConfigPath = resolve(configPath);
@@ -104,13 +93,20 @@ async function main(): Promise<void> {
       const modeTag = formatModeTag({ isStatic, minify, cacheMode });
 
       const runOnce = async (): Promise<void> => {
+        const start = performance.now();
         const userConfig = await loadConfig(resolvedConfigPath);
         let svg = isStatic
           ? await generateStatic(userConfig, genOpts)
           : await generate(userConfig, genOpts);
         if (minify) svg = minifySvg(svg);
         writeFileSync(resolvedOutputPath, svg, 'utf-8');
-        console.log(`Generated ${outputPath}${modeTag} (${(svg.length / 1024).toFixed(1)} KB)`);
+        const elapsed = Math.round(performance.now() - start);
+        // In watch mode, prefix the log with an HH:MM:SS timestamp + render
+        // duration so the user can see when each re-render happened and how
+        // long it took. Without this the watch log is silent-looking.
+        const prefix = watch ? `[${new Date().toTimeString().slice(0, 8)}] ` : '';
+        const duration = watch ? `, ${elapsed}ms` : '';
+        console.log(`${prefix}Generated ${outputPath}${modeTag} (${(svg.length / 1024).toFixed(1)} KB${duration})`);
       };
 
       if (!watch) {
@@ -189,7 +185,7 @@ window:
   width: 1000
   height: 560
   title: "user@terminal:~"
-  # style: macos       # macos | floating | minimal | none
+  # style: macos       # macos | win95 | floating | minimal | none
   # autoHeight: false   # Auto-calculate height from content
   # minHeight: 300      # Minimum height when autoHeight is true
   # maxHeight: 1200     # Maximum height when autoHeight is true
@@ -232,6 +228,12 @@ blocks:
         - "Talk is cheap. Show me the code."
         - "First, solve the problem. Then, write the code."
 
+  # Uncomment to see an animated block (the library's signature feature) —
+  # spinners, clocks, dice rolls. Multi-frame animation, single-line restriction.
+  # - block: loading-spinner
+  #   config:
+  #     label: "deploying to production"
+
   - block: custom
     config:
       command: echo "Thanks for visiting!"
@@ -240,7 +242,15 @@ blocks:
         - ""
         - "Have a great day!"
 `;
-      writeFileSync('terminal.yml', starter, 'utf-8');
+      const targetPath = resolve('terminal.yml');
+      // Don't silently clobber a hand-tuned config. The HIGH-impact UX bug
+      // for a tool whose entry point is `init` — losing 30 minutes of YAML
+      // to a stray ↑-enter is unforgivable.
+      if (existsSync(targetPath) && !hasFlag('force')) {
+        console.error('terminal.yml already exists. Use --force to overwrite.');
+        process.exit(1);
+      }
+      writeFileSync(targetPath, starter, 'utf-8');
       console.log('Created terminal.yml — edit it and run: svg-terminal generate');
       break;
     }
@@ -297,29 +307,38 @@ blocks:
       console.log(`svg-terminal — Generate animated SVG terminals
 
 Commands:
-  generate     Generate SVG from config file
-  init         Create a starter terminal.yml
-  themes       List available themes
-  blocks       List available block types
-  cache check  Verify dynamic-block cache freshness (exit 1 on stale/missing)
+  generate           Generate SVG from config file
+  init               Create a starter terminal.yml (refuses to overwrite without --force)
+  themes             List available themes
+  blocks             List available block types
+  cache check        Verify dynamic-block cache freshness (exit 1 on stale/missing)
 
-Options:
-  --config    Config file path (default: terminal.yml)
-  --output    Output file path (default: terminal.svg)
-  --static    Generate non-animated SVG (final frame snapshot)
-  --minify          Strip inter-element whitespace for smaller output
-  --strict          Promote unknown-block-config-key warnings to hard errors
-  --watch           Re-generate on config file change (Ctrl-C to exit)
-  --no-cache        Don't read or write the dynamic-block fetch cache
-  --refresh-cache   Force refresh: ignore existing cache entries, re-fetch all
-  --frozen-cache    Use cached values only; never fetch (CI offline mode)
-  --version         Print version number
+Generate options:
+  --config <path>    Config file path (default: terminal.yml)
+  --output <path>    Output file path (default: terminal.svg)
+  --static           Render the non-animated final-frame snapshot
+  --minify           Strip inter-element whitespace for smaller output
+  --strict           Promote unknown-block-config-key warnings to hard errors
+  --watch            Re-generate on config file change (Ctrl-C to exit)
 
-Example:
+Cache modes (mutually exclusive — defaults to normal):
+  --no-cache         Don't read or write the dynamic-block fetch cache
+  --refresh-cache    Force refresh: ignore existing cache entries, re-fetch all
+  --frozen-cache     Use cached values only; never fetch (CI offline mode)
+  --cache-mode <m>   Explicit: normal | refresh | frozen | off
+
+Init options:
+  --force            Overwrite an existing terminal.yml
+
+Global:
+  --version          Print version number
+
+Examples:
   svg-terminal init
   svg-terminal generate --config terminal.yml --output terminal.svg
-  svg-terminal generate --config terminal.yml --output static.svg --static
-  svg-terminal generate --config terminal.yml --output tiny.svg --minify
+  svg-terminal generate --static
+  svg-terminal generate --watch
+  svg-terminal cache check --config terminal.yml
 `);
     }
   }

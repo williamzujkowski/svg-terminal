@@ -232,7 +232,9 @@ describe('SMIL-stripped fallback', () => {
     const stripped = stripSmil(svg);
     // Every <g id="line-N"> in the output should be visible after stripping.
     // Look for the line groups — they used to be `<g id="line-N" ... opacity="0">`.
-    expect(stripped).not.toMatch(/<g[^>]*id="line-\d+"[^>]*opacity="0"/);
+    // Old shape: <g id="line-N" ...>. v0.13 dropped the id (it was never
+    // referenced); the line groups still need to not be opacity=0.
+    expect(stripped).not.toMatch(/<g[^>]*opacity="0"/);
   });
 
   it('clip-path rect has static width=final, not width=0', () => {
@@ -252,8 +254,8 @@ describe('SMIL-stripped fallback', () => {
   it('first sequence command has no setHold (startTime=0 — nothing to hold)', () => {
     const seq: Sequence[] = [{ type: 'command', content: 'whoami', typingDuration: 200 }];
     const svg = generateSvg(seq, makeConfig());
-    // Still no opacity="0" on the line group / no width="0" on the clip rect.
-    expect(svg).not.toMatch(/<g[^>]*id="line-0"[^>]*opacity="0"/);
+    // Still no opacity="0" on any line group / no width="0" on the clip rect.
+    expect(svg).not.toMatch(/<g[^>]*opacity="0"/);
     expect(svg).toMatch(/<rect x="\d+" y="-\d+" width="48" height="\d+">/);
   });
 
@@ -275,7 +277,7 @@ describe('SMIL-stripped fallback', () => {
       { type: 'output', content: 'spin', frames: [' / ', ' - ', ' \\ ', ' | '], framesFps: 4, framesLoop: true },
     ];
     const svg = generateSvg(seq, makeConfig());
-    expect(svg).not.toMatch(/<g[^>]*id="line-1"[^>]*opacity="0"/);
+    expect(svg).not.toMatch(/<g[^>]*opacity="0"/);
     // Frame 0 still has opacity="1" so it's the static fallback when SMIL is stripped.
     expect(svg).toContain('opacity="1"');
   });
@@ -391,8 +393,10 @@ describe('line-position rounding', () => {
       { type: 'output', content: 'l4' },
     ];
     const svg = generateSvg(seq, makeConfig());
-    const ys = [...svg.matchAll(/<g[^>]*id="line-(\d+)"[^>]*translate\(0, ([\d.]+)\)/g)]
-      .map(m => +m[2]!);
+    // Match output line <g>s by their fade-in class (v0.13 dropped the
+    // unreferenced id="line-N"; the class is now the stable anchor).
+    const ys = [...svg.matchAll(/<g transform="translate\(0, ([\d.]+)\)" class="fade-in"/g)]
+      .map(m => +m[1]!);
     expect(ys).toEqual([0, 25.2, 50.4, 75.6, 100.8]);
   });
 });

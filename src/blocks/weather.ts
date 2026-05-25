@@ -18,6 +18,20 @@ const weatherSchema = z.object({
   command: z.string().optional(),
 }).strict();
 
+/**
+ * Encode a wttr.in location for URL embedding. wttr.in's path parser accepts
+ * `+`, `~`, `_`, and (sometimes) `%20` as space separators — but they're not
+ * all equally reliable. We standardize on `+` (the most widely-documented and
+ * universally-honored variant — wttr.in's own examples use it). Both the
+ * standalone weather block and `fetchWeatherSummary` (used by `motd`) go
+ * through this helper so they can't drift apart again — they previously used
+ * `_` and `~` respectively, with each function's comment contradicting the
+ * other.
+ */
+export function encodeWttrLocation(location: string): string {
+  return encodeURIComponent(location).replace(/%20/g, '+');
+}
+
 /** wttr.in JSON response shape (subset). */
 interface WttrResponse {
   current_condition: Array<{
@@ -111,9 +125,7 @@ export const weatherBlock: Block = {
       };
     }
 
-    // wttr.in hangs on %20 and misroutes ~ — underscores work reliably for spaces
-    const encodedLocation = encodeURIComponent(location).replace(/%20/g, '_');
-    const url = `https://wttr.in/${encodedLocation}?format=j1`;
+    const url = `https://wttr.in/${encodeWttrLocation(location)}?format=j1`;
     const cacheKey = `weather:${hashConfig(config)}`;
     const data = context.useCache
       ? await context.useCache(cacheKey, () => fetchJson<WttrResponse>(url, timeout))
@@ -152,9 +164,7 @@ export async function fetchWeatherSummary(
 ): Promise<string | null> {
   if (!location) return null;
 
-  // wttr.in treats %20 and + inconsistently — use ~ for spaces (documented by wttr.in)
-  const encodedLocation = encodeURIComponent(location).replace(/%20/g, '~');
-  const url = `https://wttr.in/${encodedLocation}?format=j1`;
+  const url = `https://wttr.in/${encodeWttrLocation(location)}?format=j1`;
   const data = await fetchJson<WttrResponse>(url, timeout);
 
   if (!data?.current_condition?.length) return null;

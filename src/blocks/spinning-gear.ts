@@ -5,7 +5,11 @@
 import { z } from 'zod';
 import type { Block, BlockContext, BlockResult } from '../types.js';
 
-const GEAR_FRAMES = ['|', '/', '─', '\\'];
+// Canonical 4-frame ASCII spinner. Pure ASCII (no U+2500 BOX DRAWING) so
+// every frame occupies the same monospace cell — the previous '─' was
+// visibly wider than '|/\' in most monospace fonts, making the animation
+// read as flicker rather than rotation.
+const GEAR_FRAMES = ['|', '/', '-', '\\'];
 
 const spinningGearSchema = z.object({
   label: z.string().optional(),

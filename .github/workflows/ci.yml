@@ -44,13 +44,14 @@ jobs:
           test -s /tmp/sample.min.svg
 
       - name: verify demo SVGs are up to date
-        # `npm run demo` regenerates examples/demo.svg + the per-theme gallery.
-        # If the diff is non-empty, the rendering changed and the committed
-        # demo SVGs are stale — fail with an actionable message rather than
-        # auto-committing.
+        # `demo:regen` skips the tsup rebuild (the `build` step already ran).
+        # That alone saves ~9s of CI wall-time per run since DTS generation
+        # was the dominant cost. If the diff is non-empty, the rendering
+        # changed and the committed demo SVGs are stale — fail with an
+        # actionable message rather than auto-committing.
         run: |
           set -euo pipefail
-          npm run demo > /dev/null
+          npm run demo:regen > /dev/null
           if ! git diff --quiet -- examples/; then
             echo "::error::examples/ is out of date — run \`npm run demo\` locally and commit the regenerated SVGs"
             git diff --stat -- examples/
