@@ -1,5 +1,58 @@
 # Changelog
 
+## v0.8.0 — 2026-05-25
+
+A polish + 8-blocks release. Cursor animation bug fixed (cursor now sits ON emerging characters; doesn't blink invisible during typing). Watch-mode survives delete+recreate. Static-SVG paths slimmed. Eight new blocks across animated + practical categories.
+
+### ⚠️ Deprecations
+
+- **`animation.cursorBlinkCycle`** still in the schema but the typing-time cursor is now solid (the previous blink was the cause of the cursor-animation bug). The field will be removed in v1.0. Same trajectory as `charAppearDuration` (deprecated in v0.7).
+
+### Fixes
+
+- **Cursor animation bug** — cursor used to land on column N+1 at the instant char N emerged (so it visually led typed chars) AND blink invisible for ~333 ms out of every 1000 ms (so chars appeared without a visible cursor). Now lag-by-one + solid during typing. Decided by 7-agent nexus consensus vote, 100% approve option A.
+- **`--watch` survives file delete + recreate** (`#76`). Was binding `fs.watch` to the inode; vim's atomic-save + plain `rm`-then-`touch` detached the watcher silently. Now watches the parent directory and filters by basename.
+
+### Performance
+
+- **One fewer `<defs>` block per animated SVG** (`#74` + `#75`). Viewport clipPath moved from `renderTerminalContent` into the top-level defs. ~20 bytes saved.
+
+### DX
+
+- **Hint for `accessibility: false`** (`#77`). User passes a boolean expecting a "disable" shortcut; now gets `hint: to disable accessibility descriptions, use \`accessibility: { describe: false }\` (not a boolean).`
+- **`registerTheme({ name: 'random' })` throws** (`#78`). `random` is reserved (triggers daily rotation). Was silently shadowing.
+- **Negative `CacheRuntime.ttl` fails fast** (`#80`). `makeUseCache` throws on construction instead of `pruneStaleEntries` silently no-op'ing.
+- **CI exercises the cache code path end-to-end** (`#79`). New smoke step runs `--refresh-cache` + `cache check` + `--frozen-cache` against a small dynamic-block fixture. Catches read/write/path regressions that unit tests can miss.
+
+### New blocks (+8, registry 38 → 46)
+
+**Animated:**
+- `ascii-clock` — HH:MM:SS with pulsing colon, 12h / 24h
+- `progress-bar` — fake build bar that fills 0% → 100% in 5% steps
+- `bouncing-dot` — single glyph ping-pongs left ↔ right
+- `dice-roll` — N d6 dice tumble and land on a result (deterministic per-day)
+
+**Practical:**
+- `palette-swatch` — one-line render of the 16 named theme colors
+- `semver-bump` — current version + major/minor/patch bump preview
+- `ascii-calendar` — current-month grid with today bolded
+- `toc` — markdown TOC with GitHub-flavored anchor slugs
+
+### Docs
+
+- **Honest a11y note** about SMIL ↔ `prefers-reduced-motion` gap. README's accessibility section and CONTRIBUTING both call it out; pointer to `--static` for motion-sensitive contexts. The architectural fix is tracked in `#71`.
+
+### Tests
+
+- 233 → 276 tests (+43 since v0.7 → +21 in this release).
+
+### Deferred (still open)
+
+- `#69` refactor frame-cycle to single text + content cycling
+- `#70` consolidate per-scroll animateTransform
+- `#71` SMIL prefers-reduced-motion (needs design vote)
+- `#72` snapshot-file structuring helper
+
 ## v0.7.0 — 2026-05-24
 
 A perf + new-blocks release. Two design questions went through nexus 7-agent consensus votes before implementation: the per-character animation consolidation (86% approve, fold-in: cursor-first separate commit, deprecate not silently drop `charAppearDuration`, regression test) and the v0.7 priorities (epic synthesis from two discovery subagents).
