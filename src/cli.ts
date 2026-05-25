@@ -12,7 +12,7 @@
  */
 
 import { writeFileSync, watch as fsWatch } from 'node:fs';
-import { resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { generate, generateStatic, inspectCache, listBlocks, loadConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
@@ -149,12 +149,19 @@ async function main(): Promise<void> {
         }, DEBOUNCE_MS);
       };
 
-      const watcher = fsWatch(resolvedConfigPath, { persistent: true }, () => trigger());
+      // Watch the parent directory + filter by filename. This survives the
+      // common editor patterns that detach a file-level fs.watch on Linux:
+      // vim's backupcopy=no (write-then-rename), plain rm-then-touch, and
+      // VSCode's atomic-save dance. Re-bind isn't needed because the dir
+      // watcher stays valid even when the file disappears and reappears.
+      const configDir = dirname(resolvedConfigPath);
+      const configName = basename(resolvedConfigPath);
+      const watcher = fsWatch(configDir, { persistent: true }, (_event, filename) => {
+        if (filename === configName) trigger();
+      });
 
-      // Editors that rename-on-save can detach fs.watch from the inode on
-      // Linux. Re-arm if the file disappears and reappears.
-      watcher.on('error', () => {
-        // best-effort: fall through; user will notice if changes stop firing
+      watcher.on('error', err => {
+        console.error(`\x1b[31m[svg-terminal] watch error: ${err.message}\x1b[0m`);
       });
 
       process.on('SIGINT', () => {
