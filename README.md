@@ -107,6 +107,14 @@ Special value: `theme: random` rotates through all themes deterministically by d
 | `bbs-login` | Retro 1980s BBS welcome banner — pairs with `amber` / `green-phosphor` |
 | `build-badge` | Terminal-style project status card (tests / lint / coverage) |
 | `license-card` | Boxed License / Copyright card |
+| `ascii-clock` | HH:MM:SS clock with pulsing colon separators (12h / 24h) |
+| `progress-bar` | Fake build progress bar that fills 0% → 100% |
+| `bouncing-dot` | Single glyph bouncing left ↔ right |
+| `dice-roll` | N d6 dice that tumble and land on a result |
+| `palette-swatch` | One-line render of all 16 theme palette colors |
+| `semver-bump` | Current semver + bump preview (major/minor/patch) |
+| `ascii-calendar` | Current-month calendar grid with today highlighted |
+| `toc` | Auto-generated markdown anchor-link table of contents |
 
 ### Dynamic API Blocks
 

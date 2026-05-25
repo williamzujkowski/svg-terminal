@@ -41,6 +41,14 @@ import { sparklineBlock } from './sparkline.js';
 import { bbsLoginBlock } from './bbs-login.js';
 import { buildBadgeBlock } from './build-badge.js';
 import { licenseCardBlock } from './license-card.js';
+import { asciiClockBlock } from './ascii-clock.js';
+import { progressBarBlock } from './progress-bar.js';
+import { bouncingDotBlock } from './bouncing-dot.js';
+import { diceRollBlock } from './dice-roll.js';
+import { paletteSwatchBlock } from './palette-swatch.js';
+import { semverBumpBlock } from './semver-bump.js';
+import { asciiCalendarBlock } from './ascii-calendar.js';
+import { tocBlock } from './toc.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -83,6 +91,14 @@ export function registerBuiltinBlocks(): void {
     bbsLoginBlock,
     buildBadgeBlock,
     licenseCardBlock,
+    asciiClockBlock,
+    progressBarBlock,
+    bouncingDotBlock,
+    diceRollBlock,
+    paletteSwatchBlock,
+    semverBumpBlock,
+    asciiCalendarBlock,
+    tocBlock,
   ]);
 }
 
@@ -125,3 +141,11 @@ export { sparklineBlock } from './sparkline.js';
 export { bbsLoginBlock } from './bbs-login.js';
 export { buildBadgeBlock } from './build-badge.js';
 export { licenseCardBlock } from './license-card.js';
+export { asciiClockBlock } from './ascii-clock.js';
+export { progressBarBlock } from './progress-bar.js';
+export { bouncingDotBlock } from './bouncing-dot.js';
+export { diceRollBlock } from './dice-roll.js';
+export { paletteSwatchBlock } from './palette-swatch.js';
+export { semverBumpBlock } from './semver-bump.js';
+export { asciiCalendarBlock } from './ascii-calendar.js';
+export { tocBlock } from './toc.js';

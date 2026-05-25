@@ -214,6 +214,106 @@ describe('previously-uncovered blocks', () => {
   });
 });
 
+describe('v0.8 animated blocks', () => {
+  const animated = ['ascii-clock', 'progress-bar', 'bouncing-dot', 'dice-roll'];
+
+  for (const name of animated) {
+    it(`${name}: returns animation payload + frame-0 fallback`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.animation).toBeDefined();
+      expect(result.animation!.frames.length).toBeGreaterThan(1);
+      expect(result.lines.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('ascii-clock honors 12h vs 24h format', async () => {
+    const block = getBlock('ascii-clock')!;
+    const result12 = await block.render(context, { format: '12h' });
+    const result24 = await block.render(context, { format: '24h' });
+    expect(result12.lines[0]).toMatch(/[AP]M/);
+    expect(result24.lines[0]).not.toMatch(/[AP]M/);
+  });
+
+  it('progress-bar configurable width affects frame width', async () => {
+    const block = getBlock('progress-bar')!;
+    const narrow = await block.render(context, { width: 10 });
+    const wide = await block.render(context, { width: 40 });
+    // Final frame should be wider when width is larger.
+    const narrowFinal = narrow.animation!.frames[narrow.animation!.frames.length - 1]![0]!;
+    const wideFinal = wide.animation!.frames[wide.animation!.frames.length - 1]![0]!;
+    expect(wideFinal.length).toBeGreaterThan(narrowFinal.length);
+  });
+
+  it('dice-roll respects a configured result', async () => {
+    const block = getBlock('dice-roll')!;
+    const result = await block.render(context, { result: [4, 5, 6] });
+    const last = result.animation!.frames[result.animation!.frames.length - 1]![0]!;
+    expect(last).toContain('15'); // 4+5+6 sum
+  });
+
+  it('bouncing-dot full out-and-back has 2*width-2 frames', async () => {
+    const block = getBlock('bouncing-dot')!;
+    const result = await block.render(context, { width: 10 });
+    expect(result.animation!.frames.length).toBe(10 + 10 - 2); // 18
+  });
+});
+
+describe('v0.8 practical blocks', () => {
+  const practical = ['palette-swatch', 'semver-bump', 'ascii-calendar', 'toc'];
+
+  for (const name of practical) {
+    it(`${name}: renders default + non-empty output`, async () => {
+      const block = getBlock(name)!;
+      expect(block).toBeDefined();
+      const result = await block.render(context, {});
+      expect(result.command).toBeTruthy();
+      expect(result.lines.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('palette-swatch lists all 16 named colors via [[fg:...]] markup', async () => {
+    const block = getBlock('palette-swatch')!;
+    const result = await block.render(context, {});
+    const joined = result.lines.join('\n');
+    expect((joined.match(/\[\[fg:/g) ?? []).length).toBe(16);
+  });
+
+  it('semver-bump computes major/minor/patch correctly', async () => {
+    const block = getBlock('semver-bump')!;
+    const result = await block.render(context, { current: '2.3.4' });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('3.0.0');
+    expect(joined).toContain('2.4.0');
+    expect(joined).toContain('2.3.5');
+  });
+
+  it('semver-bump rejects non-semver current via configSchema', async () => {
+    const block = getBlock('semver-bump')!;
+    expect(() => block.configSchema!.parse({ current: 'v2.3' })).toThrow();
+  });
+
+  it('toc generates GitHub-flavored anchor slugs', async () => {
+    const block = getBlock('toc')!;
+    const result = await block.render(context, {
+      sections: ['Getting Started', 'API Reference', 'FAQs & Help'],
+    });
+    const joined = result.lines.join('\n');
+    expect(joined).toContain('#getting-started');
+    expect(joined).toContain('#api-reference');
+    expect(joined).toContain('#faqs--help');
+  });
+
+  it('ascii-calendar highlights today with bold markup', async () => {
+    const block = getBlock('ascii-calendar')!;
+    const result = await block.render(context, {});
+    const joined = result.lines.join('\n');
+    const todayPadded = String(context.now.getDate()).padStart(2, ' ');
+    expect(joined).toContain(`[[bold]]${todayPadded}[[/bold]]`);
+  });
+});
+
 describe('v0.7 practical blocks', () => {
   const practical = ['sparkline', 'bbs-login', 'build-badge', 'license-card'];
 
