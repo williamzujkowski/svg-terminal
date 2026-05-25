@@ -171,12 +171,25 @@ function renderAccessibilityChildren(
       lines.push(`${prompt}${seq.content}`);
     } else if (seq.content) {
       for (const line of seq.content.split('\n')) {
-        lines.push(stripMarkup(line));
+        const stripped = stripMarkup(line);
+        if (isBoxDrawingOnly(stripped)) continue;
+        lines.push(stripped);
       }
     }
   }
   if (lines.length === 0) return title;
   return `${title}\n  <desc>${escapeXml(lines.join('\n'))}</desc>`;
+}
+
+/**
+ * True if the line is composed entirely of Unicode box-drawing glyphs
+ * (U+2500–U+257F) plus whitespace. Those lines are pure visual frames
+ * for ASCII boxes — they carry zero semantic content for a screen reader
+ * AND inflate the <desc> payload (~600 bytes per box × 8 gallery files).
+ */
+function isBoxDrawingOnly(line: string): boolean {
+  if (line.length === 0) return false;
+  return /^[─-╿\s]+$/.test(line);
 }
 
 /** Render <title> + <desc> for the static SVG path from pre-flattened lines. */
@@ -187,7 +200,11 @@ function renderStaticAccessibilityChildren(
 ): string {
   const title = `\n  <title>${escapeXml(label)}</title>`;
   if (!a11y.describe || lines.length === 0) return title;
-  const stripped = lines.map(stripMarkup).join('\n');
+  const stripped = lines
+    .map(stripMarkup)
+    .filter(line => !isBoxDrawingOnly(line))
+    .join('\n');
+  if (stripped.length === 0) return title;
   return `${title}\n  <desc>${escapeXml(stripped)}</desc>`;
 }
 

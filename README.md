@@ -10,7 +10,7 @@ Generate animated SVG terminals from a declarative YAML config. The output is a 
 
 - **Declarative YAML config** — write blocks, pick a theme, run the CLI
 - **46 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories
-- **8 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95 (with chrome to match)
+- **11 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95, catppuccin, tokyo-night, gruvbox (with chrome to match)
 - **Single-line frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 9 animated blocks (spinners, clock, dice, progress bar, etc.). Multi-line is a known restriction
 - **Dynamic-block cache** — the 4 cacheable blocks (weather, github-stats, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
 - **Reduced-motion respected for fade-ins** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins. SMIL-driven typing reveal, cursor walk, scroll, and frame cycles remain animated; pair with `--static` for full stillness
@@ -69,13 +69,16 @@ blocks:
 | `amber` | Vintage amber CRT (pairs well with `effects.textGlow: true`) |
 | `green-phosphor` | Classic green-on-black phosphor (pair with glow) |
 | `cyberpunk` | Neon magenta/cyan on near-black |
-| `solarized-dark` | Ethan Schoonover's solarized dark palette |
+| `solarized-dark` | Ethan Schoonover's solarized dark palette (lifted prompt/comment for WCAG AA) |
 | `win95` | Authentic Windows 95 chrome — auto-switches `window.style: win95` |
+| `catppuccin` | Catppuccin Mocha — soothing pastel dark theme |
+| `tokyo-night` | Tokyo Night (storm variant) — popular for Vim/Neovim |
+| `gruvbox` | Gruvbox Dark medium — retro warm contrast |
 
 Special value: `theme: random` rotates through all themes deterministically by day of year — gives you a different look every day without committing to one.
 
 <details>
-<summary>Theme gallery — click to expand all 8</summary>
+<summary>Theme gallery — click to expand all 11</summary>
 
 Each is the same 2-block config (motd + neofetch) rendered against the named theme. Source in [`examples/gallery/_template.yml`](./examples/gallery/_template.yml).
 
@@ -85,6 +88,8 @@ Each is the same 2-block config (motd + neofetch) rendered against the named the
 | **monokai**<br><img src="./examples/gallery/monokai.svg" width="380" alt="monokai theme preview"/> | **amber**<br><img src="./examples/gallery/amber.svg" width="380" alt="amber theme preview"/> |
 | **green-phosphor**<br><img src="./examples/gallery/green-phosphor.svg" width="380" alt="green-phosphor theme preview"/> | **cyberpunk**<br><img src="./examples/gallery/cyberpunk.svg" width="380" alt="cyberpunk theme preview"/> |
 | **solarized-dark**<br><img src="./examples/gallery/solarized-dark.svg" width="380" alt="solarized-dark theme preview"/> | **win95**<br><img src="./examples/gallery/win95.svg" width="380" alt="win95 theme preview"/> |
+| **catppuccin**<br><img src="./examples/gallery/catppuccin.svg" width="380" alt="catppuccin theme preview"/> | **tokyo-night**<br><img src="./examples/gallery/tokyo-night.svg" width="380" alt="tokyo-night theme preview"/> |
+| **gruvbox**<br><img src="./examples/gallery/gruvbox.svg" width="380" alt="gruvbox theme preview"/> | |
 
 </details>
 

@@ -2,15 +2,10 @@
   role="img" aria-label="Animated terminal showing: cat /etc/motd, neofetch --ascii_distro svg-terminal">
   <title>Animated terminal showing: cat /etc/motd, neofetch --ascii_distro svg-terminal</title>
   <desc>$ cat /etc/motd
-╔════════════════════════════════════════════════════════════════════════════╗
-║                                                                            ║
 ║ DEV TERMINAL v2026.05                                                      ║
 ║ Theme preview                                                              ║
-║                                                                            ║
-╚════════════════════════════════════════════════════════════════════════════╝
 $ neofetch --ascii_distro svg-terminal
 dev@svg-terminal
-────────────────
 OS:        TerminalOS v1.0
 Shell:     bash 5.2
 Uptime:    a long time

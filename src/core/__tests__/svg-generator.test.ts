@@ -281,6 +281,32 @@ describe('SMIL-stripped fallback', () => {
   });
 });
 
+describe('<desc> box-drawing elision (partial #91)', () => {
+  // Pure box-drawing lines (╔═══╗ / ║ … ║ / ╚═══╝) carry zero semantic value
+  // for screen readers AND bloat the <desc> payload. They're elided.
+  it('strips lines composed entirely of box-drawing glyphs', () => {
+    const seq: Sequence[] = [
+      { type: 'output', content: '╔════════════════╗\n║ Hello, world ║\n╚════════════════╝' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    const descMatch = /<desc>([^<]+)<\/desc>/.exec(svg);
+    expect(descMatch).not.toBeNull();
+    const desc = descMatch![1]!;
+    expect(desc).toContain('Hello, world');
+    // The two box-drawing-only lines (top + bottom) are stripped.
+    expect(desc).not.toContain('═');
+  });
+
+  it('keeps lines that have content alongside box chars', () => {
+    const seq: Sequence[] = [
+      // The middle line has ║ AND text — kept verbatim.
+      { type: 'output', content: '║ Important content ║' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).toContain('Important content');
+  });
+});
+
 describe('prefers-reduced-motion (CSS fade-ins, #71)', () => {
   // Option 5 from the nexus vote: fade-ins migrated from SMIL <animate> to
   // CSS @keyframes fadeIn. The existing @media (prefers-reduced-motion) block

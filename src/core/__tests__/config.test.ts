@@ -188,6 +188,46 @@ describe('loadConfig error paths', () => {
     }
   });
 
+  it('suggests Levenshtein-close keys on top-level typo (winodw → window)', async () => {
+    const file = write('typo-toplevel.yml', 'theme: dracula\nwinodw:\n  width: 800\nblocks:\n  - block: custom\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      const msg = (e as ConfigError).formatted;
+      expect(msg).toContain('Unrecognized key');
+      expect(msg).toMatch(/did you mean "window"/);
+    }
+  });
+
+  it('suggests Levenshtein-close keys on nested typo (terminal.fontsize → fontSize)', async () => {
+    const file = write('typo-nested.yml', 'theme: dracula\nterminal:\n  fontsize: 14\nblocks:\n  - block: custom\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      const msg = (e as ConfigError).formatted;
+      expect(msg).toContain('Unrecognized key');
+      expect(msg).toMatch(/did you mean "fontSize"/);
+    }
+  });
+
+  it('does not suggest for keys that are far from every known key', async () => {
+    const file = write('far-key.yml', 'theme: dracula\ntotallyMadeUp: 1\nblocks:\n  - block: custom\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      const msg = (e as ConfigError).formatted;
+      expect(msg).toContain('Unrecognized key');
+      // No hint at all when nothing is close enough.
+      expect(msg).not.toMatch(/did you mean/);
+    }
+  });
+
   it('rejects unknown theme names with the available list', async () => {
     const file = write('bad-theme.yml', 'theme: solarizedDark\nblocks:\n  - block: custom\n');
     try {

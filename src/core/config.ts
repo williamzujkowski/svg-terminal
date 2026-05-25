@@ -74,8 +74,80 @@ function hintForIssues(err: z.ZodError): string {
       // Most common: user passed `accessibility: false` to disable a11y.
       hints.push('  hint: to disable accessibility descriptions, use `accessibility: { describe: false }` (not a boolean).');
     }
+    // Typo hints for unknown keys (zod .strict() schemas). The schema is now
+    // strict at every level — unrecognized_keys fires when YAML has e.g.
+    // `winodw:` or `terminal: fontsize:` — silent skipping was the prior
+    // behavior. We surface a Levenshtein-≤2 suggestion against the known
+    // keys at that path.
+    if (issue.code === 'unrecognized_keys') {
+      const pathKey = issue.path.length === 0 ? '<root>' : issue.path.join('.');
+      const known = KNOWN_KEYS[pathKey];
+      const unknown = (issue as { keys?: string[] }).keys ?? [];
+      if (known) {
+        for (const key of unknown) {
+          const suggestion = closestKey(key, known);
+          if (suggestion) {
+            const where = pathKey === '<root>' ? '' : ` at ${pathKey}`;
+            hints.push(`  hint: unknown key "${key}"${where} — did you mean "${suggestion}"?`);
+          }
+        }
+      }
+    }
   }
   return hints.length > 0 ? '\n' + hints.join('\n') : '';
+}
+
+/**
+ * Hardcoded map of path → known-keys, used by the typo-suggestion hint. Kept
+ * separate from the zod schemas because runtime introspection through zod's
+ * `_def` shape isn't stable across versions, and the maintenance cost of
+ * keeping this in sync is one edit per schema change.
+ */
+const KNOWN_KEYS: Record<string, readonly string[]> = {
+  '<root>': ['theme', 'window', 'terminal', 'effects', 'animation', 'chrome', 'accessibility', 'blocks', 'variables', 'maxDuration', 'scrollDuration', 'accessibilityLabel', 'fetchTimeout', 'cacheTTL', 'cachePath'],
+  window: ['width', 'height', 'borderRadius', 'titleBarHeight', 'title', 'style', 'autoHeight', 'minHeight', 'maxHeight'],
+  terminal: ['fontFamily', 'fontSize', 'lineHeight', 'padding', 'paddingTop', 'prompt'],
+  effects: ['textGlow', 'shadow', 'scanlines'],
+  animation: ['cursorBlinkCycle', 'charAppearDuration', 'outputLineStagger', 'commandOutputPause', 'scrollDelay', 'outputEndPause', 'defaultTypingDuration', 'defaultSequencePause', 'loop'],
+  chrome: ['titleFontSize', 'buttonRadius', 'buttonSpacing', 'dimOpacity', 'buttonY'],
+  accessibility: ['describe'],
+};
+
+/**
+ * Returns the closest key from `candidates` within Levenshtein distance 2
+ * of `input`, or null if nothing fits. Distance 2 catches single-char typos
+ * (winodw → window, dist 1) and transposed-pair typos (linHeight → lineHeight,
+ * dist 2). For very short inputs (≤3 chars) caps at distance 1 to avoid
+ * "fpo" → "foo"-style overreach.
+ */
+function closestKey(input: string, candidates: readonly string[]): string | null {
+  const maxDist = input.length <= 3 ? 1 : 2;
+  let best: { name: string; dist: number } | null = null;
+  for (const c of candidates) {
+    const d = levenshtein(input.toLowerCase(), c.toLowerCase());
+    if (d <= maxDist && (best === null || d < best.dist)) {
+      best = { name: c, dist: d };
+    }
+  }
+  return best?.name ?? null;
+}
+
+/** Standard iterative DP Levenshtein. Inlined to avoid a dep for ~20 LOC. */
+function levenshtein(a: string, b: string): number {
+  if (a === b) return 0;
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  let curr = new Array<number>(b.length + 1);
+  for (let i = 1; i <= a.length; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(curr[j - 1]! + 1, prev[j]! + 1, prev[j - 1]! + cost);
+    }
+    [prev, curr] = [curr, prev];
+  }
+  return prev[b.length]!;
 }
 
 /** Validate theme + block names against the live registries with actionable lists. */

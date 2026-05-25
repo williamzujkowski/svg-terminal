@@ -25,7 +25,7 @@ const WindowSchema = z.object({
   autoHeight: z.boolean().optional(),
   minHeight: z.number().positive().optional(),
   maxHeight: z.number().positive().optional(),
-}).optional();
+}).strict().optional();
 
 const TerminalSchema = z.object({
   fontFamily: z.string().optional(),
@@ -34,13 +34,13 @@ const TerminalSchema = z.object({
   padding: z.number().min(0).optional(),
   paddingTop: z.number().min(0).optional(),
   prompt: z.string().optional(),
-}).optional();
+}).strict().optional();
 
 const EffectsSchema = z.object({
   textGlow: z.boolean().optional(),
   shadow: z.boolean().optional(),
   scanlines: z.boolean().optional(),
-}).optional();
+}).strict().optional();
 
 const AnimationSchema = z.object({
   cursorBlinkCycle: z.number().positive('cursorBlinkCycle must be positive').optional(),
@@ -52,11 +52,11 @@ const AnimationSchema = z.object({
   defaultTypingDuration: z.number().positive().optional(),
   defaultSequencePause: z.number().min(0).optional(),
   loop: z.union([z.boolean(), z.number().int().positive()]).optional(),
-}).optional();
+}).strict().optional();
 
 const AccessibilitySchema = z.object({
   describe: z.boolean().optional(),
-}).optional();
+}).strict().optional();
 
 const ChromeSchema = z.object({
   titleFontSize: z.number().positive('titleFontSize must be positive').optional(),
@@ -64,7 +64,7 @@ const ChromeSchema = z.object({
   buttonSpacing: z.number().positive().optional(),
   dimOpacity: z.number().min(0).max(1, 'dimOpacity must be between 0 and 1').optional(),
   buttonY: z.number().min(0).optional(),
-}).optional();
+}).strict().optional();
 
 export const UserConfigSchema = z.object({
   theme: z.union([z.string(), z.record(z.string(), z.unknown())]).optional(),
@@ -82,7 +82,7 @@ export const UserConfigSchema = z.object({
   fetchTimeout: z.number().positive().optional(),
   cacheTTL: z.number().int().min(0, 'cacheTTL must be ≥ 0').optional(),
   cachePath: z.string().min(1).optional(),
-});
+}).strict();
 
 /** Validate a raw config object and return typed UserConfig or throw. */
 export function validateConfig(raw: unknown): UserConfig {

@@ -23,6 +23,9 @@ const THEMES = [
   'cyberpunk',
   'solarized-dark',
   'win95',
+  'catppuccin',
+  'tokyo-night',
+  'gruvbox',
 ];
 
 async function writeSvg(svg, relPath) {

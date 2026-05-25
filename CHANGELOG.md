@@ -1,5 +1,47 @@
 # Changelog
 
+## v0.11.0 — 2026-05-25
+
+Themes + DX release. 3 community themes (catppuccin, tokyo-night, gruvbox), typo hints with Levenshtein suggestions, `<desc>` payload elision, shadow filter region widened, per-theme gallery title bars. Round 3 discovery surfaced 8 findings — 5 shipped here, 5 filed for future rounds.
+
+### Themes (+3, total 11)
+
+- **catppuccin** (Mocha) — the canonical pastel dark theme. Surface2 comment-color lifted slightly to clear WCAG AA against Base.
+- **tokyo-night** (storm) — popular Vim/Neovim companion. Same comment-color lift as catppuccin for AA.
+- **gruvbox** (dark medium) — retro warm contrast.
+
+All three pass WCAG AA for `text` and `prompt` on their backgrounds; gallery thumbnails added.
+
+### Config UX
+
+- **Levenshtein typo hints (closes round-3 finding #5).** Schema now `.strict()` at every level. Unknown keys at top-level OR in nested objects (`window`, `terminal`, `effects`, `animation`, `chrome`, `accessibility`) now throw `ConfigError` with a "did you mean…?" suggestion drawn from the known keys at that path. Levenshtein-≤2 matching, capped at distance 1 for short (≤3 char) inputs to avoid `fpo → foo` overreach. The prior behavior was silent skip — users typing `winodw:` or `fontsize:` would set defaults and think the field was broken.
+- **Hardcoded `KNOWN_KEYS` map** in `src/core/config.ts` rather than runtime zod introspection — zod's `_def` shape isn't stable across versions, so we trade one edit per schema change for stability.
+
+### Output payload
+
+- **`<desc>` elides pure box-drawing lines (partial #91).** Lines composed entirely of Unicode box-drawing glyphs (`U+2500–U+257F` + whitespace) carry zero semantic value for screen readers AND inflate the payload (~600 bytes per ASCII box × 8 gallery files = ~5 KB). Now stripped at emit time. ARIA pronunciation guidance (the OTHER half of #91) remains open for a separate design call.
+- **Shadow filter region widened (closes #88).** `x="-5%" y="-5%" width="110%" height="115%"` → `x="-8%" y="-8%" width="116%" height="120%"`. At saturated effects the prior bounds clipped the side shadow by ~2 px.
+
+### Gallery
+
+- **Per-theme title bar (closes #89).** `user@svg-terminal:~` → `user@<theme>:~` for each gallery thumbnail. The thumbnail now labels itself.
+
+### Library exports
+
+- **Completed the theme re-exports** at `src/index.ts`. Only `dracula, nord, monokai` were named-exported (despite 8 themes existing); now all 11 are re-exported (`amber, greenPhosphor, cyberpunk, solarizedDark, win95, catppuccin, tokyoNight, gruvbox` added). Pure addition — library consumers can now `import { gruvbox } from 'svg-terminal'` instead of going through `getTheme('gruvbox')`.
+
+### Tests
+
+- 296 → 301 (+5): Levenshtein typo hint (3 cases — toplevel, nested, no-match); `<desc>` box-drawing elision (2 cases — strip / keep-when-mixed).
+
+### Filed for future rounds (round-3 discovery)
+
+- `#92` `github-languages` block (top-N language % bars — staple profile widget).
+- `#93` high-contrast / WCAG AAA accessibility theme.
+- `#94` subtle radial vignette effect for CRT themes.
+- `#95` snapshot file split (subsumes `#72`).
+- `#96` pre-commit hook gating `examples/` regen.
+
 ## v0.10.0 — 2026-05-25
 
 Accessibility + perf release. Closes `#70` (perf) and `#71` (a11y prefers-reduced-motion, partial — fade-ins only). Docs friction from a user-journey audit fixed in the same batch.
