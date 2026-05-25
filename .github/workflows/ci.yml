@@ -33,8 +33,29 @@ jobs:
 
       - name: smoke generate
         run: |
+          set -euo pipefail
           node dist/cli.js init
           node dist/cli.js generate --config terminal.yml --output /tmp/sample.svg --no-cache
           node dist/cli.js generate --config terminal.yml --output /tmp/sample.min.svg --minify --no-cache
           test -s /tmp/sample.svg
           test -s /tmp/sample.min.svg
+
+      - name: smoke cache (refresh + frozen + check)
+        run: |
+          set -euo pipefail
+          # Build a config that uses cacheable blocks. The static blocks in
+          # terminal.yml don't touch the cache, so add a dynamic one here.
+          cat > /tmp/cache-smoke.yml <<'YML'
+          blocks:
+            - block: quote
+              config:
+                fallback: "shown only if upstream fails — cache should hit"
+          YML
+          # 1. --refresh-cache: populate (network OK, fallback OK either way)
+          node dist/cli.js generate --config /tmp/cache-smoke.yml --output /tmp/refresh.svg --refresh-cache
+          test -s /tmp/refresh.svg
+          # 2. cache check: should report OK now that the cache is populated
+          node dist/cli.js cache check --config /tmp/cache-smoke.yml
+          # 3. --frozen-cache: serve from the just-populated cache, no network
+          node dist/cli.js generate --config /tmp/cache-smoke.yml --output /tmp/frozen.svg --frozen-cache
+          test -s /tmp/frozen.svg
