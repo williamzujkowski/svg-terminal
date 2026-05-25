@@ -1,18 +1,18 @@
 # svg-terminal
 
-Generate beautiful animated SVG terminals for GitHub READMEs and beyond.
+Generate animated SVG terminals from a declarative YAML config. The output is a single self-contained SVG that works inside GitHub's sandbox — no script, no external assets.
 
 ![svg-terminal demo](./examples/demo.svg)
 
-<sub>Demo above is the SVG that this library produces. Source: [`examples/demo.yml`](./examples/demo.yml). Regenerate with `npm run demo`.</sub>
+<sub>Demo above is the actual SVG this library produces. Source: [`examples/demo.yml`](./examples/demo.yml). Regenerate with `npm run demo`.</sub>
 
-- **Declarative config** — YAML/JSON, no code needed for basic use
-- **46 built-in blocks** — across persona, retro, animation, practical, and meme categories
-- **8 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95
-- **Animation primitive** — multi-frame `BlockResult.animation` for spinners, clocks, mascots
-- **Cache layer** — dynamic blocks cache to disk for reproducible CI; `--frozen-cache` for fully offline builds
-- **Zero-runtime-deps SVG output** — works in GitHub's sandbox, no script, no external fonts
-- **CLI + Library** — use from command line or import as a module with strict zod-validated configs
+- **Declarative YAML config** — write blocks, pick a theme, run the CLI
+- **46 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories
+- **8 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95 (with chrome to match)
+- **Single-line frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 9 animated blocks (spinners, clock, dice, progress bar, etc.). Multi-line is a known restriction
+- **Dynamic-block cache** — the 4 cacheable blocks (weather, github-stats, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
+- **No runtime deps in the output** — SMIL animation, inline CSS, GitHub-sandbox-safe
+- **CLI + library** — `npx svg-terminal generate`, or `import { generate } from 'svg-terminal'`. Strict zod validation on every block's config
 
 ## Quick Start
 
@@ -209,15 +209,22 @@ svg-terminal generate --no-cache            # bypass cache entirely (don't read,
 
 ### Custom Blocks
 
+Custom blocks declare a strict zod `configSchema` so typos throw `BlockConfigError` at config-load time instead of silently falling back to defaults. Skipping the schema is allowed but discouraged — see [CONTRIBUTING.md](./CONTRIBUTING.md#adding-a-new-block).
+
 ```typescript
+import { z } from 'zod';
 import { registerBlock, generate } from 'svg-terminal';
 
 registerBlock({
   name: 'my-block',
+  configSchema: z.object({
+    greeting: z.string().optional(),
+  }).strict(),
   render(context, config) {
+    const greeting = (config.greeting as string) ?? 'hello';
     return {
       command: 'my-command',
-      lines: ['Output line 1', '[[fg:green]]Colored line[[/fg]]'],
+      lines: [`[[fg:green]]${greeting}, world[[/fg]]`],
     };
   },
 });
@@ -226,16 +233,25 @@ registerBlock({
 ## Programmatic API
 
 ```typescript
-import { generate } from 'svg-terminal';
+import { generate, generateStatic } from 'svg-terminal';
 
 const svg = await generate({
   theme: 'nord',
   blocks: [
     { block: 'neofetch', config: { username: 'dev' } },
-    { block: 'custom', config: { command: 'date', lines: ['2026-02-18'] } },
-  ],
+    { block: 'custom', config: { command: 'date', lines: ['2026-05-25'] } },
+  ]
+}, {
+  // All fields optional. configPath anchors cachePath resolution if you
+  // want the cache; cacheMode is one of 'normal' | 'refresh' | 'frozen' | 'off';
+  // now lets you pin context.now for reproducible test/demo output.
+  configPath: '/abs/path/to/config.yml',
+  cacheMode: 'frozen',
+  now: new Date('2026-05-25T13:37:00Z'),
 });
 ```
+
+`generateStatic` returns the same content as a non-animated SVG — useful for accessibility fallbacks and social-preview cards.
 
 ## GitHub Action
 
@@ -247,7 +263,18 @@ const svg = await generate({
     commit: true
 ```
 
-For maximally reproducible CI, commit `.svg-terminal-cache.json` alongside `terminal.yml` and add an `args: --frozen-cache` step to the workflow — every build will serve cached payloads with zero network calls.
+For maximally reproducible CI, commit `.svg-terminal-cache.json` alongside `terminal.yml` and set `cache-mode: frozen` — every build will serve cached payloads with zero network calls. The build fails loudly if a cacheable block is missing an entry:
+
+```yaml
+- uses: williamzujkowski/svg-terminal@v1
+  with:
+    config: terminal.yml
+    output: src/terminal.svg
+    cache-mode: frozen   # normal | refresh | frozen | off
+    static: false        # set true to skip animation
+    minify: false        # set true to strip inter-element whitespace
+    commit: true
+```
 
 ## Text Markup
 

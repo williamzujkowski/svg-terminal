@@ -1,5 +1,5 @@
 name: 'SVG Terminal Generator'
-description: 'Generate beautiful animated SVG terminals for GitHub READMEs'
+description: 'Generate animated SVG terminals for GitHub READMEs from a declarative YAML config.'
 author: 'williamzujkowski'
 
 branding:
@@ -15,6 +15,18 @@ inputs:
     description: 'Output SVG file path'
     required: false
     default: 'terminal.svg'
+  cache-mode:
+    description: 'Dynamic-block cache behavior: normal | refresh | frozen | off'
+    required: false
+    default: 'normal'
+  static:
+    description: 'Generate a non-animated SVG (final-frame snapshot)'
+    required: false
+    default: 'false'
+  minify:
+    description: 'Strip inter-element whitespace from the output'
+    required: false
+    default: 'false'
   commit:
     description: 'Auto-commit the generated SVG'
     required: false
@@ -52,7 +64,19 @@ runs:
         TZ: ${{ env.TZ || 'UTC' }}
       run: |
         set -euo pipefail
-        svg-terminal generate --config "${{ inputs.config }}" --output "${{ inputs.output }}"
+        # Compose the optional flags into a single $args string. Empty by default;
+        # only adds the flag when the input was set to a non-default value.
+        args=""
+        case "${{ inputs.cache-mode }}" in
+          refresh) args="$args --refresh-cache" ;;
+          frozen)  args="$args --frozen-cache" ;;
+          off)     args="$args --no-cache" ;;
+          normal|"") : ;;
+          *) echo "::error::Unknown cache-mode '${{ inputs.cache-mode }}'"; exit 1 ;;
+        esac
+        if [ "${{ inputs.static }}" = "true" ]; then args="$args --static"; fi
+        if [ "${{ inputs.minify }}" = "true" ]; then args="$args --minify"; fi
+        svg-terminal generate --config "${{ inputs.config }}" --output "${{ inputs.output }}" $args
         echo "size=$(stat -c%s "${{ inputs.output }}" 2>/dev/null || stat -f%z "${{ inputs.output }}")" >> "$GITHUB_OUTPUT"
 
     - name: Commit SVG

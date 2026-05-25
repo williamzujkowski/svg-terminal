@@ -7,7 +7,7 @@ Thanks for thinking about contributing — this project welcomes block authors, 
 ```bash
 npm ci                  # one-time install
 npm run dev             # tsup --watch — rebuild on change
-npm test                # vitest, ~220 tests
+npm test                # vitest (281 tests at v0.8.1)
 npm run typecheck       # tsc --noEmit
 npm run lint            # eslint v9
 npm run build           # production bundle into dist/
@@ -35,12 +35,11 @@ A block is a small TypeScript module that exports an object implementing the `Bl
 
 1. Create `src/blocks/<name>.ts`. Copy `src/blocks/vim-exit.ts` for the simplest possible example, or `src/blocks/custom.ts` if your block accepts configuration.
 
-2. **Declare a config contract.** Pick one of two paths:
+2. **Declare a config contract.** Set `configSchema: z.object({...}).strict()` on your block. The renderer parses every user config through this schema before `render()` runs and throws `BlockConfigError` on failure — with the block name, the entry index, and the offending key formatted for the CLI. See `src/blocks/neofetch.ts` for a canonical example. Use `.strict()` so typos throw instead of being silently stripped.
 
-   - **Strong** (recommended): set `configSchema: z.object({...}).strict()`. The renderer parses every user config through this schema and throws `BlockConfigError` on failure — with the block name, the entry index, and the offending key all formatted for the CLI. See `src/blocks/neofetch.ts` for the canonical example. Use `.strict()` so typos throw rather than being silently stripped.
-   - **Bridge** (legacy/fast): set `allowedKeys: ['key1', 'key2'] as const`. Unknown keys produce a stderr warning (promoted to error under `--strict`). Lighter than a full schema; the migration path from `allowedKeys` → `configSchema` is straightforward when the block matures.
+   The universal entry-level keys (`command`, `color`, `typing`, `pause`) are handled by the renderer; don't redeclare them in your schema.
 
-   Universal entry-level keys (`command`, `color`, `typing`, `pause`) are always allowed — don't list them in `allowedKeys`.
+   (There's also an `allowedKeys: readonly string[]` field on the Block interface that produces stderr warnings instead of throws. It existed as a migration bridge while the built-ins were converted to schemas; every built-in now uses `configSchema`, and new blocks should too. The field is still in the type for downstream/third-party-block back-compat.)
 
 3. If the block fetches from a network API, mark it `cacheable: true` so it participates in the cache machinery and `svg-terminal cache check`. Inside `render()`, call `context.useCache(key, () => fetchJson(...))` to opt into caching — see `src/blocks/quote.ts`.
 

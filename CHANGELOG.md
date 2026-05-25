@@ -1,5 +1,44 @@
 # Changelog
 
+## v0.8.1 — 2026-05-25
+
+Polish release surfaced by a three-agent full-repo review (docs accuracy / source QA / repo hygiene). One issue filed for follow-up (`#84`, symlinked-configDir cachePath escape — real but rare + has TOCTOU caveats); 15 findings fixed inline.
+
+### Fixes
+
+- **Inline theme `{ name: 'random' }` now rejected at load time.** Was bypassing the `registerTheme` reserved-name guard (only the string form was checked) and silently shadowing the daily-rotation behavior.
+- **`--watch` handles SIGTERM, not just SIGINT.** Process managers (docker, systemctl, kill) send SIGTERM; the watcher used to leak until the kernel reaped it.
+- **`generate()` / `generateStatic()` throw on empty `blocks`.** zod enforces this at config-load, but library consumers building a UserConfig in code could bypass it and get an empty SVG.
+
+### Packaging
+
+- **npm publish no longer ships source maps.** `files` field tightened to `["dist/**/*.js", "dist/**/*.d.ts", ...]`. Drops ~296 KB of `.map` files (~70% of the prior `dist/` payload).
+- **`package.json` description rewritten** — dropped subjective words, named the actual numbers (46 blocks / 8 themes / zero runtime deps in the output).
+- **Keywords refreshed** for v0.8 feature surface (smil, blocks, themes, yaml, cache, static-site, accessibility).
+- **`.gitignore` covers user-facing CLI defaults** (`terminal.yml`, `terminal.svg`) and the cache file (`.svg-terminal-cache.json`) so local exploratory runs don't get tracked.
+- **CI Node version pinned to `22.19.0`** — was floating on `22`, a minor bump could silently change the generated SVG bytes (the demo-verification step diffs byte output).
+
+### GitHub Action
+
+- New inputs: `cache-mode` (normal | refresh | frozen | off), `static`, `minify`. The previous README's `args: --frozen-cache` example didn't actually work — the action only accepted `config`, `output`, `commit`. Now it does.
+- Description rewritten (drop "beautiful").
+
+### Docs
+
+- **CONTRIBUTING.md** — test-count claim was stale (~220 → actual 276+). Block-author guidance no longer recommends the `allowedKeys` "bridge path" as one of two equal options (every built-in uses `configSchema`; the bridge is back-compat only).
+- **CHANGELOG.md** — v0.8 test-count math was wrong (`+21 this release` → actual `+24`).
+- **README.md** — intro rewritten to drop subjective words; `Custom Blocks` example now shows the `configSchema` pattern; `Programmatic API` section documents the `GenerateOptions` surface (configPath, cacheMode, now); GitHub Action snippet uses the real inputs.
+- **CLAUDE.md** — rewritten end-to-end for v0.8.1 (was last updated at v0.5). Documents the cache primitive, animation primitive, accessibility track, deprecated fields, and current pipeline.
+- **GitHub v0.8.0 release notes** updated in place to fix the test-count math.
+
+### Tests
+
+- 276 → 281 (+5): inline-random-theme reject, single-char cursor edge, empty-command cursor, programmatic empty-blocks reject (×2).
+
+### Filed for follow-up
+
+- `#84` cachePath traversal guard is string-based; symlinked configDir can resolve outside the apparent tree. Real but rare; `fs.realpath()` has TOCTOU caveats. Documented as a known limitation.
+
 ## v0.8.0 — 2026-05-25
 
 A polish + 8-blocks release. Cursor animation bug fixed (cursor now sits ON emerging characters; doesn't blink invisible during typing). Watch-mode survives delete+recreate. Static-SVG paths slimmed. Eight new blocks across animated + practical categories.
@@ -44,7 +83,7 @@ A polish + 8-blocks release. Cursor animation bug fixed (cursor now sits ON emer
 
 ### Tests
 
-- 233 → 276 tests (+43 since v0.7 → +21 in this release).
+- 252 → 276 tests (+24 in v0.8; +43 cumulative from v0.6's 233).
 
 ### Deferred (still open)
 
