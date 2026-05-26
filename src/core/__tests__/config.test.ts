@@ -228,6 +228,15 @@ describe('loadConfig error paths', () => {
     }
   });
 
+  it('accepts chrome.titleFontFamily (#98 — was missing from schema)', async () => {
+    const file = write('font-family.yml',
+      'theme: dracula\nchrome:\n  titleFontFamily: "system-ui, sans-serif"\nblocks:\n  - block: custom\n');
+    // Should NOT throw. Previously --strict-friendly configs rejected this
+    // even though the TS interface allowed it.
+    const cfg = await loadConfig(file);
+    expect(cfg.chrome?.titleFontFamily).toBe('system-ui, sans-serif');
+  });
+
   it('rejects unknown theme names with the available list', async () => {
     const file = write('bad-theme.yml', 'theme: solarizedDark\nblocks:\n  - block: custom\n');
     try {

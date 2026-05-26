@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.16.3 — 2026-05-25
+
+Closes `#97` and `#98` — two schema/generator drift bugs filed by external users in the same session.
+
+### Bug fixes
+
+- **`accessibilityLabel` config option now honored (`#97`).** The field was declared in `UserConfigSchema` and `--strict` accepted it, but both the animated and static generator paths in `src/core/svg-generator.ts` always emitted an auto-generated label. Now `config.accessibilityLabel` wins on both paths; auto-generation is the fallback when unset. Also added to `TerminalConfig` so it surfaces in the merged config.
+- **`chrome.titleFontFamily` added to the zod schema (`#98`).** The field was declared in the `ChromeConfig` TS interface (and used by the default config), but `ChromeSchema` rejected it as `unrecognized_keys` under `--strict`. Schema and type now agree. Also added to the `KNOWN_KEYS` typo-suggestion map.
+
+### Tests
+
+- 370 → 375 (+5): four for `#97` (animated + static, label set + unset) and one for `#98` (the field roundtrips through `loadConfig` without `--strict` rejection).
+
 ## v0.16.2 — 2026-05-25
 
 Closes `#72` and `#95`. Test infra only.

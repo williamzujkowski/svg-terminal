@@ -315,6 +315,33 @@ describe('<desc> box-drawing elision (partial #91)', () => {
   });
 });
 
+describe('config.accessibilityLabel honored on both paths (#97)', () => {
+  // Bug #97: schema declared the field but svg-generator.ts always
+  // auto-generated the aria-label, ignoring the user's override.
+  it('animated path uses config.accessibilityLabel when set', () => {
+    const config = makeConfig({ accessibilityLabel: 'My custom label' });
+    const svg = generateSvg(basicSequences, config);
+    expect(svg).toContain('aria-label="My custom label"');
+    expect(svg).not.toContain('Animated terminal showing');
+  });
+
+  it('animated path falls back to auto-generated label when accessibilityLabel is unset', () => {
+    const svg = generateSvg(basicSequences, makeConfig());
+    expect(svg).toMatch(/aria-label="Animated terminal showing/);
+  });
+
+  it('static path uses config.accessibilityLabel when set', () => {
+    const config = makeConfig({ accessibilityLabel: 'My static custom label' });
+    const svg = generateStaticSvg(['hello'], config);
+    expect(svg).toContain('aria-label="My static custom label"');
+  });
+
+  it('static path falls back to auto-generated label when unset', () => {
+    const svg = generateStaticSvg(['hello', 'world'], makeConfig());
+    expect(svg).toMatch(/aria-label="Static terminal showing \d+ lines"/);
+  });
+});
+
 describe('output-line pinWidth opt-in (#85)', () => {
   // BlockResult.pinWidth=true → output line text emits textLength +
   // lengthAdjust=spacingAndGlyphs. Skipped for styled (markup-bearing)

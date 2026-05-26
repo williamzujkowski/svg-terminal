@@ -206,6 +206,11 @@ export interface TerminalConfig {
   cacheTTL: number;
   /** Cache file path, relative to the config file (default: `.svg-terminal-cache.json`) */
   cachePath: string;
+  /** Optional aria-label override for the generated SVG. When set, replaces
+   *  the auto-generated "Animated terminal showing: …" / "Static terminal
+   *  showing N lines" defaults. Useful for screen-reader-first profile
+   *  README labels. */
+  accessibilityLabel?: string;
 }
 
 // ============================================================================

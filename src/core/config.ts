@@ -109,7 +109,7 @@ const KNOWN_KEYS: Record<string, readonly string[]> = {
   terminal: ['fontFamily', 'fontSize', 'lineHeight', 'padding', 'paddingTop', 'prompt'],
   effects: ['textGlow', 'shadow', 'scanlines', 'vignette'],
   animation: ['cursorBlinkCycle', 'charAppearDuration', 'outputLineStagger', 'commandOutputPause', 'scrollDelay', 'outputEndPause', 'defaultTypingDuration', 'defaultSequencePause', 'loop'],
-  chrome: ['titleFontSize', 'buttonRadius', 'buttonSpacing', 'dimOpacity', 'buttonY'],
+  chrome: ['titleFontFamily', 'titleFontSize', 'buttonRadius', 'buttonSpacing', 'dimOpacity', 'buttonY'],
   accessibility: ['describe'],
 };
 
@@ -234,5 +234,8 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
     fetchTimeout: userConfig.fetchTimeout ?? DEFAULT_CONFIG.fetchTimeout,
     cacheTTL: userConfig.cacheTTL ?? DEFAULT_CONFIG.cacheTTL,
     cachePath: userConfig.cachePath ?? DEFAULT_CONFIG.cachePath,
+    // Optional aria-label override (#97). Unset means the auto-generated
+    // command-summary / line-count label wins downstream.
+    accessibilityLabel: userConfig.accessibilityLabel,
   };
 }
