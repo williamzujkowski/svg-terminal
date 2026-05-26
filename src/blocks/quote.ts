@@ -45,6 +45,7 @@ export const quoteBlock: Block = {
 
     const quote = data?.quote ?? fallbackQuote;
     const author = data?.author ?? fallbackAuthor;
+    const isFallback = !data;
 
     // Wrap long quotes manually for box display
     const maxLineWidth = width - 6; // account for box borders + padding
@@ -78,6 +79,7 @@ export const quoteBlock: Block = {
       lines: box.split('\n'),
       typing: 'fast',
       pause: 'long',
+      fallback: isFallback,
     };
   },
 };

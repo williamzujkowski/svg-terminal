@@ -150,10 +150,15 @@ function persistCacheFile(filePath: string, data: CacheFile): void {
 }
 
 /**
- * Return a useCache function bound to the given runtime.
- * Wire this into BlockContext.useCache.
+ * Return a useCache function bound to the given runtime. Wire this into
+ * BlockContext.useCache. The optional `onEvent` callback receives one of
+ * 'hit' / 'miss' / 'refreshed' per call, with the cache key — wired through
+ * to GenerateOptions.onCacheEvent so the CLI can summarize at the end.
  */
-export function makeUseCache(runtime: CacheRuntime): NonNullable<import('../types.js').BlockContext['useCache']> {
+export function makeUseCache(
+  runtime: CacheRuntime,
+  onEvent?: (event: 'hit' | 'miss' | 'refreshed', key: string) => void,
+): NonNullable<import('../types.js').BlockContext['useCache']> {
   // Fail fast on negative TTL — silently no-op'ing (the old pruneStaleEntries
   // behavior) hides API misuse from library consumers building runtimes by hand.
   if (!Number.isFinite(runtime.ttl) || runtime.ttl < 0) {
@@ -161,6 +166,9 @@ export function makeUseCache(runtime: CacheRuntime): NonNullable<import('../type
   }
   return async <T>(key: string, getter: () => Promise<T>, opts?: { ttl?: number }): Promise<T> => {
     if (runtime.mode === 'off') {
+      // Bypass mode — every call is effectively a "miss" (fetched fresh,
+      // not cached). Useful signal for the CLI summary.
+      onEvent?.('miss', key);
       return getter();
     }
     if (!runtime.data) runtime.data = loadCacheFile(runtime.filePath);
@@ -172,18 +180,25 @@ export function makeUseCache(runtime: CacheRuntime): NonNullable<import('../type
     if (runtime.mode === 'frozen') {
       // Frozen mode: serve the cached entry no matter how old; if it's
       // missing, surface that as an error rather than fetching.
-      if (entry) return entry.payload as T;
+      if (entry) {
+        onEvent?.('hit', key);
+        return entry.payload as T;
+      }
       throw new Error(`cache: frozen mode but no entry for "${key}" — re-run without --frozen-cache to populate`);
     }
 
     if (runtime.mode === 'normal' && entry) {
       const ageMs = now - Date.parse(entry.fetchedAt);
       if (ageMs >= 0 && ageMs < ttl * 1000) {
+        onEvent?.('hit', key);
         return entry.payload as T;
       }
     }
 
     // refresh OR (normal AND stale/missing): fetch fresh and write back.
+    // 'refreshed' if the user explicitly asked for it (--refresh-cache);
+    // 'miss' otherwise (cold cache or stale entry).
+    onEvent?.(runtime.mode === 'refresh' ? 'refreshed' : 'miss', key);
     const payload = await getter();
     runtime.data.entries[key] = {
       fetchedAt: new Date(now).toISOString(),

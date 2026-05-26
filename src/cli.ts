@@ -92,10 +92,26 @@ async function main(): Promise<void> {
       setStrictBlockConfig(strict);
       const resolvedConfigPath = resolve(configPath);
       const resolvedOutputPath = resolve(outputPath);
-      const genOpts = { configPath: resolvedConfigPath, cacheMode };
       const modeTag = formatModeTag({ isStatic, minify, cacheMode });
 
+      // Per-run cache stats accumulator. Reset each call. Surfaces in the
+      // final log line when any dynamic block participated; tells the user
+      // whether they got fresh data, served cache, or fell back to defaults
+      // (the "frozen-cache served stale" / "network silently failed" cases).
+      const cacheStats = { hit: 0, miss: 0, refreshed: 0, fallback: 0, fallbacks: [] as string[] };
+      const onCacheEvent = (evt: 'hit' | 'miss' | 'refreshed' | 'fallback', key: string): void => {
+        cacheStats[evt]++;
+        if (evt === 'fallback') cacheStats.fallbacks.push(key);
+      };
+
       const runOnce = async (): Promise<void> => {
+        // Reset per-run.
+        cacheStats.hit = 0;
+        cacheStats.miss = 0;
+        cacheStats.refreshed = 0;
+        cacheStats.fallback = 0;
+        cacheStats.fallbacks = [];
+
         const start = performance.now();
         const tLoadStart = performance.now();
         const userConfig = await loadConfig(resolvedConfigPath);
@@ -123,6 +139,7 @@ async function main(): Promise<void> {
           console.error(`[svg-terminal --explain]\n${JSON.stringify(explainDump, null, 2)}`);
         }
 
+        const genOpts = { configPath: resolvedConfigPath, cacheMode, onCacheEvent };
         const tGenStart = performance.now();
         let svg = isStatic
           ? await generateStatic(userConfig, genOpts)
@@ -149,6 +166,20 @@ async function main(): Promise<void> {
           console.error(
             `[svg-terminal --timings]  load: ${tLoadMs.toFixed(1)}ms  generate: ${tGenMs.toFixed(1)}ms  write: ${tWriteMs.toFixed(1)}ms  total: ${elapsed}ms`,
           );
+        }
+
+        // Cache summary — print when any dynamic block participated. Fallback
+        // events are the surprising case (network failed / no username /
+        // frozen but cache empty); always-print those even if hits=0.
+        const totalEvents = cacheStats.hit + cacheStats.miss + cacheStats.refreshed + cacheStats.fallback;
+        if (totalEvents > 0) {
+          const parts: string[] = [];
+          if (cacheStats.hit) parts.push(`\x1b[32mhit ${cacheStats.hit}\x1b[0m`);
+          if (cacheStats.miss) parts.push(`miss ${cacheStats.miss}`);
+          if (cacheStats.refreshed) parts.push(`refreshed ${cacheStats.refreshed}`);
+          if (cacheStats.fallback) parts.push(`\x1b[33mfallback ${cacheStats.fallback}\x1b[0m`);
+          const fallbackList = cacheStats.fallbacks.length > 0 ? ` [${cacheStats.fallbacks.join(', ')}]` : '';
+          console.error(`[svg-terminal cache]  ${parts.join('  ')}${fallbackList}`);
         }
       };
 
@@ -403,6 +434,9 @@ Generate options:
   --watch            Re-generate on config file change (Ctrl-C to exit)
   --timings          Print per-phase wall-clock timings (load, generate, write) to stderr
   --explain          Print the resolved config + block list as JSON to stderr
+
+Cache events appear in stderr automatically when any dynamic block
+participates ([svg-terminal cache] hit N miss N fallback N [block-names]).
 
 Cache modes (mutually exclusive — defaults to normal):
   --no-cache         Don't read or write the dynamic-block fetch cache

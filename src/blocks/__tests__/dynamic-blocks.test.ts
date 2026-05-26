@@ -282,3 +282,48 @@ describe('fetch timeout fallback', () => {
     expect(result.lines.length).toBeGreaterThan(0);
   });
 });
+
+describe('cacheable blocks set result.fallback when serving defaults (#102)', () => {
+  // Each cacheable block returns fallback content when the fetch fails or
+  // required config is missing. They must set result.fallback = true so
+  // generate() can fire the 'fallback' onCacheEvent and the CLI can warn
+  // the user that they're seeing defaults, not live data.
+  const ctx: BlockContext = {
+    now: new Date('2026-02-19T12:00:00Z'),
+    config: { ...DEFAULT_CONFIG, fetchTimeout: 50 },
+    variables: {},
+  };
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('weather: fallback=true when location is missing', async () => {
+    const result = await weatherBlock.render(ctx, {});
+    expect(result.fallback).toBe(true);
+  });
+
+  it('github-languages: fallback=true when username is missing', async () => {
+    const result = await githubLanguagesBlock.render(ctx, {});
+    expect(result.fallback).toBe(true);
+  });
+
+  it('quote: fallback=true when fetch returns null', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
+    const result = await quoteBlock.render(ctx, {});
+    expect(result.fallback).toBe(true);
+  });
+
+  it('fun-fact: fallback=true when fetch returns null', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
+    const result = await funFactBlock.render(ctx, {});
+    expect(result.fallback).toBe(true);
+  });
+
+  it('github-stats: fallback=true when fetch returns null', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 404 }));
+    const result = await githubStatsBlock.render(ctx, { username: 'ghost-user' });
+    expect(result.fallback).toBe(true);
+  });
+});

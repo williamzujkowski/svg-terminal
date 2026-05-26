@@ -47,6 +47,7 @@ export const funFactBlock: Block = {
       : await fetchJson<FactResponse>(url, timeout);
 
     const factText = data?.text ?? fallback;
+    const isFallback = !data?.text;
 
     // Wrap long facts for box display
     const maxLineWidth = width - 6;
@@ -78,6 +79,7 @@ export const funFactBlock: Block = {
       lines: box.split('\n'),
       typing: 'fast',
       pause: 'medium',
+      fallback: isFallback,
     };
   },
 };

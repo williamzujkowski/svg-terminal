@@ -87,6 +87,7 @@ export const githubStatsBlock: Block = {
       lines: box.split('\n'),
       typing: 'fast',
       pause: 'medium',
+      fallback: !data,
     };
   },
 };

@@ -122,6 +122,7 @@ export const weatherBlock: Block = {
         lines: ['[[fg:yellow]]Weather: no location configured[[/fg]]'],
         typing: 'fast',
         pause: 'short',
+        fallback: true,
       };
     }
 
@@ -132,6 +133,7 @@ export const weatherBlock: Block = {
       : await fetchJson<WttrResponse>(url, timeout);
 
     let lines: string[];
+    let isFallback = false;
     if (data?.current_condition?.length) {
       lines = formatWeather(data, units, compact);
     } else {
@@ -141,6 +143,7 @@ export const weatherBlock: Block = {
         `Location: ${location}`,
         '',
       ];
+      isFallback = true;
     }
 
     const box = compact ? undefined : createDoubleBox(lines, width);
@@ -149,6 +152,7 @@ export const weatherBlock: Block = {
       lines: box ? box.split('\n') : lines,
       typing: 'fast',
       pause: 'medium',
+      fallback: isFallback,
     };
   },
 };

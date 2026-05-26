@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.15.0 — 2026-05-25
+
+Closes `#102` (cache hit/miss/fallback visibility) and `#103` (closed wontfix after benching).
+
+### Cache visibility (closes #102)
+
+- **New `GenerateOptions.onCacheEvent` callback** + new `BlockResult.fallback` field. The cache layer now emits `'hit' | 'miss' | 'refreshed'` events per `useCache()` invocation, and the generate loop emits `'fallback'` events once per block whose render returned `result.fallback === true`. Previously the user had no signal at the block boundary that, say, `--frozen-cache` served stale data or the network call silently failed and the block returned defaults.
+- **CLI auto-prints a one-line cache summary** to stderr after every render when any dynamic block participated: `[svg-terminal cache] hit 1 miss 1 fallback 1 [github-languages]`. Hits in green, fallbacks in yellow. Quiet when no cacheable blocks were involved (the default).
+- **All 5 cacheable blocks updated** to set `result.fallback = true` when serving defaults: `weather` (no location, or fetch returned nothing); `github-stats` (fetch returned null); `quote` (fetch returned null); `fun-fact` (fetch returned null); `github-languages` (no username, fetch returned null, or aggregate empty).
+
+### Perf (closes #103 wontfix)
+
+- **Benched 50-block `vim-exit` config at 6.44 ms per generate.** Schema parsing is microseconds of that total — memoization would shave nothing visible. Closed `#103` as wontfix; reopen if a real config hits the 50ms+ range.
+
+### Public API additions
+
+- `GenerateOptions.onCacheEvent?: (event: 'hit' | 'miss' | 'refreshed' | 'fallback', key: string) => void`
+- `BlockResult.fallback?: boolean`
+- `CacheEventType` exported type
+- Both fully backwards-compat (purely additive optional fields).
+
+### Tests
+
+- 359 → 364 (+5): one per cacheable block asserting `result.fallback === true` on the fallback path.
+
 ## v0.14.2 — 2026-05-25
 
 Closes `#101` — two new CLI instrumentation modes.

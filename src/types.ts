@@ -298,6 +298,15 @@ export interface BlockResult {
    * and screen-reader `<desc>` use `lines` only.
    */
   animation?: BlockAnimation;
+  /**
+   * Optional signal: the block's render produced FALLBACK output (network
+   * failure, missing config, etc.) rather than the canonical live payload.
+   * Surfaces via `GenerateOptions.onCacheEvent('fallback', blockName)` so
+   * the CLI can warn users that a dynamic block didn't get its real data.
+   * Cacheable blocks (weather, github-stats, quote, fun-fact, github-languages)
+   * set this when they return their fallback lines.
+   */
+  fallback?: boolean;
 }
 
 /** Multi-frame animation payload for a block. */

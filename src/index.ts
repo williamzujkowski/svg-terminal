@@ -26,6 +26,9 @@ import { BlockConfigError } from './core/errors.js';
 import type { CacheCheckResult, CacheMode, CacheRuntime } from './core/cache.js';
 import { checkCache, flushCache, hashConfig, makeUseCache, resolveCachePath } from './core/cache.js';
 
+/** Cache + render event surfaced by `GenerateOptions.onCacheEvent`. */
+export type CacheEventType = 'hit' | 'miss' | 'refreshed' | 'fallback';
+
 /** Options to thread cache runtime + file context into generate(). */
 export interface GenerateOptions {
   /** Absolute or relative path to the YAML config file — anchors cachePath resolution. */
@@ -39,6 +42,22 @@ export interface GenerateOptions {
    * produce deterministic output.
    */
   now?: Date;
+  /**
+   * Optional callback for cache + render events. Called per cacheable-block
+   * `useCache` invocation (`'hit'` = served from cache within TTL, `'miss'` =
+   * fetched fresh, `'refreshed'` = forced refresh under `--refresh-cache`)
+   * AND once per block that returned `result.fallback === true` (failed to
+   * fetch live data, served defaults).
+   *
+   * `key` is the block's cache key for cache events (e.g.
+   * `"weather:abc123"`) OR the block's name for fallback events.
+   *
+   * The CLI uses this to print a one-line summary at the end of a generate
+   * run when dynamic blocks are involved — surfaces the
+   * "frozen-cache served a stale entry" / "network failed silently" cases
+   * that were previously invisible.
+   */
+  onCacheEvent?: (event: CacheEventType, key: string) => void;
 }
 
 // Register built-in blocks on import
@@ -112,13 +131,7 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
   const config = mergeConfig(userConfig);
   const sequences: Sequence[] = [];
 
-  const cacheRuntime = makeCacheRuntime(config, options);
-  const context: BlockContext = {
-    now: options.now ?? new Date(),
-    config,
-    variables: userConfig.variables ?? {},
-    useCache: cacheRuntime ? makeUseCache(cacheRuntime) : undefined,
-  };
+  const { context, cacheRuntime } = buildContext(userConfig, config, options);
 
   for (let i = 0; i < userConfig.blocks.length; i++) {
     const entry = userConfig.blocks[i]!;
@@ -131,6 +144,7 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
     validateBlockEntry(block, entry, i);
 
     const result = await block.render(context, entry.config ?? {});
+    if (result.fallback) options.onCacheEvent?.('fallback', entry.block);
 
     // Command sequence — pause after typing before output appears
     sequences.push({
@@ -185,6 +199,25 @@ export function inspectCache(userConfig: UserConfig, configPath: string): {
   return { filePath, results: checkCache({ filePath, ttl: merged.cacheTTL, entries }) };
 }
 
+/** Build the BlockContext + cache runtime once, share between generate/generateStatic. */
+function buildContext(
+  userConfig: UserConfig,
+  config: ReturnType<typeof mergeConfig>,
+  options: GenerateOptions,
+): { context: BlockContext; cacheRuntime: ReturnType<typeof makeCacheRuntime> } {
+  const cacheRuntime = makeCacheRuntime(config, options);
+  const cacheEventForUseCache = options.onCacheEvent
+    ? (evt: 'hit' | 'miss' | 'refreshed', key: string): void => options.onCacheEvent!(evt, key)
+    : undefined;
+  const context: BlockContext = {
+    now: options.now ?? new Date(),
+    config,
+    variables: userConfig.variables ?? {},
+    useCache: cacheRuntime ? makeUseCache(cacheRuntime, cacheEventForUseCache) : undefined,
+  };
+  return { context, cacheRuntime };
+}
+
 /** Build a CacheRuntime if a config path is known and the mode is not 'off'. */
 function makeCacheRuntime(
   config: ReturnType<typeof mergeConfig>,
@@ -224,13 +257,7 @@ export async function generateStatic(userConfig: UserConfig, options: GenerateOp
   const config = mergeConfig(userConfig);
   const allLines: string[] = [];
 
-  const cacheRuntime = makeCacheRuntime(config, options);
-  const context: BlockContext = {
-    now: options.now ?? new Date(),
-    config,
-    variables: userConfig.variables ?? {},
-    useCache: cacheRuntime ? makeUseCache(cacheRuntime) : undefined,
-  };
+  const { context, cacheRuntime } = buildContext(userConfig, config, options);
 
   for (let i = 0; i < userConfig.blocks.length; i++) {
     const entry = userConfig.blocks[i]!;
@@ -243,6 +270,7 @@ export async function generateStatic(userConfig: UserConfig, options: GenerateOp
     validateBlockEntry(block, entry, i);
 
     const result = await block.render(context, entry.config ?? {});
+    if (result.fallback) options.onCacheEvent?.('fallback', entry.block);
     const prompt = config.text.prompt;
     allLines.push(`${prompt}${entry.command ?? result.command}`);
     allLines.push(...result.lines);

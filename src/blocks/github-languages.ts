@@ -103,6 +103,7 @@ export const githubLanguagesBlock: Block = {
         lines: renderSlices(fallbackSlices, barWidth),
         typing: 'fast',
         pause: 'medium',
+        fallback: true,
       };
     }
 
@@ -113,11 +114,18 @@ export const githubLanguagesBlock: Block = {
       : await fetchJson<GitHubRepo[]>(url, timeout);
 
     let slices: LanguageSlice[];
+    let usedFallback = false;
     if (repos && Array.isArray(repos)) {
       const aggregated = aggregate(repos, top);
-      slices = aggregated.length > 0 ? aggregated : fallbackSlices;
+      if (aggregated.length > 0) {
+        slices = aggregated;
+      } else {
+        slices = fallbackSlices;
+        usedFallback = true;
+      }
     } else {
       slices = fallbackSlices;
+      usedFallback = true;
     }
 
     return {
@@ -125,6 +133,7 @@ export const githubLanguagesBlock: Block = {
       lines: renderSlices(slices, barWidth),
       typing: 'fast',
       pause: 'medium',
+      fallback: usedFallback,
     };
   },
 };
