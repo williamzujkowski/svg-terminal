@@ -283,6 +283,25 @@ describe('fetch timeout fallback', () => {
   });
 });
 
+describe('URL query strings scrubbed from http.ts warn logs (#114 L3)', () => {
+  // Defense-in-depth: today no built-in block sends tokens in query strings,
+  // but a future third-party block via registerBlock might, and unscrubbed
+  // URLs in CI logs are a known leak path. fetchJson logs the URL on HTTP
+  // failure; verify the query portion is stripped.
+  it('strips ?query from logged URLs on HTTP failure', async () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation(msg => { warns.push(String(msg)); });
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 500 }));
+    const { fetchJson } = await import('../../core/http.js');
+    await fetchJson('https://api.example.com/v1/data?token=SECRET&other=foo');
+    const log = warns.find(w => w.includes('HTTP'));
+    expect(log).toBeTruthy();
+    expect(log).not.toContain('token=SECRET');
+    expect(log).not.toContain('?');
+    expect(log).toContain('https://api.example.com/v1/data');
+  });
+});
+
 describe('cacheable blocks set result.fallback when serving defaults (#102)', () => {
   // Each cacheable block returns fallback content when the fetch fails or
   // required config is missing. They must set result.fallback = true so

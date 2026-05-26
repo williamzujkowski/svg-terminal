@@ -8,6 +8,22 @@
 export const DEFAULT_FETCH_TIMEOUT = 10000;
 
 /**
+ * Strip the query string + fragment from a URL for safe logging.
+ * Today no built-in block embeds tokens in query strings, but defense in
+ * depth: a future block (or third-party `registerBlock` consumer) might,
+ * and unscrubbed URLs in `console.warn` end up in CI logs and shareable
+ * stack traces. (#114 L3.) Falls back to the host on parse failure.
+ */
+function safeUrlForLog(url: string): string {
+  try {
+    const u = new URL(url);
+    return `${u.protocol}//${u.host}${u.pathname}`;
+  } catch {
+    return url.split('?')[0] ?? url;
+  }
+}
+
+/**
  * Per-response byte cap to bound memory + parse time when an upstream
  * misbehaves. Largest legitimate payload we know of is ~50 KB from
  * github-stats; 1 MiB leaves several orders of magnitude of headroom
@@ -26,7 +42,7 @@ async function readCappedText(response: Response, url: string): Promise<string |
   // Fast path: respect Content-Length when present.
   const contentLength = response.headers.get('content-length');
   if (contentLength && Number(contentLength) > MAX_RESPONSE_BYTES) {
-    console.warn(`[svg-terminal] Response too large (${contentLength} bytes, cap ${MAX_RESPONSE_BYTES}) from ${url}`);
+    console.warn(`[svg-terminal] Response too large (${contentLength} bytes, cap ${MAX_RESPONSE_BYTES}) from ${safeUrlForLog(url)}`);
     return null;
   }
   // Stream the body so we can short-circuit even when Content-Length is absent
@@ -43,7 +59,7 @@ async function readCappedText(response: Response, url: string): Promise<string |
       total += value.length;
       if (total > MAX_RESPONSE_BYTES) {
         await reader.cancel();
-        console.warn(`[svg-terminal] Response exceeded ${MAX_RESPONSE_BYTES}-byte cap mid-stream from ${url}`);
+        console.warn(`[svg-terminal] Response exceeded ${MAX_RESPONSE_BYTES}-byte cap mid-stream from ${safeUrlForLog(url)}`);
         return null;
       }
       chunks.push(value);
@@ -75,16 +91,16 @@ export async function fetchWithTimeout(
       headers: { 'User-Agent': USER_AGENT },
     });
     if (!response.ok) {
-      console.warn(`[svg-terminal] HTTP ${response.status} from ${url}`);
+      console.warn(`[svg-terminal] HTTP ${response.status} from ${safeUrlForLog(url)}`);
       return null;
     }
     return response;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.includes('abort')) {
-      console.warn(`[svg-terminal] Timeout after ${timeoutMs}ms fetching ${url}`);
+      console.warn(`[svg-terminal] Timeout after ${timeoutMs}ms fetching ${safeUrlForLog(url)}`);
     } else {
-      console.warn(`[svg-terminal] Fetch failed for ${url}: ${message}`);
+      console.warn(`[svg-terminal] Fetch failed for ${safeUrlForLog(url)}: ${message}`);
     }
     return null;
   } finally {
@@ -108,7 +124,7 @@ export async function fetchJson<T = unknown>(
   try {
     return JSON.parse(text) as T;
   } catch {
-    console.warn(`[svg-terminal] Invalid JSON from ${url}`);
+    console.warn(`[svg-terminal] Invalid JSON from ${safeUrlForLog(url)}`);
     return null;
   }
 }
@@ -127,7 +143,7 @@ export async function fetchText(
   try {
     return await readCappedText(response, url);
   } catch {
-    console.warn(`[svg-terminal] Failed to read text from ${url}`);
+    console.warn(`[svg-terminal] Failed to read text from ${safeUrlForLog(url)}`);
     return null;
   }
 }

@@ -16,7 +16,7 @@ import { basename, dirname, resolve } from 'node:path';
 import { generate, generateStatic, getBlock, inspectCache, listBlocks, loadConfig, mergeConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
-import { formatModeTag, formatZodType, humanAge, isZodOptional, minifySvg, resolveCacheMode } from './core/cli-helpers.js';
+import { formatModeTag, formatZodType, humanAge, isZodOptional, minifySvg, resolveCacheMode, scrubSecrets } from './core/cli-helpers.js';
 
 // Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
 declare const __PKG_VERSION__: string;
@@ -120,6 +120,12 @@ async function main(): Promise<void> {
         // --explain: emit a JSON dump of the resolved config + block list to
         // stderr (so it doesn't interleave with stdout if the SVG is piped).
         // Runs the full generate path after; doesn't skip writing.
+        //
+        // Secret scrubbing (#114 L4): keys matching SECRET_KEY_RE in any
+        // block.config are redacted to "[REDACTED]" before emit. No built-in
+        // block today accepts a token / secret config, but third-party blocks
+        // via registerBlock may — and the --explain output ends up in CI
+        // logs and shareable stack traces.
         if (explain) {
           const merged = mergeConfig(userConfig);
           const explainDump = {
@@ -132,7 +138,12 @@ async function main(): Promise<void> {
             blockCount: userConfig.blocks.length,
             blocks: userConfig.blocks.map(entry => {
               const block = getBlock(entry.block);
-              return { name: entry.block, cacheable: block?.cacheable ?? false, registered: !!block };
+              return {
+                name: entry.block,
+                cacheable: block?.cacheable ?? false,
+                registered: !!block,
+                config: entry.config ? scrubSecrets(entry.config) : undefined,
+              };
             }),
             maxDuration: merged.maxDuration,
           };

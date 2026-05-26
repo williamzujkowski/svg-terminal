@@ -136,11 +136,18 @@ function loadCacheFile(filePath: string): CacheFile {
   }
 }
 
-/** Atomic write via temp file + rename. */
+/**
+ * Atomic write via temp file + rename. Files are created with mode 0o600
+ * (owner read/write only) — defense against shared CI runners with
+ * permissive umasks leaving cache contents world-readable. The cache
+ * holds public API responses today (weather, github-stats, quotes), so
+ * the practical impact is low, but mode 0o600 is one line and prevents
+ * future blocks that might cache auth tokens from leaking. (#114 L2)
+ */
 function persistCacheFile(filePath: string, data: CacheFile): void {
   const dir = dirname(filePath);
   const tmp = join(dir, `.svg-terminal-cache.${randomBytes(6).toString('hex')}.tmp`);
-  writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf-8');
+  writeFileSync(tmp, JSON.stringify(data, null, 2), { encoding: 'utf-8', mode: 0o600 });
   try {
     renameSync(tmp, filePath);
   } catch (err) {

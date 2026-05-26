@@ -8,6 +8,7 @@ import {
   minifySvg,
   resolveCacheMode,
   parseFlags,
+  scrubSecrets,
 } from '../cli-helpers.js';
 
 describe('formatModeTag', () => {
@@ -272,5 +273,55 @@ describe('formatZodType + isZodOptional (#100)', () => {
     expect(formatZodType(null)).toBe('unknown');
     expect(formatZodType(undefined)).toBe('unknown');
     expect(isZodOptional(null)).toBe(false);
+  });
+});
+
+describe('scrubSecrets (#114 L4)', () => {
+  it('redacts keys matching the secret regex', () => {
+    const r = scrubSecrets({
+      username: 'alice',
+      token: 'ghp_xyz123',
+      apiKey: 'sk-abc',
+      api_key: 'sk-abc',
+      password: 'hunter2',
+      secret: 'shh',
+      authToken: 'Bearer xyz',
+      credential: 'pwd',
+      bearer: 'eyJ...',
+      webhookUrl: 'https://hook',
+      webhook_url: 'https://hook',
+    });
+    expect(r).toEqual({
+      username: 'alice',
+      token: '[REDACTED]',
+      apiKey: '[REDACTED]',
+      api_key: '[REDACTED]',
+      password: '[REDACTED]',
+      secret: '[REDACTED]',
+      authToken: '[REDACTED]',
+      credential: '[REDACTED]',
+      bearer: '[REDACTED]',
+      webhookUrl: '[REDACTED]',
+      webhook_url: '[REDACTED]',
+    });
+  });
+
+  it('recurses into nested objects + arrays', () => {
+    const r = scrubSecrets({
+      config: { nested: { token: 'x' } },
+      blocks: [{ apiKey: 'k1' }, { apiKey: 'k2' }],
+    });
+    expect(r).toEqual({
+      config: { nested: { token: '[REDACTED]' } },
+      blocks: [{ apiKey: '[REDACTED]' }, { apiKey: '[REDACTED]' }],
+    });
+  });
+
+  it('passes through primitives + non-secret keys unchanged', () => {
+    expect(scrubSecrets({ name: 'x', count: 5, ok: true, items: [1, 2] }))
+      .toEqual({ name: 'x', count: 5, ok: true, items: [1, 2] });
+    expect(scrubSecrets('plain')).toBe('plain');
+    expect(scrubSecrets(42)).toBe(42);
+    expect(scrubSecrets(null)).toBe(null);
   });
 });

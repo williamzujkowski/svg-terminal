@@ -139,6 +139,27 @@ export interface ParsedFlags {
 }
 
 /**
+ * Keys whose values should be redacted from --explain output (#114 L4).
+ * Conservative regex catching anything that looks like a credential. Operates
+ * on the literal key name. False positives are tolerable (worst case: a
+ * legitimate field named `tokenLength` gets redacted; users rename it).
+ */
+export const SECRET_KEY_RE = /token|secret|password|api[-_]?key|auth|credential|bearer|webhook[-_]?url/i;
+
+/** Recursively redact values whose keys match SECRET_KEY_RE. */
+export function scrubSecrets(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(scrubSecrets);
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = SECRET_KEY_RE.test(k) ? '[REDACTED]' : scrubSecrets(v);
+    }
+    return out;
+  }
+  return value;
+}
+
+/**
  * Format a zod type as a single short human-readable string, e.g. "string",
  * "number", `"'metric' | 'imperial' | 'both'"`, `"array of string"`.
  *

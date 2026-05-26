@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.18.1 — 2026-05-26 — security hardening
+
+Closes `#114` — the L1/L2/L3/L4 hardening cluster from the v0.17.0 security audit. All defense-in-depth; no known exploit but each is best-practice for the marketplace publish.
+
+### L1 — Pin actions to SHAs
+
+All references to `actions/checkout@v4`, `actions/setup-node@v4`, and `github/codeql-action/{init,analyze}@v3` across `ci.yml`, `codeql.yml`, and `action.yml` now use immutable SHA pins. Mutable major tags are a supply-chain risk; SHAs are immutable. Dependabot's `github-actions` ecosystem (configured in v0.17.1) keeps them auto-bumped.
+
+### L2 — Cache file mode 0o600
+
+`writeFileSync` for `.svg-terminal-cache.json` now passes `mode: 0o600` (owner read/write only). Shared CI runners with permissive umasks no longer leave cache contents world-readable. Cache today only holds public API responses, but mode 0o600 future-proofs against blocks that might cache auth tokens.
+
+### L3 — URL query strings scrubbed from logs
+
+`fetchWithTimeout` / `fetchJson` / `fetchText` warn-log paths now go through a `safeUrlForLog()` helper that strips `?query` + `#fragment` before logging. Defense against future third-party blocks that might embed credentials in query strings.
+
+### L4 — Secret scrubbing in `--explain`
+
+`svg-terminal generate --explain` now redacts values whose key names match a conservative regex (`/token|secret|password|api[-_]?key|auth|credential|bearer|webhook[-_]?url/i`) in the JSON dump. The CLI's --explain output ends up in CI logs and shared stack traces; this prevents future blocks that take credential config from leaking those credentials. Helper exported from `src/core/cli-helpers.ts` for library consumers building their own debug surfaces.
+
+### Action
+
+- Bumped pinned svg-terminal version in `action.yml` install: `svg-terminal@0.17.1` → `svg-terminal@0.18.1`.
+
+### Tests
+
+- 381 → 386 (+5): cache file mode 0o600 (L2); URL log scrub on HTTP failure (L3); secret scrub recursion + nested objects + primitives (L4 × 3).
+
 ## v0.18.0 — 2026-05-26
 
 Marketplace prep. Closes `#115`, `#117`, `#118`, `#120` from the v0.17.0 audit.

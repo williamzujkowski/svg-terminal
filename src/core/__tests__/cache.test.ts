@@ -303,3 +303,25 @@ describe('corrupt cache file handling', () => {
     expect(v).toEqual({ ok: true });
   });
 });
+
+describe('cache file mode 0o600 (#114 L2)', () => {
+  it('persisted cache file is mode 0o600 (owner read/write only)', async () => {
+    const rt = runtime('normal');
+    const useCache = makeUseCache(rt);
+    await useCache('k', async () => ({ ok: true }));
+    flushCache(rt);
+    expect(existsSync(rt.filePath)).toBe(true);
+    const { statSync } = await import('node:fs');
+    const mode = statSync(rt.filePath).mode & 0o777;
+    expect(mode).toBe(0o600);
+  });
+
+  function runtime(mode: 'normal' | 'refresh' | 'frozen' | 'off'): CacheRuntime {
+    return {
+      mode,
+      filePath: join(dir, `mode-${mode}-${Date.now()}.json`),
+      ttl: 60,
+      dirty: false,
+    };
+  }
+});
