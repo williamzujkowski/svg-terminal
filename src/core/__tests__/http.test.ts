@@ -219,3 +219,34 @@ describe('hashConfig cycle guard — QA round 2 #2', () => {
     expect(() => hashConfig(a)).toThrow(/circular reference/);
   });
 });
+
+describe('cycle-guard path-locality — QA round 3 MED-2', () => {
+  // Round 2 used a WeakSet that never deleted, which incorrectly flagged a
+  // legitimate DAG share (same sub-object reached from two paths) as a cycle.
+  // Round 3 fix: Set + delete-on-exit so only ancestor cycles are caught.
+  it('hashConfig handles legitimate DAG shares (no false positive)', async () => {
+    const { hashConfig } = await import('../cache.js');
+    const shared = { value: 42 };
+    const cfg = { a: shared, b: shared }; // same sub-object, NOT a cycle
+    // Should hash cleanly — no error.
+    expect(() => hashConfig(cfg)).not.toThrow();
+    expect(hashConfig(cfg)).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it('scrubSecrets handles DAG shares without [CIRCULAR] false positive', async () => {
+    const { scrubSecrets } = await import('../cli-helpers.js');
+    const shared = { kept: 'ok' };
+    const result = scrubSecrets({ a: shared, b: shared }) as Record<string, Record<string, unknown>>;
+    // Both branches recurse normally — neither is [CIRCULAR].
+    expect(result['a']).toEqual({ kept: 'ok' });
+    expect(result['b']).toEqual({ kept: 'ok' });
+  });
+
+  it('hashConfig still throws on a REAL cycle (regression of round-2 guard)', async () => {
+    const { hashConfig } = await import('../cache.js');
+    const a: Record<string, unknown> = { name: 'a' };
+    const b: Record<string, unknown> = { name: 'b', parent: a };
+    a['child'] = b;  // ancestor cycle: a→b→a
+    expect(() => hashConfig(a)).toThrow(/circular reference/);
+  });
+});

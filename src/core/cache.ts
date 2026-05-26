@@ -59,21 +59,26 @@ export function hashConfig(config: unknown): string {
 
 /**
  * Stable JSON: sort object keys recursively so identical configs hash
- * identically. Cycle-aware (QA round 2 finding #2): YAML anchors or any
- * other reference cycle inside a block's config previously stack-overflowed
- * here; now throws a clean ConfigError-shaped Error so the CLI can pretty-
- * print it.
+ * identically. Cycle-aware via path-local ancestor tracking — only TRUE
+ * cycles (ancestor referencing back) throw; legitimate DAG shares (same
+ * sub-object reached from two paths) hash normally. QA round 3 finding
+ * MED-2 corrected the prior all-visited-ever pattern that false-positived
+ * on third-party schemas using `z.record(z.any())` + YAML anchors.
  */
-function canonicalize(value: unknown, seen: WeakSet<object> = new WeakSet()): string {
+function canonicalize(value: unknown, ancestors: Set<object> = new Set()): string {
   if (value === null || typeof value !== 'object') return JSON.stringify(value);
-  if (seen.has(value)) {
+  if (ancestors.has(value)) {
     throw new Error('cache: config contains a circular reference (YAML anchor or programmatic cycle) — cannot hash');
   }
-  seen.add(value);
-  if (Array.isArray(value)) return `[${value.map(v => canonicalize(v, seen)).join(',')}]`;
-  const obj = value as Record<string, unknown>;
-  const keys = Object.keys(obj).sort();
-  return `{${keys.map(k => `${JSON.stringify(k)}:${canonicalize(obj[k], seen)}`).join(',')}}`;
+  ancestors.add(value);
+  try {
+    if (Array.isArray(value)) return `[${value.map(v => canonicalize(v, ancestors)).join(',')}]`;
+    const obj = value as Record<string, unknown>;
+    const keys = Object.keys(obj).sort();
+    return `{${keys.map(k => `${JSON.stringify(k)}:${canonicalize(obj[k], ancestors)}`).join(',')}}`;
+  } finally {
+    ancestors.delete(value);
+  }
 }
 
 /**

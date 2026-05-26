@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:  # manual re-trigger from gh / UI
 
 # Principle of least privilege — CI only reads (typecheck + lint + test +
 # build + demo regen + git diff). Override per-job if a step needs more.

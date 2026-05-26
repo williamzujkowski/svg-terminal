@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.18.3 — 2026-05-26 — QA round 3 + CodeQL alerts
+
+Closes the 3 open CodeQL alerts + 1 design issue from a third QA + security review.
+
+### MED-1 — Polynomial ReDoS in `stripMarkup` (CodeQL `js/polynomial-redos`)
+
+`src/core/markup-parser.ts:160` used `/\[\[[^\]]+\]\]/g` — unbounded backtrack class. Repro: 50,000 `[[` characters → ~10s of CPU. Reachable from any block output. Fix: bound the inner class to `{1,256}` (every legitimate markup tag is <20 chars). Worst case is now linear in input length; bench shows 50K-char hostile string in ~135ms vs 10s before.
+
+### MED-2 — Path-local cycle guard (round-2 fix had a false-positive shape)
+
+Round 2 introduced cycle detection in `scrubSecrets` + `canonicalize` via `WeakSet` that was `add`-only. That flagged legitimate DAG shares (same sub-object referenced from two paths) as cycles. Fix: convert to `Set` + `delete`-on-exit so only true ancestor cycles trip the guard. Real cycles still throw `"circular reference"` cleanly; DAG shares hash normally.
+
+### LOW-1 — TOCTOU races in `init` + install-hooks (CodeQL `js/file-system-race` ×2)
+
+`src/cli.ts:339` and `scripts/install-hooks.mjs:54` used `existsSync` → `writeFileSync`/`readFileSync` patterns that race between the check and the action. Fix:
+- `init`: switch to `writeFileSync(path, content, { flag: 'wx' })` — atomic create-or-fail. `--force` still works via fallback to flag `w`.
+- Hook installer: replace `existsSync` → `readFileSync` with try/`readFileSync`/`catch ENOENT` — same effect, no race window.
+
+### Infrastructure
+
+- **`workflow_dispatch`** added to `ci.yml` so CI can be manually re-triggered from the gh CLI / UI without needing a commit.
+
+### Action
+
+- Bumped pinned svg-terminal install: `svg-terminal@0.18.2` → `svg-terminal@0.18.3`.
+
+### Tests
+
+- 394 → 398 (+4): ReDoS bench (50K-char hostile string completes in <500ms), 3 cycle-guard regressions (DAG share doesn't false-positive in `hashConfig` or `scrubSecrets`; real ancestor cycle still throws).
+
+### Verification of the deferred MAJORs
+
+`typescript-eslint` v9 **still not GA** (latest published `8.60.0`; only `8.60.1-alpha` in canary). The two deferred Dependabot PRs from last session — `typescript@6` (`#112`) and `eslint@10` (`#121`) — remain blocked on this. Will revisit when ts-eslint v9 ships.
+
 ## v0.18.2 — 2026-05-26 — dep updates + QA-round-2 fixes
 
 Closes 5 Dependabot PRs (`#108`, `#109`, `#110`, `#111`, `#116`) and 4 findings from a second QA + security review.

@@ -13,6 +13,8 @@
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync, chmodSync } from 'node:fs';
+// existsSync is still used below at the .git/ check; readFileSync's
+// ENOENT-catch replaced the existsSync→read pattern for HOOK_PATH.
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -51,13 +53,18 @@ fi
 
 mkdirSync(HOOK_DIR, { recursive: true });
 
-if (existsSync(HOOK_PATH)) {
-  const existing = readFileSync(HOOK_PATH, 'utf-8');
-  if (!existing.includes(MARKER)) {
-    // Hand-customized hook — don't clobber. Print a tip and exit.
-    console.log('[svg-terminal] .git/hooks/pre-commit exists and is not managed by us; leaving alone.');
-    process.exit(0);
-  }
+// Atomic existence-check via try/read (closes the existsSync→readFile TOCTOU
+// CodeQL flagged in round-3 LOW-1). Hand-customized hooks (no MARKER line)
+// are preserved; ours get rewritten in place.
+let existing = '';
+try {
+  existing = readFileSync(HOOK_PATH, 'utf-8');
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err;
+}
+if (existing && !existing.includes(MARKER)) {
+  console.log('[svg-terminal] .git/hooks/pre-commit exists and is not managed by us; leaving alone.');
+  process.exit(0);
 }
 
 writeFileSync(HOOK_PATH, HOOK_BODY, 'utf-8');

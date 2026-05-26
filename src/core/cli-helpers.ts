@@ -149,24 +149,34 @@ export const SECRET_KEY_RE = /token|secret|password|api[-_]?key|auth|credential|
 /**
  * Recursively redact values whose keys match SECRET_KEY_RE.
  *
- * Tracks visited objects via `seen` so YAML anchors or any other cycle
- * doesn't stack-overflow `--explain` (QA round 2 finding #2). A cycle is
- * replaced with `'[CIRCULAR]'` so the JSON output still parses cleanly.
+ * Tracks the CURRENT ancestor chain (not all-visited-ever) so YAML anchors
+ * / programmatic cycles get flagged as `'[CIRCULAR]'` but legitimate DAG
+ * shares (same sub-object referenced from two different paths) recurse
+ * normally instead of false-positiving. Tracked via Set + delete-on-exit
+ * — QA round 3 finding MED-2.
  */
-export function scrubSecrets(value: unknown, seen: WeakSet<object> = new WeakSet()): unknown {
+export function scrubSecrets(value: unknown, ancestors: Set<object> = new Set()): unknown {
   if (Array.isArray(value)) {
-    if (seen.has(value)) return '[CIRCULAR]';
-    seen.add(value);
-    return value.map(v => scrubSecrets(v, seen));
+    if (ancestors.has(value)) return '[CIRCULAR]';
+    ancestors.add(value);
+    try {
+      return value.map(v => scrubSecrets(v, ancestors));
+    } finally {
+      ancestors.delete(value);
+    }
   }
   if (value && typeof value === 'object') {
-    if (seen.has(value)) return '[CIRCULAR]';
-    seen.add(value);
-    const out: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(value)) {
-      out[k] = SECRET_KEY_RE.test(k) ? '[REDACTED]' : scrubSecrets(v, seen);
+    if (ancestors.has(value)) return '[CIRCULAR]';
+    ancestors.add(value);
+    try {
+      const out: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(value)) {
+        out[k] = SECRET_KEY_RE.test(k) ? '[REDACTED]' : scrubSecrets(v, ancestors);
+      }
+      return out;
+    } finally {
+      ancestors.delete(value);
     }
-    return out;
   }
   return value;
 }

@@ -11,7 +11,7 @@
  *   svg-terminal blocks
  */
 
-import { existsSync, writeFileSync, watch as fsWatch } from 'node:fs';
+import { writeFileSync, watch as fsWatch } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { generate, generateStatic, getBlock, inspectCache, listBlocks, loadConfig, mergeConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
@@ -333,14 +333,19 @@ blocks:
         - "Have a great day!"
 `;
       const targetPath = resolve('terminal.yml');
-      // Don't silently clobber a hand-tuned config. The HIGH-impact UX bug
-      // for a tool whose entry point is `init` — losing 30 minutes of YAML
-      // to a stray ↑-enter is unforgivable.
-      if (existsSync(targetPath) && !hasFlag('force')) {
-        console.error('terminal.yml already exists. Use --force to overwrite.');
-        process.exit(1);
+      // Don't silently clobber a hand-tuned config. Atomic write-or-fail
+      // via flag: 'wx' — closes the existsSync→writeFileSync TOCTOU window
+      // that CodeQL flagged (round-3 LOW-1). --force overrides by passing
+      // the default 'w' flag.
+      try {
+        writeFileSync(targetPath, starter, { encoding: 'utf-8', flag: hasFlag('force') ? 'w' : 'wx' });
+      } catch (err) {
+        if ((err as { code?: string }).code === 'EEXIST') {
+          console.error('terminal.yml already exists. Use --force to overwrite.');
+          process.exit(1);
+        }
+        throw err;
       }
-      writeFileSync(targetPath, starter, 'utf-8');
       console.log('Created terminal.yml — edit it and run: svg-terminal generate');
       break;
     }

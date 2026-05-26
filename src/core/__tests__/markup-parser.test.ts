@@ -63,6 +63,20 @@ describe('stripMarkup', () => {
   it('preserves plain text', () => {
     expect(stripMarkup('no markup here')).toBe('no markup here');
   });
+
+  it('completes in <500ms on a 50K-char hostile string (#114 round-3 ReDoS guard)', () => {
+    // CodeQL js/polynomial-redos: prior unbounded `/\[\[[^\]]+\]\]/`
+    // backtracked for ~10 seconds on `[[ × 50000`. The {1,256} cap makes
+    // the worst case linear in input length — measured ~135ms locally;
+    // 500ms gives 3× headroom for slower runners.
+    const hostile = '[['.repeat(50_000);
+    const start = performance.now();
+    const result = stripMarkup(hostile);
+    const elapsed = performance.now() - start;
+    expect(elapsed).toBeLessThan(500);
+    // No `]]` to close anything, so nothing is stripped — output ≈ input.
+    expect(result).toBe(hostile);
+  });
 });
 
 // ============================================================================

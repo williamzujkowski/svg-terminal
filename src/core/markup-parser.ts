@@ -154,8 +154,15 @@ export function hasMarkup(text: string): boolean {
   return typeof text === 'string' && text.includes('[[');
 }
 
-/** Strip all markup and return plain text. */
+/**
+ * Strip all markup and return plain text. The inner class is bounded to
+ * 256 chars to defuse the polynomial-ReDoS risk that CodeQL flagged on
+ * the unbounded form (`/\[\[[^\]]+\]\]/`). Every legitimate markup tag
+ * fits — `[[fg:hexNNNNNN]]`, `[[bold]]`, `[[dim]]` are all <20 chars —
+ * so the cap doesn't lose real input; it only kills the attacker's
+ * backtrack runway.
+ */
 export function stripMarkup(text: string): string {
   if (!text) return '';
-  return text.replace(/\[\[[^\]]+\]\]/g, '');
+  return text.replace(/\[\[[^\]]{1,256}\]\]/g, '');
 }
