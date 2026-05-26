@@ -665,7 +665,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
 
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">${a11yChildren}
-  <style>.tt { font-family: ${terminal.fontFamily}; font-size: ${terminal.fontSize}px; white-space: pre; }</style>
+  <style>.tt { font-family: ${escapeXml(terminal.fontFamily)}; font-size: ${terminal.fontSize}px; white-space: pre; }</style>
   <defs>
     ${generateDefs(effects, window.style)}
     ${generateFilters(effects, theme.colors.cursor)}

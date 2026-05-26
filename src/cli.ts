@@ -128,13 +128,18 @@ async function main(): Promise<void> {
         // logs and shareable stack traces.
         if (explain) {
           const merged = mergeConfig(userConfig);
-          const explainDump = {
+          // QA round 2 finding #6: scrubSecrets covers every user-controllable
+          // surface in --explain, not just block.config. variables / window /
+          // text are all attacker-influenceable via YAML and previously bypassed
+          // the redactor.
+          const explainDump = scrubSecrets({
             configPath: resolvedConfigPath,
             outputPath: resolvedOutputPath,
             theme: merged.theme.name,
             window: merged.window,
             text: merged.text,
             effects: merged.effects,
+            variables: userConfig.variables,
             blockCount: userConfig.blocks.length,
             blocks: userConfig.blocks.map(entry => {
               const block = getBlock(entry.block);
@@ -142,11 +147,11 @@ async function main(): Promise<void> {
                 name: entry.block,
                 cacheable: block?.cacheable ?? false,
                 registered: !!block,
-                config: entry.config ? scrubSecrets(entry.config) : undefined,
+                config: entry.config,
               };
             }),
             maxDuration: merged.maxDuration,
-          };
+          });
           console.error(`[svg-terminal --explain]\n${JSON.stringify(explainDump, null, 2)}`);
         }
 

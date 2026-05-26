@@ -108,3 +108,114 @@ describe('fetchText', () => {
     expect(result).toBeNull();
   });
 });
+
+describe('response-size cap (#114 M4) — QA round 2 #3', () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => { globalThis.fetch = originalFetch; vi.restoreAllMocks(); });
+
+  it('aborts via Content-Length when header exceeds 1 MiB cap', async () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response('{"ok":true}', {
+        status: 200,
+        headers: { 'content-length': String(2 * 1024 * 1024) },
+      }),
+    );
+    const result = await fetchJson('https://example.com/big');
+    expect(result).toBeNull();
+    expect(warns.some(w => w.includes('Response too large'))).toBe(true);
+  });
+
+  it('aborts mid-stream when body exceeds 1 MiB cap (no Content-Length)', async () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    // Construct a ReadableStream that emits >1 MiB across 2 chunks. The cap
+    // (1 MiB = 1048576 bytes) should trip on the 2nd chunk and cancel.
+    const chunk = new Uint8Array(700 * 1024); // 700 KiB
+    chunk.fill(65); // 'A'
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(chunk);
+        controller.enqueue(chunk); // 1.4 MiB total → trips at chunk 2
+        controller.close();
+      },
+    });
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(stream, { status: 200 }),
+    );
+    const result = await fetchText('https://example.com/streamy');
+    expect(result).toBeNull();
+    expect(warns.some(w => w.includes('exceeded') && w.includes('cap'))).toBe(true);
+  });
+
+  it('returns body unchanged when under the cap', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response('small payload', { status: 200 }),
+    );
+    const result = await fetchText('https://example.com/small');
+    expect(result).toBe('small payload');
+  });
+});
+
+describe('URL log scrubbing (#114 L3) — safeUrlForLog', () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => { globalThis.fetch = originalFetch; vi.restoreAllMocks(); });
+
+  it('strips ?query and #fragment from logged URLs on HTTP failure', async () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 500 }));
+    await fetchJson('https://api.example.com/v1/data?token=SECRET&other=foo#frag');
+    const log = warns.find(w => w.includes('HTTP'));
+    expect(log).toContain('https://api.example.com/v1/data');
+    expect(log).not.toContain('token=SECRET');
+    expect(log).not.toContain('?');
+    expect(log).not.toContain('#frag');
+  });
+
+  it('strips userinfo (user:pass@host) from logged URLs', async () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 401 }));
+    await fetchJson('https://user:pass@api.example.com/auth');
+    const log = warns.find(w => w.includes('HTTP'));
+    // Implementation falls back to protocol+host+pathname; URL parser drops userinfo.
+    expect(log).not.toContain('user:pass');
+    expect(log).not.toContain(':pass@');
+  });
+});
+
+describe('scrubSecrets cycle guard — QA round 2 #2', () => {
+  it('replaces cycles with [CIRCULAR] instead of stack-overflowing', async () => {
+    const { scrubSecrets } = await import('../cli-helpers.js');
+    const a: Record<string, unknown> = { name: 'a' };
+    const b: Record<string, unknown> = { name: 'b', parent: a };
+    a['child'] = b; // cycle: a → b → a
+    const result = scrubSecrets(a) as Record<string, unknown>;
+    expect(result['name']).toBe('a');
+    const childResult = result['child'] as Record<string, unknown>;
+    expect(childResult['name']).toBe('b');
+    // The b.parent reference back to a is detected as a cycle.
+    expect(childResult['parent']).toBe('[CIRCULAR]');
+  });
+
+  it('replaces array cycles with [CIRCULAR]', async () => {
+    const { scrubSecrets } = await import('../cli-helpers.js');
+    const arr: unknown[] = [1, 2];
+    arr.push(arr);
+    const result = scrubSecrets(arr) as unknown[];
+    expect(result[0]).toBe(1);
+    expect(result[1]).toBe(2);
+    expect(result[2]).toBe('[CIRCULAR]');
+  });
+});
+
+describe('hashConfig cycle guard — QA round 2 #2', () => {
+  it('throws a clean error on circular config instead of stack-overflowing', async () => {
+    const { hashConfig } = await import('../cache.js');
+    const a: Record<string, unknown> = { name: 'a' };
+    a['self'] = a;
+    expect(() => hashConfig(a)).toThrow(/circular reference/);
+  });
+});

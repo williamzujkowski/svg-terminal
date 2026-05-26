@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.18.2 — 2026-05-26 — dep updates + QA-round-2 fixes
+
+Closes 5 Dependabot PRs (`#108`, `#109`, `#110`, `#111`, `#116`) and 4 findings from a second QA + security review.
+
+### Dependabot PRs merged
+
+- **`actions/checkout`** v4.3.1 → v6.0.2 (SHA `de0fac2`) — `#108`
+- **`actions/setup-node`** v4.4.0 → v6.4.0 (SHA `48b55a0`) — `#110` applied manually post-conflict
+- **`github/codeql-action`** SHA bump within v3 (`fee9466` → `03e4368`) — `#109`
+- **`@types/node`** 22.19.11 → 22.19.19 — `#111` (within-22-LTS patch)
+- **`vitest` + `@vitest/coverage-v8`** 3.2.4 → 4.x — `#116`. Release notes confirmed no breakage in our test surface.
+
+### Dependabot PRs explicitly deferred
+
+- **`typescript`** 5.9.3 → 6.0.3 — `#112` closed: typescript-eslint v9 not GA yet (latest is `8.60.1-alpha`).
+- **`eslint`** 9.x → 10.4.0 — `#121` closed: same blocker (peer-deps require ts-eslint v9). Also requires `engines.node: >=22.13.0` bump.
+
+### QA round 2 findings shipped
+
+- **Finding #1 — `fontFamily` escape on static SVG path.** `src/core/svg-generator.ts:668` emitted `${terminal.fontFamily}` in the `<style>` block without `escapeXml`. Animated path was escaped; this restores the defense-in-depth contract. Not currently exploitable (schema validator already rejects the dangerous characters).
+- **Finding #2 — Cycle guards in `scrubSecrets` + `canonicalize`.** YAML anchors / programmatic cycles previously stack-overflowed both functions. `scrubSecrets` now replaces cycles with `'[CIRCULAR]'`; `hashConfig`'s `canonicalize` throws a clean `"config contains a circular reference"` error.
+- **Finding #3 — Test coverage for `readCappedText`.** Three new cases: Content-Length over cap, mid-stream cap fire on a ReadableStream, under-cap pass-through.
+- **Finding #6 — Wider `--explain` redaction.** `scrubSecrets` now wraps the entire explain payload (was only `block.config`). `userConfig.variables`, `merged.window`, `merged.text` also covered.
+
+### Action
+
+- Bumped pinned svg-terminal install: `svg-terminal@0.18.1` → `svg-terminal@0.18.2`.
+
+### Tests
+
+- 386 → 394 (+8): 3 for size cap, 2 for URL log scrub (`?query`, `userinfo`), 2 for `scrubSecrets` cycle, 1 for `hashConfig` cycle.
+
 ## v0.18.1 — 2026-05-26 — security hardening
 
 Closes `#114` — the L1/L2/L3/L4 hardening cluster from the v0.17.0 security audit. All defense-in-depth; no known exploit but each is best-practice for the marketplace publish.

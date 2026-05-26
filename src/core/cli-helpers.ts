@@ -146,13 +146,25 @@ export interface ParsedFlags {
  */
 export const SECRET_KEY_RE = /token|secret|password|api[-_]?key|auth|credential|bearer|webhook[-_]?url/i;
 
-/** Recursively redact values whose keys match SECRET_KEY_RE. */
-export function scrubSecrets(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(scrubSecrets);
+/**
+ * Recursively redact values whose keys match SECRET_KEY_RE.
+ *
+ * Tracks visited objects via `seen` so YAML anchors or any other cycle
+ * doesn't stack-overflow `--explain` (QA round 2 finding #2). A cycle is
+ * replaced with `'[CIRCULAR]'` so the JSON output still parses cleanly.
+ */
+export function scrubSecrets(value: unknown, seen: WeakSet<object> = new WeakSet()): unknown {
+  if (Array.isArray(value)) {
+    if (seen.has(value)) return '[CIRCULAR]';
+    seen.add(value);
+    return value.map(v => scrubSecrets(v, seen));
+  }
   if (value && typeof value === 'object') {
+    if (seen.has(value)) return '[CIRCULAR]';
+    seen.add(value);
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value)) {
-      out[k] = SECRET_KEY_RE.test(k) ? '[REDACTED]' : scrubSecrets(v);
+      out[k] = SECRET_KEY_RE.test(k) ? '[REDACTED]' : scrubSecrets(v, seen);
     }
     return out;
   }
