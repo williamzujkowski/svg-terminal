@@ -1,0 +1,107 @@
+<svg width="640" height="129" viewBox="0 0 640 129" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Animated terminal showing: ./launch.sh">
+  <title>Animated terminal showing: ./launch.sh</title>
+  <desc>user@host:~$ ./launch.sh
+T- 5...</desc>
+  <style>
+    .tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }
+    @keyframes scanlineScroll {
+      from { transform: translateY(0); }
+      to { transform: translateY(4px); }
+    }
+    .scanline-overlay { animation: scanlineScroll 1.2s linear infinite; }
+    /* fadeIn drives all opacity fade-ins (prompt + output lines + animated frame
+       wrappers). Lives in CSS rather than SMIL so the @media block below kills
+       it under prefers-reduced-motion. fill-mode: backwards keeps the element
+       at opacity 0 during the animation-delay window so it doesn't pop in
+       before its scheduled time. */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 10ms linear backwards; }
+    /* frame-cycle-N (closes #69): one rule per unique frame count across the
+       animated blocks in this render. Each frame text element carries the
+       class + an inline animation-delay = i*frameDur. The static opacity
+       attribute (frame 0 = 1, others = 0) is the SMIL-stripped AND
+       reduced-motion fallback — frame 0 visible, rest invisible. Under
+       prefers-reduced-motion the @media block kills animation-duration so
+       the underlying opacity attribute applies. */
+    @keyframes frame-cycle-6 { 0%, 16.6667% { opacity: 1; } 16.6767%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+  <defs>
+    
+    <pattern id="scanlines" patternUnits="userSpaceOnUse" width="1" height="2">
+      <rect width="1" height="1" fill="transparent"/>
+      <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
+    </pattern>
+    
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="40" width="640" height="89"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#shadow)">
+    
+    <rect x="0" y="0" width="640" height="129"
+          rx="12" ry="12"
+          fill="#0a0e27"/>
+    
+    <rect x="0" y="0" width="640" height="40"
+          rx="12" ry="12"
+          fill="#151b2e"/>
+    <rect x="0" y="16" width="640" height="16"
+          fill="#151b2e"/>
+    <g id="window-controls">
+      <circle cx="14" cy="16" r="6" fill="#ff5f57" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="34" cy="16" r="6" fill="#ffbd2e" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+    </g>
+    <text x="320" y="24.55"
+          font-family="-apple-system, BlinkMacSystemFont, &apos;Segoe UI&apos;, Helvetica, Arial, sans-serif" font-size="13"
+          fill="#e0e6ed" text-anchor="middle">
+      countdown
+    </text>
+    
+    <rect x="0" y="40" width="640"
+          height="89" fill="#0a0e27"/>
+    <g clip-path="url(#terminalViewport)">
+      <g id="scrollContainer" transform="translate(12, 54)">
+        
+        
+    <g transform="translate(0, 0)">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="88" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88" keyTimes="0.0000;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0000" calcMode="discrete" begin="0ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt fade-in" style="animation-delay: 0ms" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">user@host:~$ </text>
+      <text class="tt" x="109" fill="#00ff9f" textLength="88" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">./launch.sh</text>
+      
+    <rect x="109" y="-12" width="8" height="14"
+          fill="#00ff41" opacity="0">
+      <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="opacity" to="0" begin="1200ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="x" values="109;109;117;125;133;141;149;157;165;173;181;189" keyTimes="0.0000;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0000" calcMode="discrete" begin="0ms" dur="1200ms" fill="freeze"/>
+    </rect>
+    </g>
+
+    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
+      <text class="tt frame-cycle-6" opacity="1" style="animation: frame-cycle-6 6000ms linear 0ms 1"><tspan fill="#f1fa8c">T- 5...</tspan></text><text class="tt frame-cycle-6" opacity="0" style="animation: frame-cycle-6 6000ms linear 1000ms 1"><tspan fill="#f1fa8c">T- 4...</tspan></text><text class="tt frame-cycle-6" opacity="0" style="animation: frame-cycle-6 6000ms linear 2000ms 1"><tspan fill="#f1fa8c">T- 3...</tspan></text><text class="tt frame-cycle-6" opacity="0" style="animation: frame-cycle-6 6000ms linear 3000ms 1"><tspan fill="#f1fa8c">T- 2...</tspan></text><text class="tt frame-cycle-6" opacity="0" style="animation: frame-cycle-6 6000ms linear 4000ms 1"><tspan fill="#f1fa8c">T- 1...</tspan></text><text class="tt frame-cycle-6" opacity="0" style="animation: frame-cycle-6 6000ms linear 5000ms 1"><tspan fill="#50fa7b" font-weight="bold">🚀 LIFT-OFF</tspan></text>
+    </g>
+      </g>
+    </g>
+    
+    <rect x="0" y="40" width="640" height="89" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
+  </g>
+</svg>

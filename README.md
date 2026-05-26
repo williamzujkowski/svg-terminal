@@ -1,6 +1,11 @@
 # svg-terminal
 
-> Requires **Node 22+**
+[![CI](https://github.com/williamzujkowski/svg-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/williamzujkowski/svg-terminal/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/williamzujkowski/svg-terminal/actions/workflows/codeql.yml/badge.svg)](https://github.com/williamzujkowski/svg-terminal/actions/workflows/codeql.yml)
+[![npm version](https://img.shields.io/npm/v/svg-terminal)](https://www.npmjs.com/package/svg-terminal)
+[![npm downloads](https://img.shields.io/npm/dm/svg-terminal)](https://www.npmjs.com/package/svg-terminal)
+[![Node 22+](https://img.shields.io/badge/node-%E2%89%A522-brightgreen)](https://nodejs.org/)
+[![MIT license](https://img.shields.io/github/license/williamzujkowski/svg-terminal)](./LICENSE)
 
 Generate animated SVG terminals from a declarative YAML config. The output is a single self-contained SVG that works inside GitHub's sandbox — no script, no external assets.
 
@@ -8,14 +13,37 @@ Generate animated SVG terminals from a declarative YAML config. The output is a 
 
 <sub>Demo above is the actual SVG this library produces. Source: [`examples/demo.yml`](./examples/demo.yml). Regenerate with `npm run demo`.</sub>
 
+### Try in 60 seconds
+
+```bash
+npx svg-terminal init                       # writes terminal.yml
+npx svg-terminal generate                   # writes terminal.svg
+npx svg-terminal blocks                     # lists all 47 blocks
+```
+
+Or as a GitHub Action — refresh your profile README on a schedule:
+
+```yaml
+- uses: williamzujkowski/svg-terminal@v1
+  with:
+    config: terminal.yml
+    output: terminal.svg
+    commit: true
+```
+
+See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (47 blocks, one preview each), and the [12-theme gallery](#themes).
+
+### What's in the box
+
 - **Declarative YAML config** — write blocks, pick a theme, run the CLI
-- **47 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories
+- **47 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories. Browse the [block catalog](./examples/blocks/) for previews of each
 - **12 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast (with chrome to match)
 - **Single-line frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 9 animated blocks (spinners, clock, dice, progress bar, etc.). Multi-line is a known restriction
 - **Dynamic-block cache** — the 5 cacheable blocks (weather, github-stats, github-languages, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
-- **Reduced-motion respected for fade-ins** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins. SMIL-driven typing reveal, cursor walk, scroll, and frame cycles remain animated; pair with `--static` for full stillness
+- **Reduced-motion respected** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins AND (since v0.17) the frame cycle. SMIL-driven typing reveal, cursor walk, and scroll-on-overflow remain animated; pair with `--static` for full stillness
+- **Schema-validated, XSS-safe** — strict zod schema on every config field; user-controllable values are escaped at SVG emit sites. See [SECURITY.md](./SECURITY.md)
 - **No runtime deps in the output** — SMIL + CSS animation, inline, GitHub-sandbox-safe
-- **CLI + library** — `npx svg-terminal generate`, or `import { generate } from 'svg-terminal'`. Strict zod validation on every block's config
+- **CLI + library** — `npx svg-terminal generate`, or `import { generate } from 'svg-terminal'`. Requires Node 22+
 
 ## Quick Start
 
@@ -23,6 +51,7 @@ Generate animated SVG terminals from a declarative YAML config. The output is a 
 npx svg-terminal init                       # Creates terminal.yml
 npx svg-terminal generate                   # Generates terminal.svg
 npx svg-terminal generate --watch           # Rebuild on every save
+npx svg-terminal blocks <name>              # Inspect a block's config schema
 ```
 
 ## Configuration
@@ -104,7 +133,7 @@ Run `svg-terminal blocks` to list all 47 (cacheable ones marked `*`), or `svg-te
 | `fortune` | Random quote/fortune in ASCII box |
 | `custom` | Arbitrary text with `[[fg:color]]` markup |
 | `motd` | Welcome banner / message of the day |
-| `dad-joke` | Q&A joke in a fancy ASCII box (daily rotation) |
+| `dad-joke` | Q&A joke in an ASCII box (daily rotation) |
 | `htop` | Colorful process/resource monitor display |
 | `profile` | Developer profile info card |
 | `goodbye` | Farewell message with well-wishes |
@@ -129,7 +158,7 @@ Run `svg-terminal blocks` to list all 47 (cacheable ones marked `*`), or `svg-te
 | `who` | `who` listing with ghost users (debugger, coffee, sanity) |
 | `uptime` | Ridiculous uptime ("up 632 days, that one incident") |
 | `matrix-rain` | Single-frame Matrix rain screen with ACCESS GRANTED footer |
-| `cowsay` | Speech bubble + iconic ASCII cow (with word-wrap) |
+| `cowsay` | Speech bubble + ASCII cow (with word-wrap) |
 | `loading-spinner` | Braille spinner cycling at configurable fps |
 | `heartbeat` | Pulsing heart — emotional hook for a project you love |
 | `spinning-gear` | Rotating `\|/-\\` gear for DevOps/infra vibes |
@@ -276,7 +305,7 @@ main();
 
 `generateStatic` returns the same content as a non-animated SVG — useful for accessibility fallbacks and social-preview cards.
 
-`inspectCache(configPath)` returns the cache file's stored entries with their TTL freshness — useful for building your own "is the cache hot?" CI gates without invoking the `svg-terminal cache check` subcommand.
+`inspectCache(userConfig, configPath)` returns `{filePath, results}` where each result reports per-cacheable-block status (`OK` / `STALE` / `MISS`) with age in seconds — useful for building your own "is the cache hot?" CI gates without invoking the `svg-terminal cache check` subcommand. `userConfig` is the parsed config object; `configPath` anchors cache-path resolution.
 
 ## GitHub Action
 

@@ -41,8 +41,17 @@ outputs:
     description: 'Path to the generated SVG file'
     value: ${{ inputs.output }}
   svg-size:
-    description: 'Size of the generated SVG in bytes'
+    description: 'Size of the generated SVG in bytes (also: svg-bytes — same value)'
     value: ${{ steps.generate.outputs.size }}
+  svg-bytes:
+    description: 'Byte count of the generated SVG (integer string)'
+    value: ${{ steps.generate.outputs.size }}
+  svg-sha256:
+    description: 'Hex SHA-256 of the generated SVG, for cache-busting downstream'
+    value: ${{ steps.generate.outputs.sha256 }}
+  svg-changed:
+    description: 'true | false — did the SVG differ from the previously-committed version? (always false on first run; meaningful when commit=true)'
+    value: ${{ steps.generate.outputs.changed }}
 
 runs:
   using: 'composite'
@@ -55,7 +64,11 @@ runs:
 
     - name: Install svg-terminal
       shell: bash
-      run: npm install -g svg-terminal
+      # Pin to the npm-published version that matches this action's release —
+      # users who pin the action by SHA / tag get reproducible behavior
+      # instead of whatever floats on the npm registry. Bumped each action
+      # release to match the published npm version.
+      run: npm install -g svg-terminal@0.17.1
 
     - name: Generate SVG
       id: generate
@@ -84,8 +97,20 @@ runs:
         esac
         if [ "$INPUT_STATIC" = "true" ]; then args="$args --static"; fi
         if [ "$INPUT_MINIFY" = "true" ]; then args="$args --minify"; fi
+        # Capture pre-existing SVG content (if any) so we can compute svg-changed.
+        prev_sha=""
+        if [ -f "$INPUT_OUTPUT" ]; then
+          prev_sha=$(sha256sum "$INPUT_OUTPUT" | cut -d' ' -f1)
+        fi
         svg-terminal generate --config "$INPUT_CONFIG" --output "$INPUT_OUTPUT" $args
-        echo "size=$(stat -c%s "$INPUT_OUTPUT" 2>/dev/null || stat -f%z "$INPUT_OUTPUT")" >> "$GITHUB_OUTPUT"
+        new_sha=$(sha256sum "$INPUT_OUTPUT" | cut -d' ' -f1)
+        bytes=$(stat -c%s "$INPUT_OUTPUT" 2>/dev/null || stat -f%z "$INPUT_OUTPUT")
+        changed=$([ "$prev_sha" = "$new_sha" ] && echo "false" || echo "true")
+        {
+          echo "size=$bytes"
+          echo "sha256=$new_sha"
+          echo "changed=$changed"
+        } >> "$GITHUB_OUTPUT"
 
     - name: Commit SVG
       if: inputs.commit == 'true'

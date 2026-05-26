@@ -6,16 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run build` — bundle with tsup → `dist/` (ESM + `.d.ts`, targets node22).
 - `npm run dev` — tsup watch mode.
-- `npm test` — vitest, single run (281 tests at v0.8.1).
+- `npm test` — vitest, single run (381 tests at v0.17.1).
 - `npm run test:watch` — vitest watch.
 - `npm test -- src/core/__tests__/markup-parser.test.ts` — single test file.
 - `npm test -- -t "fragment of test name"` — single test by name.
 - `npm run typecheck` — `tsc --noEmit` (`strict`, plus `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`).
 - `npm run lint` — ESLint v9 flat config over `src/`.
 - `npm run generate` — `tsx src/cli.ts generate` against `./terminal.yml`.
-- `npm run demo` — rebuild + regenerate the README hero SVG + 8-theme gallery (CI verifies the committed SVGs match the regen).
+- `npm run demo` — rebuild + regenerate the README hero SVG + 12-theme gallery (CI verifies the committed SVGs match the regen).
+- `npm run demo:regen` — just the regen step (skips the rebuild). CI uses this after `build` to save ~9s.
 - `node dist/cli.js generate --config terminal.yml --output terminal.svg [--static] [--minify] [--watch] [--no-cache | --refresh-cache | --frozen-cache] [--strict]` — built CLI surface.
-- Node ≥ 22 (the CI workflow pins `22.19.0` so a minor Node bump can't silently change the SVG byte output).
+- Node ≥ 22 (the CI workflow pins `22.22.3` so a Node patch bump can't silently change the SVG byte output).
 
 ## Architecture
 
@@ -62,11 +63,13 @@ The library converts a declarative YAML config into a single self-contained SVG 
 
 ### Themes (`src/themes/`)
 
-8 built-in themes (`dracula`, `nord`, `monokai`, `amber`, `green-phosphor`, `cyberpunk`, `solarized-dark`, `win95`). Each exports a `Theme` with a full `ThemeColors` palette + 3 window-button colors. `resolveTheme` accepts a name string, a `Theme` object, or `'random'` (deterministic day-of-year rotation across `listThemes()`).
+12 built-in themes (`dracula`, `nord`, `monokai`, `amber`, `green-phosphor`, `cyberpunk`, `solarized-dark`, `win95`, `catppuccin`, `tokyo-night`, `gruvbox`, `high-contrast`). Each exports a `Theme` with a full `ThemeColors` palette + 3 window-button colors. `resolveTheme` accepts a name string, a `Theme` object, or `'random'` (deterministic day-of-year rotation across `listThemes()`).
+
+Inline themes (passed as a `theme:` object instead of a string name) go through a strict `InlineThemeSchema` in `src/core/schema.ts` that validates every color slot against `ColorRefSchema` (hex or palette name) — defense against the H2 XSS vector closed in v0.17.1.
 
 `registerTheme()` adds a custom theme to a separate Map that shadows built-ins on name collision. Throws if the name is `'random'` (reserved for daily rotation). Inline theme objects using `name: 'random'` are also rejected at `loadConfig` time.
 
-The `win95` theme is special-cased in `mergeConfig` to swap on its dedicated chrome (`window.style: 'win95'` + shrunk titleBarHeight + glow/scanlines off).
+The `win95` theme is special-cased in `mergeConfig` to swap on its dedicated chrome (`window.style: 'win95'` + shrunk titleBarHeight + glow/scanlines off). The three CRT-aesthetic themes (`amber`, `green-phosphor`, `cyberpunk`) auto-enable `effects.vignette` via the same pattern (v0.14).
 
 ### Window styles
 

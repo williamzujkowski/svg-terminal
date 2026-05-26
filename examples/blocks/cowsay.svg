@@ -1,0 +1,158 @@
+<svg width="640" height="305" viewBox="0 0 640 305" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Animated terminal showing: cowsay">
+  <title>Animated terminal showing: cowsay</title>
+  <desc>user@host:~$ cowsay
+__________________
+&lt; moo. I am a cow. &gt;
+------------------
+\   ^__^
+\  (oo)\_______
+(__)\       )\/\
+||----w |
+||     ||</desc>
+  <style>
+    .tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }
+    @keyframes scanlineScroll {
+      from { transform: translateY(0); }
+      to { transform: translateY(4px); }
+    }
+    .scanline-overlay { animation: scanlineScroll 1.2s linear infinite; }
+    /* fadeIn drives all opacity fade-ins (prompt + output lines + animated frame
+       wrappers). Lives in CSS rather than SMIL so the @media block below kills
+       it under prefers-reduced-motion. fill-mode: backwards keeps the element
+       at opacity 0 during the animation-delay window so it doesn't pop in
+       before its scheduled time. */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 10ms linear backwards; }
+    /* frame-cycle-N (closes #69): one rule per unique frame count across the
+       animated blocks in this render. Each frame text element carries the
+       class + an inline animation-delay = i*frameDur. The static opacity
+       attribute (frame 0 = 1, others = 0) is the SMIL-stripped AND
+       reduced-motion fallback — frame 0 visible, rest invisible. Under
+       prefers-reduced-motion the @media block kills animation-duration so
+       the underlying opacity attribute applies. */
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+  <defs>
+    
+    <pattern id="scanlines" patternUnits="userSpaceOnUse" width="1" height="2">
+      <rect width="1" height="1" fill="transparent"/>
+      <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
+    </pattern>
+    
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="40" width="640" height="265"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#shadow)">
+    
+    <rect x="0" y="0" width="640" height="305"
+          rx="12" ry="12"
+          fill="#0a0e27"/>
+    
+    <rect x="0" y="0" width="640" height="40"
+          rx="12" ry="12"
+          fill="#151b2e"/>
+    <rect x="0" y="16" width="640" height="16"
+          fill="#151b2e"/>
+    <g id="window-controls">
+      <circle cx="14" cy="16" r="6" fill="#ff5f57" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="34" cy="16" r="6" fill="#ffbd2e" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+    </g>
+    <text x="320" y="24.55"
+          font-family="-apple-system, BlinkMacSystemFont, &apos;Segoe UI&apos;, Helvetica, Arial, sans-serif" font-size="13"
+          fill="#e0e6ed" text-anchor="middle">
+      cowsay
+    </text>
+    
+    <rect x="0" y="40" width="640"
+          height="265" fill="#0a0e27"/>
+    <g clip-path="url(#terminalViewport)">
+      <g id="scrollContainer" transform="translate(12, 54)">
+        
+        
+    <g transform="translate(0, 0)">
+      <defs><clipPath id="cmdrev-0"><rect x="109" y="-14" width="48" height="28"><animate attributeName="width" values="0;8;16;24;32;40;48" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt fade-in" style="animation-delay: 0ms" fill="#00ff9f" textLength="109" lengthAdjust="spacingAndGlyphs">user@host:~$ </text>
+      <text class="tt" x="109" fill="#00ff9f" textLength="48" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-0)">cowsay</text>
+      
+    <rect x="109" y="-12" width="8" height="14"
+          fill="#00ff41" opacity="0">
+      <animate attributeName="opacity" from="0" to="1" begin="0ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="opacity" to="0" begin="1200ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="x" values="109;109;117;125;133;141;149" keyTimes="0.0000;0.1667;0.3333;0.5000;0.6667;0.8333;1.0000" calcMode="discrete" begin="0ms" dur="1200ms" fill="freeze"/>
+    </rect>
+    </g>
+
+    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
+      <text class="tt" fill="#e4e4e4">
+         __________________
+      </text>
+    </g>
+
+    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
+      <text class="tt" fill="#e4e4e4">
+        &lt; moo. I am a cow. &gt;
+      </text>
+    </g>
+
+    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
+      <text class="tt" fill="#e4e4e4">
+         ------------------
+      </text>
+    </g>
+
+    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
+      <text class="tt" fill="#e4e4e4">
+                \   ^__^
+      </text>
+    </g>
+
+    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
+      <text class="tt" fill="#e4e4e4">
+                 \  (oo)\_______
+      </text>
+    </g>
+
+    <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
+      <text class="tt" fill="#e4e4e4">
+                    (__)\       )\/\
+      </text>
+    </g>
+
+    <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
+      <text class="tt" fill="#e4e4e4">
+                        ||----w |
+      </text>
+    </g>
+
+    <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
+      <text class="tt" fill="#e4e4e4">
+                        ||     ||
+      </text>
+    </g>
+      </g>
+    </g>
+    
+    <rect x="0" y="40" width="640" height="265" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
+  </g>
+</svg>

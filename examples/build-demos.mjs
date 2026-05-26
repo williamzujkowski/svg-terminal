@@ -9,7 +9,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
-import { generate, generateStatic } from '../dist/index.js';
+import { generate, generateStatic, getBlock, listBlocks } from '../dist/index.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
@@ -71,5 +71,98 @@ async function buildGallery() {
   }
 }
 
+/**
+ * Per-block catalog (closes #118): one SVG per block + an index README so
+ * users can SEE what each of the 47 built-ins renders, not just read the
+ * one-line description. CI's `git diff --exit-code` keeps it in sync.
+ *
+ * For blocks that need required config to render meaningfully (weather,
+ * github-stats, github-languages — all use `useCache` and fall back when
+ * config is missing or fetch fails), we provide a representative config
+ * inline. With cacheMode='off' + no real network call, the cacheable
+ * blocks just render their fallback content — that's fine for the
+ * catalog (it shows the "no live data" appearance the user will see in
+ * an offline / cold-cache state).
+ */
+const BLOCK_CATALOG_CONFIG = {
+  weather: { location: 'Brooklyn' },
+  'github-stats': { username: 'octocat' },
+  'github-languages': { username: 'octocat' },
+  // motd shows weather embed if weather is set — keep static for the catalog
+  motd: { title: 'WELCOME', subtitle: 'A 47-block catalog' },
+  // quote + fun-fact normally fetch random content per render — pin to a
+  // fixed fallback string so the catalog SVG is byte-stable across regen
+  // passes (CI gate: `npm run demo:regen && git diff --exit-code examples/`).
+  quote: {
+    fallback: 'First, solve the problem. Then, write the code.',
+    fallbackAuthor: 'John Johnson',
+  },
+  'fun-fact': {
+    fallback: 'Honey never spoils. Archaeologists have found 3000-year-old honey that was still edible.',
+  },
+};
+
+async function buildBlockCatalog() {
+  console.log('block catalog:');
+  const rows = [];
+  for (const name of listBlocks()) {
+    const block = getBlock(name);
+    if (!block) continue;
+    const blockCfg = BLOCK_CATALOG_CONFIG[name] ?? {};
+    const userConfig = {
+      theme: 'dracula',
+      window: {
+        width: 640,
+        autoHeight: true,
+        minHeight: 80,
+        maxHeight: 600,
+        title: name,
+      },
+      // Force a near-instant fetch timeout for the catalog pass so cacheable
+      // blocks ALWAYS take their fallback path. Without this, weather /
+      // github-* / quote / fun-fact would hit live APIs and the random
+      // responses would byte-drift between regen runs (CI gate fail). The
+      // fallback content is what offline / cold-cache users see anyway, so
+      // it's a faithful catalog preview.
+      fetchTimeout: 1,
+      blocks: [{ block: name, config: blockCfg }],
+    };
+    try {
+      const svg = await generate(userConfig, { cacheMode: 'off', now: FIXED_NOW });
+      await writeSvg(svg, `examples/blocks/${name}.svg`);
+      rows.push({ name, desc: block.description ?? '', cacheable: !!block.cacheable });
+    } catch (err) {
+      console.warn(`  SKIP ${name}: ${err.message}`);
+    }
+  }
+  // Index README — one row per block, links to YAML + SVG thumbnail.
+  const lines = [
+    '# Block catalog',
+    '',
+    `${rows.length} built-in blocks. One SVG per block; click a thumbnail to view full size.`,
+    '',
+    'Regenerate: `npm run demo` (auto-built from `listBlocks()` so a new block gets a catalog row for free).',
+    '',
+    '| Block | Description | Preview |',
+    '|-------|-------------|---------|',
+    ...rows.map(r => {
+      const cacheTag = r.cacheable ? ' *' : '';
+      return `| \`${r.name}\`${cacheTag} | ${r.desc} | <img src="./${r.name}.svg" alt="${r.name} preview" width="320"/> |`;
+    }),
+    '',
+    '`*` = cacheable block (participates in the on-disk dynamic-block cache).',
+    '',
+  ];
+  await writeFile('examples/blocks/README.md', lines.join('\n'));
+}
+
+async function writeFile(relPath, content) {
+  const out = resolve(ROOT, relPath);
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, content, 'utf-8');
+  console.log(`  ${relPath}`);
+}
+
 await buildHero();
 await buildGallery();
+await buildBlockCatalog();
