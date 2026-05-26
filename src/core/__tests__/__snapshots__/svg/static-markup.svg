@@ -1,0 +1,66 @@
+<svg width="1000" height="560" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Static terminal showing 2 lines">
+  <title>Static terminal showing 2 lines</title>
+  <desc>hello
+world</desc>
+  <style>.tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }</style>
+  <defs>
+    
+    <pattern id="scanlines" patternUnits="userSpaceOnUse" width="1" height="2">
+      <rect width="1" height="1" fill="transparent"/>
+      <rect y="1" width="1" height="1" fill="rgba(255,255,255,0.02)"/>
+    </pattern>
+    
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="40" width="1000" height="520"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#shadow)">
+    
+    <rect x="0" y="0" width="1000" height="560"
+          rx="12" ry="12"
+          fill="#0a0e27"/>
+    
+    <rect x="0" y="0" width="1000" height="40"
+          rx="12" ry="12"
+          fill="#151b2e"/>
+    <rect x="0" y="16" width="1000" height="16"
+          fill="#151b2e"/>
+    <g id="window-controls">
+      <circle cx="14" cy="16" r="6" fill="#ff5f57" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="34" cy="16" r="6" fill="#ffbd2e" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+    </g>
+    <text x="500" y="24.55"
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"
+          fill="#e0e6ed" text-anchor="middle">
+      user@terminal:~
+    </text>
+    <rect x="0" y="40" width="1000"
+          height="520" fill="#0a0e27"/>
+    <g clip-path="url(#terminalViewport)">
+      <g transform="translate(12, 54)">
+        
+      <text class="tt" y="0" fill="#e4e4e4">
+        hello
+      </text>
+      <text class="tt" y="25">
+        <tspan fill="#8be9fd">world</tspan>
+      </text>
+      </g>
+    </g>
+    
+    <rect x="0" y="40" width="1000" height="520" fill="url(#scanlines)" pointer-events="none" opacity="0.5"/>
+  </g>
+</svg>

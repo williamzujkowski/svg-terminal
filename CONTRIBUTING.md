@@ -96,5 +96,5 @@ Open an issue with the YAML config that reproduces it and the generated SVG (or 
 
 - One logical change per PR. A new block, a perf fix, and a doc tweak are three PRs.
 - Tests for new behavior. The existing suite is the safety net — keep it green.
-- If you change SVG output structure: refresh the snapshots (`npm test -- -u`), and explain in the PR description what the visual delta is.
+- If you change SVG output structure: refresh the snapshots (`npm test -- -u`), and explain in the PR description what the visual delta is. Snapshot files live at `src/core/__tests__/__snapshots__/svg/` — one `.svg` per scenario, so a failing test produces a per-file diff you can review directly instead of grepping a monolithic `.snap`.
 - Commit messages follow the repo style (conventional-commit-ish: `feat:`, `fix:`, `perf:`, `docs:`). The PR title becomes the squash-merge subject by default — make it count.

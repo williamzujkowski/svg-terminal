@@ -636,6 +636,10 @@ describe('accessibility', () => {
 // If output changes intentionally: `npm test -- -u` to refresh.
 // ---------------------------------------------------------------------------
 describe('SVG snapshots', () => {
+  // Per-scenario .svg files (one snapshot per scenario instead of all four
+  // glued into one monolithic .snap). When a rendering change breaks N of M
+  // snapshots, git diff shows N individual file changes — easy to bisect,
+  // easy to PR-review. Closes #72/#95.
   const snapshotSeq: Sequence[] = [
     { type: 'command', content: 'whoami', typingDuration: 200 },
     { type: 'output', content: 'dev' },
@@ -643,21 +647,25 @@ describe('SVG snapshots', () => {
     { type: 'output', content: '[[fg:green]]hi[[/fg]]' },
   ];
 
-  it('macOS chrome + default effects', () => {
-    expect(generateSvg(snapshotSeq, makeConfig())).toMatchSnapshot();
+  it('macOS chrome + default effects', async () => {
+    await expect(generateSvg(snapshotSeq, makeConfig()))
+      .toMatchFileSnapshot('./__snapshots__/svg/macos-default.svg');
   });
 
-  it('floating window (no chrome)', () => {
+  it('floating window (no chrome)', async () => {
     const config = makeConfig({ window: { ...DEFAULT_CONFIG.window, style: 'floating' } });
-    expect(generateSvg(snapshotSeq, config)).toMatchSnapshot();
+    await expect(generateSvg(snapshotSeq, config))
+      .toMatchFileSnapshot('./__snapshots__/svg/floating-no-chrome.svg');
   });
 
-  it('scanlines off + glow on', () => {
+  it('scanlines off + glow on', async () => {
     const config = makeConfig({ effects: { ...DEFAULT_CONFIG.effects, scanlines: false, textGlow: true } });
-    expect(generateSvg(snapshotSeq, config)).toMatchSnapshot();
+    await expect(generateSvg(snapshotSeq, config))
+      .toMatchFileSnapshot('./__snapshots__/svg/glow-on.svg');
   });
 
-  it('static SVG with markup', () => {
-    expect(generateStaticSvg(['hello', '[[fg:cyan]]world[[/fg]]'], makeConfig())).toMatchSnapshot();
+  it('static SVG with markup', async () => {
+    await expect(generateStaticSvg(['hello', '[[fg:cyan]]world[[/fg]]'], makeConfig()))
+      .toMatchFileSnapshot('./__snapshots__/svg/static-markup.svg');
   });
 });

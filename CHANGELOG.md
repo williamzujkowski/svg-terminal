@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.16.2 — 2026-05-25
+
+Closes `#72` and `#95`. Test infra only.
+
+### Tests
+
+- **Per-scenario snapshot files** at `src/core/__tests__/__snapshots__/svg/{name}.svg` (one file per scenario) instead of a monolithic 20 KB `.snap`. When a rendering change breaks 2 of 4 snapshots, `git status` shows 2 individual file changes you can `git diff` directly — instead of grepping a wall of XML. Uses vitest's `toMatchFileSnapshot`. CONTRIBUTING.md updated to point at the new location.
+- No test count change (refactor, not new coverage).
+
 ## v0.16.1 — 2026-05-25
 
 Closes `#85` (opt-in output-line width pinning) and `#91` full (box-drawing chars stripped from screen-reader `<desc>`).
