@@ -59,7 +59,7 @@ function generateStyledText(
 ): string {
   return spans.map(span => {
     const color = span.fg ?? defaultColor;
-    const attrs = [`fill="${color}"`];
+    const attrs = [`fill="${escapeXml(color)}"`];
     if (span.bold) attrs.push('font-weight="bold"');
     if (span.dim) attrs.push(`opacity="${dimOpacity}"`);
     return `<tspan ${attrs.join(' ')}>${escapeXml(span.text)}</tspan>`;
@@ -103,7 +103,7 @@ function generateCursor(
 
   return `
     <rect x="${promptWidth}" y="${cursorY}" width="${charWidth}" height="${terminal.fontSize}"
-          fill="${cursorColor}" opacity="0">
+          fill="${escapeXml(cursorColor)}" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="${startTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       <animate attributeName="opacity" to="0" begin="${typingEndTime}ms" dur="${charAppearDuration}ms" fill="freeze"/>
       ${moveAnim}
@@ -174,8 +174,8 @@ function generateCommandLine(
   return `
     <g transform="translate(0, ${y})">
       ${revealClip}
-      <text class="tt fade-in" style="animation-delay: ${startTime}ms" fill="${promptColor}" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">${escapeXml(prompt)}</text>
-      <text class="tt" x="${promptWidth}" fill="${promptColor}"${command.length > 0 ? ` textLength="${cmdWidth}" lengthAdjust="spacingAndGlyphs" clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
+      <text class="tt fade-in" style="animation-delay: ${startTime}ms" fill="${escapeXml(promptColor)}" textLength="${promptWidth}" lengthAdjust="spacingAndGlyphs">${escapeXml(prompt)}</text>
+      <text class="tt" x="${promptWidth}" fill="${escapeXml(promptColor)}"${command.length > 0 ? ` textLength="${cmdWidth}" lengthAdjust="spacingAndGlyphs" clip-path="url(#${clipId})"` : ''}>${escapeXml(command)}</text>
       ${generateCursor(prompt, command, startTime, typingDuration, terminal, cursorColor, cursorBlinkCycle, charAppearDuration)}
     </g>`;
 }
@@ -252,7 +252,7 @@ function generateAnimatedOutputLine(
     const textContent = styled
       ? generateStyledText(parseMarkup(frame, colorMap, color), color, chrome.dimOpacity)
       : escapeXml(frame);
-    const textFill = styled ? '' : ` fill="${color}"`;
+    const textFill = styled ? '' : ` fill="${escapeXml(color)}"`;
     // animation shorthand: <name> <duration> <timing> <delay> <iter>.
     // Per-frame delay positions each text's visible window into its slot.
     const delayMs = Math.round(i * frameDurMs);
@@ -280,7 +280,7 @@ function generateOutputLine(
   const textContent = styled
     ? generateStyledText(parseMarkup(content, colorMap, color), color, chrome.dimOpacity)
     : escapeXml(content);
-  const textFill = styled ? '' : ` fill="${color}"`;
+  const textFill = styled ? '' : ` fill="${escapeXml(color)}"`;
   // pinWidth opt-in (#85): emit textLength + lengthAdjust so the rendered
   // width matches the math regardless of viewer's monospace fallback font.
   // Skip when the content has markup (parseMarkup produces multiple tspans

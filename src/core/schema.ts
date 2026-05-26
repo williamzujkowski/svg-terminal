@@ -6,14 +6,94 @@
 import { z } from 'zod';
 import type { UserConfig } from '../types.js';
 
+/**
+ * Strict color validator (defense-in-depth against H1/H2 XSS).
+ *
+ * Color values land in SVG `fill=` attributes. Without validation, a YAML
+ * config like `color: '" onmouseover="alert(1)" x="'` produces working
+ * event-handler injection in the output SVG. GitHub strips event handlers
+ * when serving SVGs from user-content (img.shields.io / camo proxy), but
+ * many third-party SVG hosts and consumers do NOT — npm-readme, raw GH
+ * via custom domain, static-site generators that embed the output.
+ *
+ * Accepts:
+ *  - Hex strings: `#abc`, `#aabbcc` (case-insensitive)
+ *  - Bare theme palette names: red, green, yellow, blue, magenta, cyan,
+ *    white, orange, purple, pink, plus their `bright*` variants, plus
+ *    `comment`, `prompt`, `cursor`, `text`, `background`, `brightBlack`.
+ *
+ * Anything else is a config error. Markup tags `[[fg:NAME]]` go through
+ * the same name set in `markup-parser.resolveColor` so the surface is
+ * consistent. (The emit-site `escapeXml(color)` is the belt-and-braces
+ * second layer.)
+ */
+const HEX_COLOR_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+const THEME_COLOR_NAMES = new Set([
+  'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'orange', 'purple', 'pink',
+  'brightRed', 'brightGreen', 'brightYellow', 'brightBlue', 'brightMagenta', 'brightCyan',
+  'brightWhite', 'brightBlack',
+  'text', 'comment', 'background', 'prompt', 'cursor', 'titleBarBackground', 'titleBarText',
+]);
+const ColorRefSchema = z.string().refine(
+  (v: string) => HEX_COLOR_RE.test(v) || THEME_COLOR_NAMES.has(v),
+  { message: 'color must be a hex string (#abc / #aabbcc) or a theme palette name (e.g. "cyan", "comment")' },
+);
+
+/**
+ * Strict font-family validator (defense-in-depth against H3 CSS injection).
+ *
+ * `fontFamily` / `titleFontFamily` land inside SVG `<style>` blocks and
+ * `font-family=` attributes. Unvalidated, a value like
+ * `monospace; } </style><script>alert(1)</script><style>.x{` escapes the
+ * style element. CSS font-family-list syntax legitimately needs commas,
+ * quotes, hyphens, underscores, digits, spaces; anything else (semicolons,
+ * angle brackets, slashes, parens) is suspicious in this context.
+ */
+const FontFamilySchema = z.string().refine(
+  v => /^[A-Za-z0-9 ,'"\-_]+$/.test(v) && !/[<>;{}]/.test(v),
+  { message: 'fontFamily must contain only letters, digits, spaces, commas, quotes, hyphens, underscores' },
+);
+
 const BlockEntrySchema = z.object({
   block: z.string().min(1, 'Block name is required'),
   config: z.record(z.string(), z.unknown()).optional(),
   command: z.string().optional(),
-  color: z.string().optional(),
+  color: ColorRefSchema.optional(),
   typing: z.string().optional(),
   pause: z.string().optional(),
 });
+
+/**
+ * Strict inline-theme schema (closes H2). Validates every color slot when
+ * the user passes a theme as an OBJECT (not just a name). Without this
+ * schema, the prior `z.record(z.string(), z.unknown())` allowed any value
+ * for any color, including attribute-breakout strings.
+ */
+const InlineThemeColorsSchema = z.object({
+  text: ColorRefSchema,
+  comment: ColorRefSchema,
+  background: ColorRefSchema,
+  titleBarBackground: ColorRefSchema,
+  titleBarText: ColorRefSchema,
+  prompt: ColorRefSchema,
+  cursor: ColorRefSchema,
+  red: ColorRefSchema, green: ColorRefSchema, yellow: ColorRefSchema, blue: ColorRefSchema,
+  magenta: ColorRefSchema, cyan: ColorRefSchema, white: ColorRefSchema,
+  orange: ColorRefSchema, purple: ColorRefSchema, pink: ColorRefSchema,
+  brightRed: ColorRefSchema, brightGreen: ColorRefSchema, brightYellow: ColorRefSchema,
+  brightBlue: ColorRefSchema, brightMagenta: ColorRefSchema, brightCyan: ColorRefSchema,
+  brightWhite: ColorRefSchema, brightBlack: ColorRefSchema,
+}).strict();
+
+const InlineThemeSchema = z.object({
+  name: z.string().min(1),
+  colors: InlineThemeColorsSchema,
+  buttons: z.object({
+    close: ColorRefSchema,
+    minimize: ColorRefSchema,
+    maximize: ColorRefSchema,
+  }).strict(),
+}).strict();
 
 const WindowSchema = z.object({
   width: z.number().positive('width must be positive').optional(),
@@ -28,7 +108,7 @@ const WindowSchema = z.object({
 }).strict().optional();
 
 const TerminalSchema = z.object({
-  fontFamily: z.string().optional(),
+  fontFamily: FontFamilySchema.optional(),
   fontSize: z.number().positive('fontSize must be positive').optional(),
   lineHeight: z.number().positive('lineHeight must be positive').optional(),
   padding: z.number().min(0).optional(),
@@ -60,7 +140,7 @@ const AccessibilitySchema = z.object({
 }).strict().optional();
 
 const ChromeSchema = z.object({
-  titleFontFamily: z.string().min(1).optional(),
+  titleFontFamily: FontFamilySchema.optional(),
   titleFontSize: z.number().positive('titleFontSize must be positive').optional(),
   buttonRadius: z.number().min(0).optional(),
   buttonSpacing: z.number().positive().optional(),
@@ -69,7 +149,7 @@ const ChromeSchema = z.object({
 }).strict().optional();
 
 export const UserConfigSchema = z.object({
-  theme: z.union([z.string(), z.record(z.string(), z.unknown())]).optional(),
+  theme: z.union([z.string(), InlineThemeSchema]).optional(),
   window: WindowSchema,
   terminal: TerminalSchema,
   effects: EffectsSchema,

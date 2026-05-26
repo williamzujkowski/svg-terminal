@@ -84,7 +84,7 @@ Editor:    neovim
       <circle cx="54" cy="16" r="6" fill="#859900" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
     <text x="360" y="24.55"
-          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"
+          font-family="-apple-system, BlinkMacSystemFont, &apos;Segoe UI&apos;, Helvetica, Arial, sans-serif" font-size="13"
           fill="#93a1a1" text-anchor="middle">
       user@solarized-dark:~
     </text>

@@ -108,7 +108,7 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">${a11yChildren}
   <style>
-    .tt { font-family: ${terminal.fontFamily}; font-size: ${terminal.fontSize}px; white-space: pre; }
+    .tt { font-family: ${escapeXml(terminal.fontFamily)}; font-size: ${terminal.fontSize}px; white-space: pre; }
     @keyframes scanlineScroll {
       from { transform: translateY(0); }
       to { transform: translateY(4px); }
@@ -472,7 +472,7 @@ function renderWindow(window: WindowConfig, theme: Theme): string {
   const bg = `
     <rect x="0" y="0" width="${window.width}" height="${window.height}"
           rx="${radius}" ry="${radius}"
-          fill="${theme.colors.background}"/>`;
+          fill="${escapeXml(theme.colors.background)}"/>`;
 
   if (window.style === 'win95') {
     // Win95 3D raised border
@@ -500,17 +500,17 @@ function renderTitleBar(
   return `
     <rect x="0" y="0" width="${window.width}" height="${window.titleBarHeight}"
           rx="${window.borderRadius}" ry="${window.borderRadius}"
-          fill="${theme.colors.titleBarBackground}"/>
+          fill="${escapeXml(theme.colors.titleBarBackground)}"/>
     <rect x="0" y="${y}" width="${window.width}" height="${y}"
-          fill="${theme.colors.titleBarBackground}"/>
+          fill="${escapeXml(theme.colors.titleBarBackground)}"/>
     <g id="window-controls">
-      <circle cx="${terminal.padding + 2}" cy="${y}" r="${r}" fill="${theme.buttons.close}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
-      <circle cx="${terminal.padding + 2 + s}" cy="${y}" r="${r}" fill="${theme.buttons.minimize}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
-      <circle cx="${terminal.padding + 2 + s * 2}" cy="${y}" r="${r}" fill="${theme.buttons.maximize}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="${terminal.padding + 2}" cy="${y}" r="${r}" fill="${escapeXml(theme.buttons.close)}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="${terminal.padding + 2 + s}" cy="${y}" r="${r}" fill="${escapeXml(theme.buttons.minimize)}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="${terminal.padding + 2 + s * 2}" cy="${y}" r="${r}" fill="${escapeXml(theme.buttons.maximize)}" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
     </g>
     <text x="${window.width / 2}" y="${(window.titleBarHeight + titleFontSize * 0.7) / 2}"
-          font-family="${titleFontFamily}" font-size="${titleFontSize}"
-          fill="${theme.colors.titleBarText}" text-anchor="middle">
+          font-family="${escapeXml(titleFontFamily)}" font-size="${titleFontSize}"
+          fill="${escapeXml(theme.colors.titleBarText)}" text-anchor="middle">
       ${escapeXml(window.title)}
     </text>`;
 }
@@ -538,7 +538,7 @@ function renderTerminalContent(
   // block sits at the SVG root.
   return `
     <rect x="0" y="${titleBarHeight}" width="${window.width}"
-          height="${viewportHeight}" fill="${theme.colors.background}"/>
+          height="${viewportHeight}" fill="${escapeXml(theme.colors.background)}"/>
     <g clip-path="url(#terminalViewport)">
       <g id="scrollContainer" transform="translate(${terminal.padding}, ${contentY})"${glow}>
         ${scrollAnimations}
@@ -616,7 +616,7 @@ function renderStaticStyledText(
   const spans = parseMarkup(text, colorMap, defaultColor);
   return spans.map(span => {
     const color = span.fg ?? defaultColor;
-    const attrs = [`fill="${color}"`];
+    const attrs = [`fill="${escapeXml(color)}"`];
     if (span.bold) attrs.push('font-weight="bold"');
     if (span.dim) attrs.push(`opacity="${dimOpacity}"`);
     return `<tspan ${attrs.join(' ')}>${escapeXml(span.text)}</tspan>`;
@@ -655,7 +655,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
     const textContent = hasMarkupTags
       ? renderStaticStyledText(line, colorMap, theme.colors.text, chrome.dimOpacity)
       : escapeXml(line);
-    const fill = hasMarkupTags ? '' : ` fill="${theme.colors.text}"`;
+    const fill = hasMarkupTags ? '' : ` fill="${escapeXml(theme.colors.text)}"`;
 
     return `
       <text class="tt" y="${y}"${fill}>
@@ -678,7 +678,7 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
     ${renderWindow(window, theme)}
     ${renderTitleBarForStyle(window, terminal, theme, chrome)}
     <rect x="0" y="${titleBarHeight}" width="${window.width}"
-          height="${viewportHeight}" fill="${theme.colors.background}"/>
+          height="${viewportHeight}" fill="${escapeXml(theme.colors.background)}"/>
     <g clip-path="url(#terminalViewport)">
       <g transform="translate(${terminal.padding}, ${contentY})"${glow}>
         ${lineElements}

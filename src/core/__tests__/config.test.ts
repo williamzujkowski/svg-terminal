@@ -266,15 +266,65 @@ describe('loadConfig error paths', () => {
   });
 
   it('rejects an inline theme using the reserved name "random"', async () => {
-    const file = write('inline-random.yml',
-      'theme:\n  name: random\n  colors:\n    text: "#000"\n' +
-      'blocks:\n  - block: custom\n');
+    // The full color/buttons payload is required by InlineThemeSchema (added
+    // for the H2 XSS fix); without it we'd fail the structural check first
+    // and never reach the reserved-name guard. We want to assert the guard
+    // itself fires, so provide a complete-but-otherwise-valid theme.
+    const cols = '#abc';
+    const file = write('inline-random.yml', `theme:
+  name: random
+  colors: { text: "${cols}", comment: "${cols}", background: "${cols}", titleBarBackground: "${cols}", titleBarText: "${cols}", prompt: "${cols}", cursor: "${cols}", red: "${cols}", green: "${cols}", yellow: "${cols}", blue: "${cols}", magenta: "${cols}", cyan: "${cols}", white: "${cols}", orange: "${cols}", purple: "${cols}", pink: "${cols}", brightRed: "${cols}", brightGreen: "${cols}", brightYellow: "${cols}", brightBlue: "${cols}", brightMagenta: "${cols}", brightCyan: "${cols}", brightWhite: "${cols}", brightBlack: "${cols}" }
+  buttons: { close: "${cols}", minimize: "${cols}", maximize: "${cols}" }
+blocks:
+  - block: custom
+`);
     try {
       await loadConfig(file);
       throw new Error('expected throw');
     } catch (e) {
       expect(e).toBeInstanceOf(ConfigError);
       expect((e as ConfigError).formatted).toContain('reserved');
+    }
+  });
+
+  it('rejects block color with attribute-breakout characters (H1 XSS)', async () => {
+    const file = write('xss-color.yml',
+      'blocks:\n  - block: motd\n    color: \'" onmouseover="alert(1)" x="\'\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('color must be');
+    }
+  });
+
+  it('rejects fontFamily with CSS injection characters (H3)', async () => {
+    const file = write('xss-font.yml',
+      'terminal:\n  fontFamily: "monospace; } </style><script>alert(1)</script>"\nblocks:\n  - block: custom\n');
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('fontFamily');
+    }
+  });
+
+  it('rejects inline-theme colors with attribute-breakout characters (H2 XSS)', async () => {
+    const file = write('xss-theme.yml', `theme:
+  name: evil
+  colors: { text: "\\" onmouseover=\\"alert(1)\\" x=\\"", comment: "#abc", background: "#abc", titleBarBackground: "#abc", titleBarText: "#abc", prompt: "#abc", cursor: "#abc", red: "#abc", green: "#abc", yellow: "#abc", blue: "#abc", magenta: "#abc", cyan: "#abc", white: "#abc", orange: "#abc", purple: "#abc", pink: "#abc", brightRed: "#abc", brightGreen: "#abc", brightYellow: "#abc", brightBlue: "#abc", brightMagenta: "#abc", brightCyan: "#abc", brightWhite: "#abc", brightBlack: "#abc" }
+  buttons: { close: "#abc", minimize: "#abc", maximize: "#abc" }
+blocks:
+  - block: custom
+`);
+    try {
+      await loadConfig(file);
+      throw new Error('expected throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ConfigError);
+      expect((e as ConfigError).formatted).toContain('color must be');
     }
   });
 

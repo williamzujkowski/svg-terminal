@@ -1,0 +1,47 @@
+name: CodeQL
+
+# Static analysis for JS/TS. Runs on every push to main, every PR targeting
+# main, and weekly on Mondays so drift between commits gets caught even if
+# no PR has been opened. Findings surface in GitHub Security tab.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * MON'
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write   # required for uploading CodeQL findings
+      packages: read           # required by CodeQL for some lockfile reads
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # security-extended catches a broader set than the default suite
+          # (e.g. command-injection, hardcoded-credentials, regex DoS).
+          queries: security-extended
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

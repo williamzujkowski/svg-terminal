@@ -7,6 +7,53 @@
 /** Default fetch timeout in milliseconds. */
 export const DEFAULT_FETCH_TIMEOUT = 10000;
 
+/**
+ * Per-response byte cap to bound memory + parse time when an upstream
+ * misbehaves. Largest legitimate payload we know of is ~50 KB from
+ * github-stats; 1 MiB leaves several orders of magnitude of headroom
+ * while preventing a hostile / compromised endpoint from OOMing CI by
+ * streaming a multi-GB body inside our timeout window. (Closes M4 from
+ * the v0.17.0 security review — timeout alone doesn't bound bytes once
+ * headers arrive.)
+ */
+const MAX_RESPONSE_BYTES = 1024 * 1024;
+
+/**
+ * Read a Response body but abort when MAX_RESPONSE_BYTES is exceeded.
+ * Returns the buffered text or null if the cap fires.
+ */
+async function readCappedText(response: Response, url: string): Promise<string | null> {
+  // Fast path: respect Content-Length when present.
+  const contentLength = response.headers.get('content-length');
+  if (contentLength && Number(contentLength) > MAX_RESPONSE_BYTES) {
+    console.warn(`[svg-terminal] Response too large (${contentLength} bytes, cap ${MAX_RESPONSE_BYTES}) from ${url}`);
+    return null;
+  }
+  // Stream the body so we can short-circuit even when Content-Length is absent
+  // or lies. We're past the timeout's headers-arrived window here.
+  const reader = response.body?.getReader();
+  if (!reader) return response.text(); // edge: no body stream (test mocks)
+
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.length;
+      if (total > MAX_RESPONSE_BYTES) {
+        await reader.cancel();
+        console.warn(`[svg-terminal] Response exceeded ${MAX_RESPONSE_BYTES}-byte cap mid-stream from ${url}`);
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return new TextDecoder().decode(Buffer.concat(chunks));
+}
+
 // Injected by tsup `define`; falls back to a dev tag under `tsx`.
 declare const __PKG_VERSION__: string;
 const USER_AGENT = `svg-terminal/${typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev'}`;
@@ -56,8 +103,10 @@ export async function fetchJson<T = unknown>(
   const response = await fetchWithTimeout(url, timeoutMs);
   if (!response) return null;
 
+  const text = await readCappedText(response, url);
+  if (text === null) return null;
   try {
-    return (await response.json()) as T;
+    return JSON.parse(text) as T;
   } catch {
     console.warn(`[svg-terminal] Invalid JSON from ${url}`);
     return null;
@@ -76,7 +125,7 @@ export async function fetchText(
   if (!response) return null;
 
   try {
-    return await response.text();
+    return await readCappedText(response, url);
   } catch {
     console.warn(`[svg-terminal] Failed to read text from ${url}`);
     return null;

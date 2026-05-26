@@ -1,0 +1,45 @@
+version: 2
+
+# Two ecosystems: the npm runtime (svg-terminal itself) and the github-actions
+# the CI workflow / composite action depend on. Both weekly; weekend cadence
+# so PR review batches with the Monday triage habit.
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    # Group non-major dev-dep bumps so we don't get 8 PRs a week.
+    # Majors stay as individual PRs (each needs human review for breaking-change scan).
+    groups:
+      dev-deps-minor-patch:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      runtime-patch:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+    ignore:
+      # @types/node major-version is intentionally pinned to match the Node
+      # engine LTS (22.x). Don't auto-PR major bumps; we'll move it deliberately
+      # when we bump the engines.node range.
+      - dependency-name: "@types/node"
+        update-types:
+          - "version-update:semver-major"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    # Pin actions to SHA via dependabot; group minor/patch bumps.
+    groups:
+      gh-actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
