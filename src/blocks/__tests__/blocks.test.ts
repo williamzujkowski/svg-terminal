@@ -149,10 +149,23 @@ describe('persona blocks', () => {
     });
   }
 
-  it('whoami emits the username on the first line', async () => {
+  it('whoami default render is a 1-line uid=N(user) gid=N(user) groups=... format', async () => {
+    // #105: changed default from the existential-bullets render to terse
+    // `whoami -a` style. Verbose mode (verbose: true) keeps the old behavior.
     const block = getBlock('whoami')!;
     const result = await block.render(context, { user: 'alice' });
+    expect(result.lines).toHaveLength(1);
+    expect(result.lines[0]).toContain('uid=');
+    expect(result.lines[0]).toContain('alice');
+    expect(result.lines[0]).toContain('gid=');
+    expect(result.lines[0]).toContain('groups=');
+  });
+
+  it('whoami verbose mode keeps the multi-line existential-bullets render', async () => {
+    const block = getBlock('whoami')!;
+    const result = await block.render(context, { user: 'alice', verbose: true });
     expect(result.lines[0]).toBe('alice');
+    expect(result.lines.length).toBeGreaterThan(1);
   });
 
   it('uptime reflects custom days in output', async () => {

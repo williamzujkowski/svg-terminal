@@ -1,5 +1,41 @@
 # Changelog
 
+## v0.16.0 — 2026-05-25
+
+Block UX. Closes `#104` (quote/fortune redundancy) and `#105` (4-persona overlap).
+
+### `whoami` default render (closes #105) — ⚠️ visible behavior change
+
+The default render is now a terse 1-line `uid=1000(dev) gid=1000(dev) groups=...` format — what real `whoami -a` (or `id` on Linux) outputs. The previous multi-line existential-bullets render is still available via `verbose: true`. Frees the persona-bullet pattern for `finger`/`who`/`last-login` where it belongs, and gives `whoami` a visually distinct silhouette at gallery thumbnail size.
+
+```yaml
+# Default (new): uid=1000(dev) gid=1000(dev) groups=1000(dev),100(users),...
+- block: whoami
+  config:
+    user: alice
+    uid: 1337
+    gid: 1337
+    groups: ['1337(alice)', 'sudo', 'docker']
+
+# Verbose (preserves prior render):
+- block: whoami
+  config:
+    verbose: true
+    bullets: ['…']
+```
+
+**Migration:** if your existing config relied on the old multi-line render, add `verbose: true` to keep it.
+
+### `fortune` pool expansion + `quote` offline degrade (closes #104)
+
+- **`fortune` default pool went from 3 entries to ~28 dev classics** with author attribution (Knuth, Torvalds, Kernighan, Fowler, Beck, etc.). Daily rotation now actually feels random over a typical user's exposure window. Custom `fortunes:` config still wins; no migration needed.
+- **`quote` block offline fallback** rotates through `fortune`'s `DEFAULT_FORTUNES` pool by day-of-time rather than serving the same Steve Jobs quote forever. Users who set `fallback:` and `fallbackAuthor:` keep that explicit override.
+- New `DEFAULT_FORTUNES` exported from `src/blocks/fortune.ts` so library consumers can reuse the pool.
+
+### Tests
+
+- 364 → 367 (+3): whoami default + verbose mode, quote fallback rotation, quote user-fallback override.
+
 ## v0.15.0 — 2026-05-25
 
 Closes `#102` (cache hit/miss/fallback visibility) and `#103` (closed wontfix after benching).

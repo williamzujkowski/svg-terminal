@@ -313,6 +313,24 @@ describe('cacheable blocks set result.fallback when serving defaults (#102)', ()
     expect(result.fallback).toBe(true);
   });
 
+  it('quote: offline fallback rotates through fortune pool (#104)', async () => {
+    // Different days → different fortune indices → different rendered text.
+    // Previously the offline fallback was a single hardcoded Steve Jobs string.
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
+    const day1 = await quoteBlock.render({ ...ctx, now: new Date('2026-01-01') }, {});
+    const day2 = await quoteBlock.render({ ...ctx, now: new Date('2026-01-15') }, {});
+    expect(day1.lines.join('\n')).not.toEqual(day2.lines.join('\n'));
+  });
+
+  it('quote: user-provided fallback overrides the fortune pool', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
+    const result = await quoteBlock.render(ctx, { fallback: 'CUSTOM USER QUOTE', fallbackAuthor: 'Me' });
+    expect(result.lines.join('\n')).toContain('CUSTOM USER QUOTE');
+    expect(result.lines.join('\n')).toContain('— Me');
+  });
+
   it('fun-fact: fallback=true when fetch returns null', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     globalThis.fetch = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
