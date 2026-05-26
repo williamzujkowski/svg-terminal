@@ -2,8 +2,8 @@
   role="img" aria-label="Static terminal showing 25 lines">
   <title>Static terminal showing 25 lines</title>
   <desc>you@svg-terminal:~$ cat /etc/motd
-║ SVG-TERMINAL v2026.05                                                                  ║
-║ Animated terminals in your README, declarative YAML in.                                ║
+SVG-TERMINAL v2026.05
+Animated terminals in your README, declarative YAML in.
 you@svg-terminal:~$ neofetch --ascii_distro svg-terminal
 dev@svg-terminal
 OS:        TerminalOS v1.0
@@ -18,7 +18,7 @@ Editor:    vim (still trying to exit)
 you@svg-terminal:~$ date +%H:%M:%S
 uptime  09:37:00
 you@svg-terminal:~$ made-with --love
-    built with care
+built with care
 you@svg-terminal:~$ palette
 theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
   <style>.tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }</style>

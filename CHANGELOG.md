@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.16.1 — 2026-05-25
+
+Closes `#85` (opt-in output-line width pinning) and `#91` full (box-drawing chars stripped from screen-reader `<desc>`).
+
+### Output
+
+- **`BlockResult.pinWidth?: boolean`** — opt-in for output lines. When set, the output line text element emits `textLength` + `lengthAdjust="spacingAndGlyphs"`, pinning the rendered width to our `CHAR_WIDTH_RATIO * fontSize` math regardless of the viewer's monospace fallback. Use for custom blocks whose layout depends on precise alignment of plain-ASCII content. Skipped automatically when the line contains markup (parseMarkup → multiple tspans, where outer textLength would distort tspan spacing). No built-in opts in — the field is for custom-block authors with alignment-sensitive ASCII output. (Closes `#85`.)
+
+### Accessibility (closes #91 full)
+
+- **`<desc>` strips leading/trailing box-drawing chars from mixed content lines.** v0.11.0 already elided lines composed entirely of box-drawing glyphs (`╔═══╗` style); v0.16.1 extends that to ALSO strip the box framing from content rows. `║ Hello, world ║` becomes `Hello, world` in the screen-reader `<desc>` — no more `║` being pronounced as the letter "L" by VoiceOver. Both the animated and static path use the new `stripBoxFraming` helper.
+
+### Tests
+
+- 367 → 370 (+3): pinWidth emits on plain ASCII, skips on markup, default off; box-framing stripped from `<desc>` content lines.
+
 ## v0.16.0 — 2026-05-25
 
 Block UX. Closes `#104` (quote/fortune redundancy) and `#105` (4-persona overlap).

@@ -183,7 +183,7 @@ function renderAccessibilityChildren(
       for (const line of seq.content.split('\n')) {
         const stripped = stripMarkup(line);
         if (isBoxDrawingOnly(stripped)) continue;
-        lines.push(stripped);
+        lines.push(stripBoxFraming(stripped));
       }
     }
   }
@@ -202,6 +202,18 @@ function isBoxDrawingOnly(line: string): boolean {
   return /^[─-╿\s]+$/.test(line);
 }
 
+/**
+ * Strip leading/trailing box-drawing characters + whitespace from a content
+ * line. Mixed lines like `║ Hello, world ║` keep the content (`"Hello, world"`)
+ * but lose the box framing — screen readers no longer pronounce `║` as the
+ * letter "L" or skip it inconsistently. Single visual frames are already
+ * eliminated by `isBoxDrawingOnly`; this handles the content rows.
+ * Closes #91 (full coverage).
+ */
+function stripBoxFraming(line: string): string {
+  return line.replace(/^[─-╿\s]+|[─-╿\s]+$/g, '');
+}
+
 /** Render <title> + <desc> for the static SVG path from pre-flattened lines. */
 function renderStaticAccessibilityChildren(
   label: string,
@@ -213,6 +225,7 @@ function renderStaticAccessibilityChildren(
   const stripped = lines
     .map(stripMarkup)
     .filter(line => !isBoxDrawingOnly(line))
+    .map(stripBoxFraming)
     .join('\n');
   if (stripped.length === 0) return title;
   return `${title}\n  <desc>${escapeXml(stripped)}</desc>`;
@@ -374,6 +387,7 @@ function createAnimationFrames(
           frames: seq.frames,
           framesFps: seq.framesFps,
           framesLoop: seq.framesLoop,
+          pinWidth: seq.pinWidth,
         });
         currentTime += anim.outputEndPause;
       } else {
@@ -395,6 +409,7 @@ function createAnimationFrames(
               lineIndex: buffer.length - 1,
               content: lines[i],
               color: seq.color,
+              pinWidth: seq.pinWidth,
             });
           } else {
             frames.push({
@@ -403,6 +418,7 @@ function createAnimationFrames(
               lineIndex: buffer.length - 1,
               content: lines[i],
               color: seq.color,
+              pinWidth: seq.pinWidth,
             });
           }
         }

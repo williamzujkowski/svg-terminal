@@ -299,13 +299,52 @@ describe('<desc> box-drawing elision (partial #91)', () => {
     expect(desc).not.toContain('═');
   });
 
-  it('keeps lines that have content alongside box chars', () => {
+  it('keeps content from mixed lines but strips the box framing chars (#91 full)', () => {
     const seq: Sequence[] = [
-      // The middle line has ║ AND text — kept verbatim.
       { type: 'output', content: '║ Important content ║' },
     ];
     const svg = generateSvg(seq, makeConfig());
-    expect(svg).toContain('Important content');
+    const descMatch = /<desc>([^<]+)<\/desc>/.exec(svg);
+    expect(descMatch).not.toBeNull();
+    const desc = descMatch![1]!;
+    // Content kept...
+    expect(desc).toContain('Important content');
+    // ...but the box-framing ║ chars (which screen readers pronounce as letters)
+    // are stripped from the leading/trailing positions.
+    expect(desc).not.toContain('║');
+  });
+});
+
+describe('output-line pinWidth opt-in (#85)', () => {
+  // BlockResult.pinWidth=true → output line text emits textLength +
+  // lengthAdjust=spacingAndGlyphs. Skipped for styled (markup-bearing)
+  // content because the outer <text>'s textLength would scale tspan
+  // spacing weirdly.
+  it('emits textLength on plain-ASCII output when pinWidth is set', () => {
+    const seq: Sequence[] = [
+      { type: 'output', content: 'hello world', pinWidth: true },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    // 'hello world' = 11 chars × 8 (charWidth) = 88
+    expect(svg).toMatch(/<text class="tt" fill="[^"]+" textLength="88" lengthAdjust="spacingAndGlyphs">/);
+  });
+
+  it('skips textLength on styled (markup) content even when pinWidth is set', () => {
+    const seq: Sequence[] = [
+      { type: 'output', content: '[[fg:green]]hello[[/fg]]', pinWidth: true },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    // No textLength on the output <text> — would distort tspan spacing.
+    expect(svg).not.toMatch(/<text class="tt"[^>]*textLength=/);
+  });
+
+  it('omits textLength when pinWidth is false / unset (default)', () => {
+    const seq: Sequence[] = [
+      { type: 'output', content: 'hello world' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    // Output element has no textLength by default.
+    expect(svg).not.toMatch(/<text class="tt" fill="[^"]+" textLength=/);
   });
 });
 

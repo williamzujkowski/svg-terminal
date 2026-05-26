@@ -234,6 +234,9 @@ export interface Sequence {
   framesFps?: number;
   /** Loop frames forever when set (default true). */
   framesLoop?: boolean;
+  /** Width-pinning opt-in (BlockResult.pinWidth). When true, output line text
+   *  elements emit `textLength` + `lengthAdjust="spacingAndGlyphs"`. */
+  pinWidth?: boolean;
 }
 
 /** An animation frame in the timeline. */
@@ -252,6 +255,8 @@ export interface AnimationFrame {
   frames?: string[];
   framesFps?: number;
   framesLoop?: boolean;
+  /** Width-pinning opt-in from BlockResult.pinWidth. */
+  pinWidth?: boolean;
 }
 
 // ============================================================================
@@ -307,6 +312,19 @@ export interface BlockResult {
    * set this when they return their fallback lines.
    */
   fallback?: boolean;
+  /**
+   * Opt the output lines into width-pinning via SVG `textLength` +
+   * `lengthAdjust="spacingAndGlyphs"`. Use for blocks whose layout depends
+   * on a precise monospace advance (e.g. `neofetch`'s aligned columns) —
+   * forces the rendered width to our `CHAR_WIDTH_RATIO * fontSize` math
+   * regardless of the viewer's monospace fallback font.
+   *
+   * NOT recommended for blocks containing box-drawing characters (`╔═══╗`),
+   * full-width/double-width emoji, or other glyphs whose intrinsic widths
+   * vary by font — `spacingAndGlyphs` would scale them into looking worse.
+   * Defaults to false; existing blocks unaffected. (#85)
+   */
+  pinWidth?: boolean;
 }
 
 /** Multi-frame animation payload for a block. */

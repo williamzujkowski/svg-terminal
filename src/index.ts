@@ -160,6 +160,7 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
       content: result.lines.join('\n'),
       color: entry.color ?? result.color,
       pause: resolvePause(entry.pause ?? result.pause),
+      pinWidth: result.pinWidth,
       ...(result.animation ? {
         frames: result.animation.frames.map(f => f.join('\n')),
         framesFps: Math.min(30, Math.max(1, result.animation.fps ?? 4)),

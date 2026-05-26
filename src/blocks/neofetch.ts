@@ -55,6 +55,10 @@ export const neofetchBlock: Block = {
       '[[fg:red]]\u25CF[[/fg]] [[fg:green]]\u25CF[[/fg]] [[fg:yellow]]\u25CF[[/fg]] [[fg:blue]]\u25CF[[/fg]] [[fg:magenta]]\u25CF[[/fg]] [[fg:cyan]]\u25CF[[/fg]] [[fg:white]]\u25CF[[/fg]] [[fg:orange]]\u25CF[[/fg]]',
     ];
 
+    // pinWidth is a no-op here because every line carries [[fg:cyan]] color
+    // markup (parseMarkup → multiple tspans, where textLength on the outer
+    // <text> would scale the spacing weirdly). Left off; documented as an
+    // available opt-in for custom blocks emitting plain-ASCII output.
     return { command, lines };
   },
 };

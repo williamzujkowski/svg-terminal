@@ -252,16 +252,25 @@ function generateOutputLine(
   startTime: number,
   colorMap: Record<string, string>,
   chrome: ChromeConfig,
+  pinWidth: boolean,
+  fontSize: number,
 ): string {
   const styled = hasMarkup(content);
   const textContent = styled
     ? generateStyledText(parseMarkup(content, colorMap, color), color, chrome.dimOpacity)
     : escapeXml(content);
   const textFill = styled ? '' : ` fill="${color}"`;
+  // pinWidth opt-in (#85): emit textLength + lengthAdjust so the rendered
+  // width matches the math regardless of viewer's monospace fallback font.
+  // Skip when the content has markup (parseMarkup produces multiple tspans
+  // — textLength on the outer <text> would scale the spacing weirdly).
+  const pin = pinWidth && !styled && content.length > 0
+    ? ` textLength="${content.length * roundCoord(fontSize * CHAR_WIDTH_RATIO)}" lengthAdjust="spacingAndGlyphs"`
+    : '';
 
   return `
     <g transform="translate(0, ${y})"${fadeInStyle(startTime)}>
-      <text class="tt"${textFill}>
+      <text class="tt"${textFill}${pin}>
         ${textContent}
       </text>
     </g>`;
@@ -322,6 +331,8 @@ export function generateAllLines(
             frame.time,
             colorMap,
             chromeConfig,
+            frame.pinWidth ?? false,
+            terminal.fontSize,
           ),
         );
       }
