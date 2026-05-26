@@ -209,6 +209,28 @@ function buildRevealClip(
  * cycle slot. Opacity uses calcMode="discrete" (no interpolation) so the
  * transition is instantaneous like a sprite swap.
  */
+/**
+ * Render an N-frame animated block. v0.17 migrated from per-frame SMIL
+ * `<animate attributeName="opacity">` to CSS `@keyframes frame-cycle-N`
+ * (nexus consensus vote 100% approval, 5-2 Option D over C — see #69).
+ *
+ * Each frame is a `<text>` sibling at the same y. The static `opacity`
+ * attribute (`"1"` on frame 0, `"0"` on the rest) is the fallback for
+ * BOTH SMIL-stripping renderers (OG scrapers, npm-readme) AND for users
+ * with `prefers-reduced-motion` — in both cases the CSS animation
+ * doesn't drive opacity, so the attribute wins. Frame 0 visible, rest
+ * invisible: the established "first frame is the static snapshot"
+ * contract that screen readers + social cards depend on.
+ *
+ * Cycling: each frame's CSS class is `frame-cycle-N` (one rule per
+ * unique frame count in the render — see svg-generator.ts where the
+ * keyframes are emitted). The `animation-delay = i * frameDur` puts
+ * frame i's visible window at wall time [i + n*T : i + n*T + T/N) for
+ * each cycle n. `animation-iteration-count: 1` (loop=false) makes the
+ * animation complete once and release back to the static opacity
+ * attribute — same end state as the previous SMIL `fill="freeze"`
+ * + wrap-to-frame-0 trick.
+ */
 function generateAnimatedOutputLine(
   y: number,
   frames: string[],
@@ -220,9 +242,10 @@ function generateAnimatedOutputLine(
   loop: boolean,
 ): string {
   const n = frames.length;
-  const cycleDur = `${(n / fps).toFixed(3)}s`;
-  const repeat = loop ? 'indefinite' : '1';
-  const keyTimes = Array.from({ length: n + 1 }, (_, i) => (i / n).toFixed(4)).join(';');
+  // Total cycle duration in ms. frameDur = 1000/fps, cycle = n * frameDur.
+  const frameDurMs = 1000 / fps;
+  const cycleMs = Math.round(n * frameDurMs);
+  const iter = loop ? 'infinite' : '1';
 
   const textElements = frames.map((frame, i) => {
     const styled = hasMarkup(frame);
@@ -230,13 +253,11 @@ function generateAnimatedOutputLine(
       ? generateStyledText(parseMarkup(frame, colorMap, color), color, chrome.dimOpacity)
       : escapeXml(frame);
     const textFill = styled ? '' : ` fill="${color}"`;
-    // Frame i is visible during [i/n, (i+1)/n). values[k] is what's shown
-    // in [keyTimes[k], keyTimes[k+1]). values[n] is the wrap-around back to
-    // frame 0; for frame 0 itself that's "1", otherwise "0".
-    const values = Array.from({ length: n + 1 }, (_, k) =>
-      k === i ? '1' : (k === n && i === 0 ? '1' : '0'),
-    ).join(';');
-    return `<text class="tt"${textFill} opacity="${i === 0 ? '1' : '0'}">${textContent}<animate attributeName="opacity" values="${values}" keyTimes="${keyTimes}" calcMode="discrete" dur="${cycleDur}" begin="${startTime}ms" repeatCount="${repeat}" fill="freeze"/></text>`;
+    // animation shorthand: <name> <duration> <timing> <delay> <iter>.
+    // Per-frame delay positions each text's visible window into its slot.
+    const delayMs = Math.round(i * frameDurMs);
+    const anim = `animation: frame-cycle-${n} ${cycleMs}ms linear ${delayMs}ms ${iter}`;
+    return `<text class="tt frame-cycle-${n}"${textFill} opacity="${i === 0 ? '1' : '0'}" style="${anim}">${textContent}</text>`;
   }).join('');
 
   return `

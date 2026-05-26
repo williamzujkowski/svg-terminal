@@ -29,6 +29,14 @@ Editor:    neovim
        before its scheduled time. */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .fade-in { animation: fadeIn 10ms linear backwards; }
+    /* frame-cycle-N (closes #69): one rule per unique frame count across the
+       animated blocks in this render. Each frame text element carries the
+       class + an inline animation-delay = i*frameDur. The static opacity
+       attribute (frame 0 = 1, others = 0) is the SMIL-stripped AND
+       reduced-motion fallback — frame 0 visible, rest invisible. Under
+       prefers-reduced-motion the @media block kills animation-duration so
+       the underlying opacity attribute applies. */
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;

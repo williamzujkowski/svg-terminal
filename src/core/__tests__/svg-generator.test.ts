@@ -548,7 +548,12 @@ describe('output element-count budget', () => {
   });
 });
 
-describe('animated output (frame-cycle)', () => {
+describe('animated output (frame-cycle) — CSS @keyframes (#69)', () => {
+  // v0.17: migrated from per-frame SMIL <animate opacity> to CSS
+  // @keyframes frame-cycle-N (one rule per unique N) + per-text
+  // animation-delay = i*frameDur. Solves reduced-motion compliance
+  // (the @media block kills CSS animation-duration → opacity attribute
+  // falls back to "1" on frame 0, "0" on others = correct rest state).
   const animSeq: Sequence[] = [
     { type: 'command', content: 'spin', typingDuration: 100 },
     {
@@ -560,25 +565,39 @@ describe('animated output (frame-cycle)', () => {
     },
   ];
 
-  it('emits one <text> per frame with discrete opacity animation', () => {
+  it('emits one <text> per frame with CSS frame-cycle class (no SMIL animate on the frame text)', () => {
     const svg = generateSvg(animSeq, makeConfig());
-    // 3 frame-opacity animates + 1 cursor walk + 1 char-reveal clipPath = 5
-    const animateCount = (svg.match(/calcMode="discrete"/g) ?? []).length;
-    expect(animateCount).toBe(5);
+    expect(svg).toMatch(/<text class="tt frame-cycle-3"[^>]*>A<\/text>/);
+    expect(svg).toMatch(/<text class="tt frame-cycle-3"[^>]*>B<\/text>/);
+    expect(svg).toMatch(/<text class="tt frame-cycle-3"[^>]*>C<\/text>/);
+    // No SMIL animate inside a frame-cycle text element — the CSS @keyframes
+    // drives opacity. (Cursor fade-in/out SMIL animates still exist on the
+    // <rect> cursor element; that's separate.)
+    expect(svg).not.toMatch(/<text class="tt frame-cycle-\d+"[^>]*>[^<]*<animate/);
   });
 
-  it('cycle duration equals frames/fps seconds', () => {
+  it('emits one @keyframes rule per unique frame count', () => {
     const svg = generateSvg(animSeq, makeConfig());
-    expect(svg).toContain('dur="1.000s"'); // 3 frames / 3 fps
+    expect(svg).toContain('@keyframes frame-cycle-3');
+    // The keyframes rule defines a "visible window" of 100/N % then hidden.
+    expect(svg).toMatch(/@keyframes frame-cycle-3 \{ 0%, 33\.3+%? \{ opacity: 1; \}/);
   });
 
-  it('uses indefinite repeat when framesLoop is true', () => {
+  it('cycle duration = N/fps seconds in the animation shorthand', () => {
     const svg = generateSvg(animSeq, makeConfig());
-    expect(svg).toContain('repeatCount="indefinite"');
-    expect(svg).toContain('dur="1.000s"');
+    // 3 frames / 3 fps = 1000 ms total cycle.
+    expect(svg).toMatch(/animation: frame-cycle-3 1000ms linear/);
   });
 
-  it('emits repeatCount=1 when framesLoop is false', () => {
+  it('per-frame animation-delay positions each text at its slot (i * frameDur)', () => {
+    const svg = generateSvg(animSeq, makeConfig());
+    // 3 fps → frameDur = 333ms. Delays: 0, 333, 666.
+    expect(svg).toContain('animation: frame-cycle-3 1000ms linear 0ms infinite');
+    expect(svg).toContain('animation: frame-cycle-3 1000ms linear 333ms infinite');
+    expect(svg).toContain('animation: frame-cycle-3 1000ms linear 667ms infinite');
+  });
+
+  it('emits iteration-count=1 in the animation shorthand when framesLoop is false', () => {
     const seq: Sequence[] = [{
       type: 'output',
       content: 'A',
@@ -587,16 +606,34 @@ describe('animated output (frame-cycle)', () => {
       framesLoop: false,
     }];
     const svg = generateSvg(seq, makeConfig());
-    expect(svg).toContain('repeatCount="1"');
-    expect(svg).toContain('dur="1.000s"');
+    expect(svg).toMatch(/animation: frame-cycle-2 1000ms linear \d+ms 1\b/);
+    expect(svg).not.toMatch(/animation: frame-cycle-2 1000ms linear \d+ms infinite/);
   });
 
-  it('first frame is also the static fallback line', () => {
+  it('frame 0 stays opacity="1", others "0" — SMIL-strip + reduced-motion fallback', () => {
     const svg = generateSvg(animSeq, makeConfig());
-    // Frame 0 starts visible (opacity="1"), others hidden (opacity="0")
-    expect(svg).toMatch(/<text class="tt"[^>]*opacity="1">A/);
-    expect(svg).toMatch(/<text class="tt"[^>]*opacity="0">B/);
-    expect(svg).toMatch(/<text class="tt"[^>]*opacity="0">C/);
+    // Voter-mandated condition (#69): under reduced-motion the animation
+    // is killed and the static opacity attribute must produce ONLY frame 0
+    // visible. Same fallback for SMIL-stripping renderers (OG cards).
+    expect(svg).toMatch(/<text class="tt frame-cycle-3"[^>]*opacity="1"[^>]*>A<\/text>/);
+    expect(svg).toMatch(/<text class="tt frame-cycle-3"[^>]*opacity="0"[^>]*>B<\/text>/);
+    expect(svg).toMatch(/<text class="tt frame-cycle-3"[^>]*opacity="0"[^>]*>C<\/text>/);
+  });
+
+  it('deduplicates @keyframes rules — same N → one rule', () => {
+    // Two animated blocks with the same frame count (3) share one keyframes rule.
+    const seq: Sequence[] = [
+      { type: 'output', content: 'A', frames: ['A','B','C'], framesFps: 3, framesLoop: true },
+      { type: 'output', content: 'X', frames: ['X','Y','Z'], framesFps: 3, framesLoop: true },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    const matches = (svg.match(/@keyframes frame-cycle-3/g) ?? []).length;
+    expect(matches).toBe(1);
+  });
+
+  it('does not emit any frame-cycle keyframes when no animated blocks exist', () => {
+    const svg = generateSvg(basicSequences, makeConfig());
+    expect(svg).not.toContain('@keyframes frame-cycle-');
   });
 });
 

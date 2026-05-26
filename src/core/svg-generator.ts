@@ -86,6 +86,25 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
   const showShadow = effects.shadow && window.style !== 'none';
   const a11yChildren = renderAccessibilityChildren(accessibilityLabel, sequences, terminal.prompt, config.accessibility);
 
+  // Collect unique frame counts (N) across all animated-block sequences for
+  // the per-N @keyframes emission below. Each N needs its own keyframes rule
+  // because the "visible window" portion is 100/N % of the cycle. Decision
+  // tree: nexus vote 100% approved Option D over C — see #69 ship notes.
+  const frameCounts = new Set<number>();
+  for (const seq of sequences) {
+    if (seq.type === 'output' && seq.frames && seq.frames.length > 1) {
+      frameCounts.add(seq.frames.length);
+    }
+  }
+  const frameCycleKeyframes = [...frameCounts].sort((a, b) => a - b).map(n => {
+    // For N frames, each is visible during [0, 100/N)% of its own cycle (its
+    // delay phase shifts the cycle's start). At keyTime 100/N, opacity drops
+    // to 0; stays 0 until 100% (next cycle starts). The 0.01% step gives
+    // discrete (non-interpolated) switching.
+    const slot = (100 / n).toFixed(4);
+    return `    @keyframes frame-cycle-${n} { 0%, ${slot}% { opacity: 1; } ${(parseFloat(slot) + 0.01).toFixed(4)}%, 100% { opacity: 0; } }`;
+  }).join('\n');
+
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label="${escapeXml(accessibilityLabel)}">${a11yChildren}
   <style>
@@ -102,6 +121,14 @@ export function generateSvg(sequences: Sequence[], config: TerminalConfig): stri
        before its scheduled time. */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .fade-in { animation: fadeIn 10ms linear backwards; }
+    /* frame-cycle-N (closes #69): one rule per unique frame count across the
+       animated blocks in this render. Each frame text element carries the
+       class + an inline animation-delay = i*frameDur. The static opacity
+       attribute (frame 0 = 1, others = 0) is the SMIL-stripped AND
+       reduced-motion fallback — frame 0 visible, rest invisible. Under
+       prefers-reduced-motion the @media block kills animation-duration so
+       the underlying opacity attribute applies. */
+${frameCycleKeyframes}
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;

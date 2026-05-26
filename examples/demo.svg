@@ -35,6 +35,15 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
        before its scheduled time. */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .fade-in { animation: fadeIn 10ms linear backwards; }
+    /* frame-cycle-N (closes #69): one rule per unique frame count across the
+       animated blocks in this render. Each frame text element carries the
+       class + an inline animation-delay = i*frameDur. The static opacity
+       attribute (frame 0 = 1, others = 0) is the SMIL-stripped AND
+       reduced-motion fallback — frame 0 visible, rest invisible. Under
+       prefers-reduced-motion the @media block kills animation-duration so
+       the underlying opacity attribute applies. */
+    @keyframes frame-cycle-2 { 0%, 50.0000% { opacity: 1; } 50.0100%, 100% { opacity: 0; } }
+    @keyframes frame-cycle-5 { 0%, 20.0000% { opacity: 1; } 20.0100%, 100% { opacity: 0; } }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -235,7 +244,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </g>
 
     <g transform="translate(0, 504)" class="fade-in" style="animation-delay: 6850ms">
-      <text class="tt" opacity="1"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09:37:00</tspan><animate attributeName="opacity" values="1;0;1" keyTimes="0.0000;0.5000;1.0000" calcMode="discrete" dur="2.000s" begin="6850ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09·37·00</tspan><animate attributeName="opacity" values="0;1;0" keyTimes="0.0000;0.5000;1.0000" calcMode="discrete" dur="2.000s" begin="6850ms" repeatCount="indefinite" fill="freeze"/></text>
+      <text class="tt frame-cycle-2" opacity="1" style="animation: frame-cycle-2 2000ms linear 0ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09:37:00</tspan></text><text class="tt frame-cycle-2" opacity="0" style="animation: frame-cycle-2 2000ms linear 1000ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09·37·00</tspan></text>
     </g>
 
     <g transform="translate(0, 529.2)">
@@ -252,7 +261,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </g>
 
     <g transform="translate(0, 554.4)" class="fade-in" style="animation-delay: 9550ms">
-      <text class="tt" opacity="1"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="1;0;0;0;0;1" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;1;0;0;0;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;0;1;0;0;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;0;0;1;0;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text><text class="tt" opacity="0"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan><animate attributeName="opacity" values="0;0;0;0;1;0" keyTimes="0.0000;0.2000;0.4000;0.6000;0.8000;1.0000" calcMode="discrete" dur="1.250s" begin="9550ms" repeatCount="indefinite" fill="freeze"/></text>
+      <text class="tt frame-cycle-5" opacity="1" style="animation: frame-cycle-5 1250ms linear 0ms infinite"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 250ms infinite"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 500ms infinite"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 750ms infinite"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 1000ms infinite"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan></text>
     </g>
 
     <g transform="translate(0, 579.6)">

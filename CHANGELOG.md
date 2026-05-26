@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.17.0 — 2026-05-25
+
+Closes `#69` (the last backlog issue — refactor frame animation from per-frame SMIL opacity-cycle to CSS `@keyframes`). Driven by a deliberate nexus consensus process: 2 parallel research subagents (OSS landscape + creative-approaches) plus a bench → 7-voter consensus_vote (100% approval, 5-2 majority for Option D over C).
+
+### Frame cycle migration
+
+- **Per-frame SMIL `<animate attributeName="opacity">` replaced with CSS `@keyframes frame-cycle-N`.** One rule per unique frame count (deduplicated across same-N blocks). Each frame text element gets `class="tt frame-cycle-N"` + inline `style="animation: frame-cycle-N {cycleMs}ms linear {i*frameDurMs}ms infinite"`. The `animation-delay` positions each frame's visible window at its slot of the cycle.
+
+- **Reduced-motion compliance for animated blocks (the headline win).** v0.10 migrated FADE-INS to CSS so `@media (prefers-reduced-motion: reduce)` could honor them; frame cycling was the last SMIL holdout. Now the same `@media` block clamps frame-cycle animations too. Under reduced-motion the CSS animation completes near-instantly with `fill-mode: none` (default), so the static `opacity` attribute applies — frame 0 visible (`"1"`), rest invisible (`"0"`). Identical to the SMIL-stripped fallback.
+
+- **DOM `<animate>` element count drops ~75%** on the pathological all-9-spinners config (141 → 36). Renderer parse-time benefit even though gzip was already absorbing the byte cost.
+
+### Bench (v0.16.3 → v0.17.0)
+
+| Scenario | Raw bytes | Gzip bytes | `<animate>` count |
+|---|---|---|---|
+| ascii-clock alone | 5186 → 5588 | 1912 → 2120 | 6 → 4 |
+| Realistic 5-block (1 spinner + 1 heart) | 20800 → 19714 (-5%) | 3570 → 3746 | 33 → 20 |
+| All-9-spinners (pathological) | 69687 → 38235 (-45%) | 5034 → 4384 | 141 → 36 (-75%) |
+
+The bench informed the design vote: gzipped wire cost is largely unchanged for typical configs (gzip absorbed the SMIL repetition fine). The motivation was a11y motion-compliance, not bytes. Voters explicitly classified the byte-driven Option C (sprite-sheet via translate) as **over-engineering** for the actual user impact and chose the smaller-blast-radius Option D (~50-100 LOC vs ~150-250 for C).
+
+### Tests
+
+- 375 → 378 (+3): 8 new frame-cycle tests (rewrote 5 existing for the new shape; added 3 for keyframe dedup + no-emit-when-empty + frame-0 static fallback).
+
+### CONTRIBUTING.md note
+
+The `prefers-reduced-motion` caveat in CONTRIBUTING.md says SMIL animations don't honor it (typing reveal, cursor walk, scroll). That's still true. Now updated: **frame cycle joins fade-ins as the second SMIL → CSS migration; only typing-reveal, cursor-walk, and scroll remain SMIL-driven.** Pair with `--static` for full stillness.
+
+### Backlog cleared
+
+`#69` was the last item on the backlog. Every concrete issue from this session is closed except deferred-by-vote partial coverage (`#71` full SMIL reduced-motion — Option 3 dual-render rejected by vote in v0.10 for the same 1.4-1.6x bloat reason that just got applied to `#69`).
+
 ## v0.16.3 — 2026-05-25
 
 Closes `#97` and `#98` — two schema/generator drift bugs filed by external users in the same session.
