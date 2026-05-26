@@ -18,7 +18,7 @@ jobs:
       # SHA-pinned per dependabot best practice (#114 L1): mutable major tags
       # are a supply-chain risk; SHAs are immutable. Dependabot's
       # `github-actions` ecosystem auto-bumps these via PR.
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           # Pin to a specific 22.x patch so a Node minor bump can't silently
