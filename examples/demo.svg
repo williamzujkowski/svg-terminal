@@ -1,6 +1,6 @@
-<svg width="960" height="708" viewBox="0 0 960 708" xmlns="http://www.w3.org/2000/svg"
-  role="img" aria-label="Animated terminal showing: cat /etc/motd, neofetch --ascii_distro svg-terminal, date +%H:%M:%S, made-with --love, palette">
-  <title>Animated terminal showing: cat /etc/motd, neofetch --ascii_distro svg-terminal, date +%H:%M:%S, made-with --love, palette</title>
+<svg width="960" height="860" viewBox="0 0 960 860" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Animated terminal showing: cat /etc/motd, neofetch --ascii_distro svg-terminal, gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;, date +%H:%M:%S, made-with --love">
+  <title>Animated terminal showing: cat /etc/motd, neofetch --ascii_distro svg-terminal, gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;, date +%H:%M:%S, made-with --love</title>
   <desc>you@svg-terminal:~$ cat /etc/motd
 SVG-TERMINAL v2026.05
 Animated terminals in your README, declarative YAML in.
@@ -15,6 +15,12 @@ Languages: TypeScript, SVG, SMIL
 Editor:    vim (still trying to exit)
 
 ● ● ● ● ● ● ● ●
+you@svg-terminal:~$ gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;
+TypeScript  ██████████░░░░░░░░░░░░░░  42%
+Rust        ██████░░░░░░░░░░░░░░░░░░  24%
+Python      ████░░░░░░░░░░░░░░░░░░░░  18%
+Go          ███░░░░░░░░░░░░░░░░░░░░░  11%
+Lua         █░░░░░░░░░░░░░░░░░░░░░░░   5%
 you@svg-terminal:~$ date +%H:%M:%S
 uptime  13:37:00
 you@svg-terminal:~$ made-with --love
@@ -70,13 +76,13 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
       </feMerge>
     </filter>
     <clipPath id="terminalViewport">
-      <rect x="0" y="40" width="960" height="668"/>
+      <rect x="0" y="40" width="960" height="820"/>
     </clipPath>
   </defs>
 
   <g filter="url(#shadow)">
     
-    <rect x="0" y="0" width="960" height="708"
+    <rect x="0" y="0" width="960" height="860"
           rx="12" ry="12"
           fill="#0a0e27"/>
     
@@ -97,7 +103,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </text>
     
     <rect x="0" y="40" width="960"
-          height="668" fill="#0a0e27"/>
+          height="820" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
       <g id="scrollContainer" transform="translate(12, 54)">
         
@@ -231,53 +237,96 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </g>
 
     <g transform="translate(0, 478.8)">
-      <defs><clipPath id="cmdrev-19"><rect x="168" y="-14" width="112" height="28"><set attributeName="width" to="0" begin="0s" end="5350ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112" keyTimes="0.0000;0.0714;0.1429;0.2143;0.2857;0.3571;0.4286;0.5000;0.5714;0.6429;0.7143;0.7857;0.8571;0.9286;1.0000" calcMode="discrete" begin="5350ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
+      <defs><clipPath id="cmdrev-19"><rect x="168" y="-14" width="528" height="28"><set attributeName="width" to="0" begin="0s" end="5350ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128;136;144;152;160;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288;296;304;312;320;328;336;344;352;360;368;376;384;392;400;408;416;424;432;440;448;456;464;472;480;488;496;504;512;520;528" keyTimes="0.0000;0.0152;0.0303;0.0455;0.0606;0.0758;0.0909;0.1061;0.1212;0.1364;0.1515;0.1667;0.1818;0.1970;0.2121;0.2273;0.2424;0.2576;0.2727;0.2879;0.3030;0.3182;0.3333;0.3485;0.3636;0.3788;0.3939;0.4091;0.4242;0.4394;0.4545;0.4697;0.4848;0.5000;0.5152;0.5303;0.5455;0.5606;0.5758;0.5909;0.6061;0.6212;0.6364;0.6515;0.6667;0.6818;0.6970;0.7121;0.7273;0.7424;0.7576;0.7727;0.7879;0.8030;0.8182;0.8333;0.8485;0.8636;0.8788;0.8939;0.9091;0.9242;0.9394;0.9545;0.9697;0.9848;1.0000" calcMode="discrete" begin="5350ms" dur="500ms" fill="freeze"/></rect></clipPath></defs>
       <text class="tt fade-in" style="animation-delay: 5350ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
-      <text class="tt" x="168" fill="#00ff9f" textLength="112" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-19)">date +%H:%M:%S</text>
+      <text class="tt" x="168" fill="#00ff9f" textLength="528" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-19)">gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;</text>
       
     <rect x="168" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
       <animate attributeName="opacity" from="0" to="1" begin="5350ms" dur="10ms" fill="freeze"/>
-      <animate attributeName="opacity" to="0" begin="6550ms" dur="10ms" fill="freeze"/>
-      <animate attributeName="x" values="168;168;176;184;192;200;208;216;224;232;240;248;256;264;272" keyTimes="0.0000;0.0714;0.1429;0.2143;0.2857;0.3571;0.4286;0.5000;0.5714;0.6429;0.7143;0.7857;0.8571;0.9286;1.0000" calcMode="discrete" begin="5350ms" dur="1200ms" fill="freeze"/>
+      <animate attributeName="opacity" to="0" begin="5850ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="x" values="168;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288;296;304;312;320;328;336;344;352;360;368;376;384;392;400;408;416;424;432;440;448;456;464;472;480;488;496;504;512;520;528;536;544;552;560;568;576;584;592;600;608;616;624;632;640;648;656;664;672;680;688" keyTimes="0.0000;0.0152;0.0303;0.0455;0.0606;0.0758;0.0909;0.1061;0.1212;0.1364;0.1515;0.1667;0.1818;0.1970;0.2121;0.2273;0.2424;0.2576;0.2727;0.2879;0.3030;0.3182;0.3333;0.3485;0.3636;0.3788;0.3939;0.4091;0.4242;0.4394;0.4545;0.4697;0.4848;0.5000;0.5152;0.5303;0.5455;0.5606;0.5758;0.5909;0.6061;0.6212;0.6364;0.6515;0.6667;0.6818;0.6970;0.7121;0.7273;0.7424;0.7576;0.7727;0.7879;0.8030;0.8182;0.8333;0.8485;0.8636;0.8788;0.8939;0.9091;0.9242;0.9394;0.9545;0.9697;0.9848;1.0000" calcMode="discrete" begin="5350ms" dur="500ms" fill="freeze"/>
     </rect>
     </g>
 
-    <g transform="translate(0, 504)" class="fade-in" style="animation-delay: 6850ms">
+    <g transform="translate(0, 504)" class="fade-in" style="animation-delay: 6150ms">
+      <text class="tt">
+        <tspan fill="#8be9fd">TypeScript</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">██████████░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  42%</tspan>
+      </text>
+    </g>
+
+    <g transform="translate(0, 529.2)" class="fade-in" style="animation-delay: 6200ms">
+      <text class="tt">
+        <tspan fill="#50fa7b">Rust      </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">██████░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  24%</tspan>
+      </text>
+    </g>
+
+    <g transform="translate(0, 554.4)" class="fade-in" style="animation-delay: 6250ms">
+      <text class="tt">
+        <tspan fill="#f1fa8c">Python    </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">████░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  18%</tspan>
+      </text>
+    </g>
+
+    <g transform="translate(0, 579.6)" class="fade-in" style="animation-delay: 6300ms">
+      <text class="tt">
+        <tspan fill="#ff79c6">Go        </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#ff79c6">███░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  11%</tspan>
+      </text>
+    </g>
+
+    <g transform="translate(0, 604.8)" class="fade-in" style="animation-delay: 6350ms">
+      <text class="tt">
+        <tspan fill="#729fcf">Lua       </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#729fcf">█░░░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">   5%</tspan>
+      </text>
+    </g>
+
+    <g transform="translate(0, 630)">
+      <defs><clipPath id="cmdrev-25"><rect x="168" y="-14" width="112" height="28"><set attributeName="width" to="0" begin="0s" end="7400ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112" keyTimes="0.0000;0.0714;0.1429;0.2143;0.2857;0.3571;0.4286;0.5000;0.5714;0.6429;0.7143;0.7857;0.8571;0.9286;1.0000" calcMode="discrete" begin="7400ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt fade-in" style="animation-delay: 7400ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
+      <text class="tt" x="168" fill="#00ff9f" textLength="112" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-25)">date +%H:%M:%S</text>
+      
+    <rect x="168" y="-12" width="8" height="14"
+          fill="#00ff41" opacity="0">
+      <animate attributeName="opacity" from="0" to="1" begin="7400ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="opacity" to="0" begin="8600ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="x" values="168;168;176;184;192;200;208;216;224;232;240;248;256;264;272" keyTimes="0.0000;0.0714;0.1429;0.2143;0.2857;0.3571;0.4286;0.5000;0.5714;0.6429;0.7143;0.7857;0.8571;0.9286;1.0000" calcMode="discrete" begin="7400ms" dur="1200ms" fill="freeze"/>
+    </rect>
+    </g>
+
+    <g transform="translate(0, 655.2)" class="fade-in" style="animation-delay: 8900ms">
       <text class="tt frame-cycle-2" opacity="1" style="animation: frame-cycle-2 2000ms linear 0ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan></text><text class="tt frame-cycle-2" opacity="0" style="animation: frame-cycle-2 2000ms linear 1000ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13·37·00</tspan></text>
     </g>
 
-    <g transform="translate(0, 529.2)">
-      <defs><clipPath id="cmdrev-21"><rect x="168" y="-14" width="128" height="28"><set attributeName="width" to="0" begin="0s" end="8050ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128" keyTimes="0.0000;0.0625;0.1250;0.1875;0.2500;0.3125;0.3750;0.4375;0.5000;0.5625;0.6250;0.6875;0.7500;0.8125;0.8750;0.9375;1.0000" calcMode="discrete" begin="8050ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt fade-in" style="animation-delay: 8050ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
-      <text class="tt" x="168" fill="#00ff9f" textLength="128" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-21)">made-with --love</text>
+    <g transform="translate(0, 680.4)">
+      <defs><clipPath id="cmdrev-27"><rect x="168" y="-14" width="128" height="28"><set attributeName="width" to="0" begin="0s" end="10100ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128" keyTimes="0.0000;0.0625;0.1250;0.1875;0.2500;0.3125;0.3750;0.4375;0.5000;0.5625;0.6250;0.6875;0.7500;0.8125;0.8750;0.9375;1.0000" calcMode="discrete" begin="10100ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt fade-in" style="animation-delay: 10100ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
+      <text class="tt" x="168" fill="#00ff9f" textLength="128" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-27)">made-with --love</text>
       
     <rect x="168" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
-      <animate attributeName="opacity" from="0" to="1" begin="8050ms" dur="10ms" fill="freeze"/>
-      <animate attributeName="opacity" to="0" begin="9250ms" dur="10ms" fill="freeze"/>
-      <animate attributeName="x" values="168;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288" keyTimes="0.0000;0.0625;0.1250;0.1875;0.2500;0.3125;0.3750;0.4375;0.5000;0.5625;0.6250;0.6875;0.7500;0.8125;0.8750;0.9375;1.0000" calcMode="discrete" begin="8050ms" dur="1200ms" fill="freeze"/>
+      <animate attributeName="opacity" from="0" to="1" begin="10100ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="opacity" to="0" begin="11300ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="x" values="168;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288" keyTimes="0.0000;0.0625;0.1250;0.1875;0.2500;0.3125;0.3750;0.4375;0.5000;0.5625;0.6250;0.6875;0.7500;0.8125;0.8750;0.9375;1.0000" calcMode="discrete" begin="10100ms" dur="1200ms" fill="freeze"/>
     </rect>
     </g>
 
-    <g transform="translate(0, 554.4)" class="fade-in" style="animation-delay: 9550ms">
+    <g transform="translate(0, 705.6)" class="fade-in" style="animation-delay: 11600ms">
       <text class="tt frame-cycle-5" opacity="1" style="animation: frame-cycle-5 1250ms linear 0ms infinite"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 250ms infinite"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 500ms infinite"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 750ms infinite"><tspan fill="#ff5555"> ♥ </tspan><tspan fill="#e4e4e4"> built with care</tspan></text><text class="tt frame-cycle-5" opacity="0" style="animation: frame-cycle-5 1250ms linear 1000ms infinite"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan></text>
     </g>
 
-    <g transform="translate(0, 579.6)">
-      <defs><clipPath id="cmdrev-23"><rect x="168" y="-14" width="56" height="28"><set attributeName="width" to="0" begin="0s" end="10750ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="10750ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
-      <text class="tt fade-in" style="animation-delay: 10750ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
-      <text class="tt" x="168" fill="#00ff9f" textLength="56" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-23)">palette</text>
+    <g transform="translate(0, 730.8)">
+      <defs><clipPath id="cmdrev-29"><rect x="168" y="-14" width="56" height="28"><set attributeName="width" to="0" begin="0s" end="12800ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="12800ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
+      <text class="tt fade-in" style="animation-delay: 12800ms" fill="#00ff9f" textLength="168" lengthAdjust="spacingAndGlyphs">you@svg-terminal:~$ </text>
+      <text class="tt" x="168" fill="#00ff9f" textLength="56" lengthAdjust="spacingAndGlyphs" clip-path="url(#cmdrev-29)">palette</text>
       
     <rect x="168" y="-12" width="8" height="14"
           fill="#00ff41" opacity="0">
-      <animate attributeName="opacity" from="0" to="1" begin="10750ms" dur="10ms" fill="freeze"/>
-      <animate attributeName="opacity" to="0" begin="11950ms" dur="10ms" fill="freeze"/>
-      <animate attributeName="x" values="168;168;176;184;192;200;208;216" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="10750ms" dur="1200ms" fill="freeze"/>
+      <animate attributeName="opacity" from="0" to="1" begin="12800ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="opacity" to="0" begin="14000ms" dur="10ms" fill="freeze"/>
+      <animate attributeName="x" values="168;168;176;184;192;200;208;216" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="12800ms" dur="1200ms" fill="freeze"/>
     </rect>
     </g>
 
-    <g transform="translate(0, 604.8)" class="fade-in" style="animation-delay: 12250ms">
+    <g transform="translate(0, 756)" class="fade-in" style="animation-delay: 14300ms">
       <text class="tt">
         <tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan>
       </text>
@@ -285,6 +334,6 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
       </g>
     </g>
     
-    <rect x="0" y="40" width="960" height="668" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
+    <rect x="0" y="40" width="960" height="820" fill="url(#scanlines)" pointer-events="none" opacity="0.5" class="scanline-overlay"/>
   </g>
 </svg>

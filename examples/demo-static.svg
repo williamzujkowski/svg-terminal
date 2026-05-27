@@ -1,6 +1,6 @@
-<svg width="960" height="708" viewBox="0 0 960 708" xmlns="http://www.w3.org/2000/svg"
-  role="img" aria-label="Static terminal showing 25 lines">
-  <title>Static terminal showing 25 lines</title>
+<svg width="960" height="860" viewBox="0 0 960 860" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Static terminal showing 31 lines">
+  <title>Static terminal showing 31 lines</title>
   <desc>you@svg-terminal:~$ cat /etc/motd
 SVG-TERMINAL v2026.05
 Animated terminals in your README, declarative YAML in.
@@ -15,6 +15,12 @@ Languages: TypeScript, SVG, SMIL
 Editor:    vim (still trying to exit)
 
 ● ● ● ● ● ● ● ●
+you@svg-terminal:~$ gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;
+TypeScript  ██████████░░░░░░░░░░░░░░  42%
+Rust        ██████░░░░░░░░░░░░░░░░░░  24%
+Python      ████░░░░░░░░░░░░░░░░░░░░  18%
+Go          ███░░░░░░░░░░░░░░░░░░░░░  11%
+Lua         █░░░░░░░░░░░░░░░░░░░░░░░   5%
 you@svg-terminal:~$ date +%H:%M:%S
 uptime  13:37:00
 you@svg-terminal:~$ made-with --love
@@ -40,13 +46,13 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
       </feMerge>
     </filter>
     <clipPath id="terminalViewport">
-      <rect x="0" y="40" width="960" height="668"/>
+      <rect x="0" y="40" width="960" height="820"/>
     </clipPath>
   </defs>
 
   <g filter="url(#shadow)">
     
-    <rect x="0" y="0" width="960" height="708"
+    <rect x="0" y="0" width="960" height="860"
           rx="12" ry="12"
           fill="#0a0e27"/>
     
@@ -66,7 +72,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
       svg-terminal — demo
     </text>
     <rect x="0" y="40" width="960"
-          height="668" fill="#0a0e27"/>
+          height="820" fill="#0a0e27"/>
     <g clip-path="url(#terminalViewport)">
       <g transform="translate(12, 54)">
         
@@ -128,26 +134,44 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
         <tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan>
       </text>
       <text class="tt" y="479" fill="#e4e4e4">
-        you@svg-terminal:~$ date +%H:%M:%S
+        you@svg-terminal:~$ gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;
       </text>
       <text class="tt" y="504">
-        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan>
+        <tspan fill="#8be9fd">TypeScript</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">██████████░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  42%</tspan>
       </text>
-      <text class="tt" y="529" fill="#e4e4e4">
-        you@svg-terminal:~$ made-with --love
+      <text class="tt" y="529">
+        <tspan fill="#50fa7b">Rust      </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">██████░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  24%</tspan>
       </text>
       <text class="tt" y="554">
-        <tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan>
+        <tspan fill="#f1fa8c">Python    </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">████░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  18%</tspan>
       </text>
-      <text class="tt" y="580" fill="#e4e4e4">
-        you@svg-terminal:~$ palette
+      <text class="tt" y="580">
+        <tspan fill="#ff79c6">Go        </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#ff79c6">███░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  11%</tspan>
       </text>
       <text class="tt" y="605">
+        <tspan fill="#729fcf">Lua       </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#729fcf">█░░░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">   5%</tspan>
+      </text>
+      <text class="tt" y="630" fill="#e4e4e4">
+        you@svg-terminal:~$ date +%H:%M:%S
+      </text>
+      <text class="tt" y="655">
+        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan>
+      </text>
+      <text class="tt" y="680" fill="#e4e4e4">
+        you@svg-terminal:~$ made-with --love
+      </text>
+      <text class="tt" y="706">
+        <tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan>
+      </text>
+      <text class="tt" y="731" fill="#e4e4e4">
+        you@svg-terminal:~$ palette
+      </text>
+      <text class="tt" y="756">
         <tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan>
       </text>
       </g>
     </g>
     
-    <rect x="0" y="40" width="960" height="668" fill="url(#scanlines)" pointer-events="none" opacity="0.5"/>
+    <rect x="0" y="40" width="960" height="820" fill="url(#scanlines)" pointer-events="none" opacity="0.5"/>
   </g>
 </svg>

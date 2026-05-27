@@ -1,14 +1,19 @@
 # README hero demo. Curated to be above-the-fold-friendly on most screens.
 # Exercises chrome + scanlines + shadow + auto-height + the v0.7/v0.8 animation
-# primitive, without going full CRT (textGlow off — it's an opt-in for amber /
-# green-phosphor / cyberpunk, where the glow makes sense as an aesthetic).
+# primitive + the v0.12 cacheable-block surface, without going full CRT
+# (textGlow off — it's an opt-in for amber / green-phosphor / cyberpunk).
 #
-# Five blocks, each pulling its weight:
-#   - motd            — chrome + ASCII double-box + colored subtitle
-#   - neofetch        — full color palette via [[fg:color]] markup
-#   - ascii-clock     — v0.8 animation: 1 fps pulsing colon
-#   - heartbeat       — v0.7 animation: multi-frame opacity cycle
-#   - palette-swatch  — confirms all 16 named theme colors
+# Six blocks, each pulling its weight:
+#   - motd             — chrome + ASCII double-box + colored subtitle
+#   - neofetch         — full color palette via [[fg:color]] markup
+#   - github-languages — v0.12 cacheable block; profile-README headline feature
+#   - ascii-clock      — v0.8 animation: 1 Hz pulsing colon
+#   - heartbeat        — v0.7 animation: multi-frame opacity cycle
+#   - palette-swatch   — confirms all 16 named theme colors
+#
+# github-languages renders its fallback (no `username` set, so it skips the
+# fetch entirely — deterministic for the byte-stable CI demo gate). Real
+# users pass `username: <gh-handle>` to get their live data.
 #
 # Regenerate with `npm run demo`. CI verifies this file's rendering is
 # committed up to date (see .github/workflows/ci.yml).
@@ -19,7 +24,7 @@ window:
   width: 960
   title: "svg-terminal — demo"
   autoHeight: true
-  maxHeight: 1000
+  maxHeight: 1100
 
 terminal:
   prompt: "you@svg-terminal:~$ "
@@ -42,6 +47,20 @@ blocks:
       role: Library Author
       languages: TypeScript, SVG, SMIL
       editor: vim (still trying to exit)
+
+  - block: github-languages
+    config:
+      # No `username` → renders the fallback below directly (no fetch).
+      # Real users: `username: your-gh-handle` to get their actual data.
+      command: "gh api users/octocat/repos --jq '[.[].language] | group_by(.) | …'"
+      top: 5
+      barWidth: 24
+      fallback:
+        - { name: TypeScript, percent: 42 }
+        - { name: Rust,       percent: 24 }
+        - { name: Python,     percent: 18 }
+        - { name: Go,         percent: 11 }
+        - { name: Lua,        percent:  5 }
 
   - block: ascii-clock
     config:
