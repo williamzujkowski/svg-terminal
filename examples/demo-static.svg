@@ -16,7 +16,7 @@ Editor:    vim (still trying to exit)
 
 ● ● ● ● ● ● ● ●
 you@svg-terminal:~$ date +%H:%M:%S
-uptime  09:37:00
+uptime  13:37:00
 you@svg-terminal:~$ made-with --love
 built with care
 you@svg-terminal:~$ palette
@@ -131,7 +131,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
         you@svg-terminal:~$ date +%H:%M:%S
       </text>
       <text class="tt" y="504">
-        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09:37:00</tspan>
+        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan>
       </text>
       <text class="tt" y="529" fill="#e4e4e4">
         you@svg-terminal:~$ made-with --love

@@ -2,7 +2,7 @@
   role="img" aria-label="Animated terminal showing: date +%H:%M:%S">
   <title>Animated terminal showing: date +%H:%M:%S</title>
   <desc>user@host:~$ date +%H:%M:%S
-09:37:00</desc>
+13:37:00</desc>
   <style>
     .tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }
     @keyframes scanlineScroll {
@@ -97,7 +97,7 @@
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt frame-cycle-2" opacity="1" style="animation: frame-cycle-2 2000ms linear 0ms infinite"><tspan fill="#8be9fd">09:37:00</tspan></text><text class="tt frame-cycle-2" opacity="0" style="animation: frame-cycle-2 2000ms linear 1000ms infinite"><tspan fill="#8be9fd">09·37·00</tspan></text>
+      <text class="tt frame-cycle-2" opacity="1" style="animation: frame-cycle-2 2000ms linear 0ms infinite"><tspan fill="#8be9fd">13:37:00</tspan></text><text class="tt frame-cycle-2" opacity="0" style="animation: frame-cycle-2 2000ms linear 1000ms infinite"><tspan fill="#8be9fd">13·37·00</tspan></text>
     </g>
       </g>
     </g>

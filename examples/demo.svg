@@ -16,7 +16,7 @@ Editor:    vim (still trying to exit)
 
 ● ● ● ● ● ● ● ●
 you@svg-terminal:~$ date +%H:%M:%S
-uptime  09:37:00
+uptime  13:37:00
 you@svg-terminal:~$ made-with --love
 built with care
 you@svg-terminal:~$ palette
@@ -244,7 +244,7 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     </g>
 
     <g transform="translate(0, 504)" class="fade-in" style="animation-delay: 6850ms">
-      <text class="tt frame-cycle-2" opacity="1" style="animation: frame-cycle-2 2000ms linear 0ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09:37:00</tspan></text><text class="tt frame-cycle-2" opacity="0" style="animation: frame-cycle-2 2000ms linear 1000ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">09·37·00</tspan></text>
+      <text class="tt frame-cycle-2" opacity="1" style="animation: frame-cycle-2 2000ms linear 0ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan></text><text class="tt frame-cycle-2" opacity="0" style="animation: frame-cycle-2 2000ms linear 1000ms infinite"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13·37·00</tspan></text>
     </g>
 
     <g transform="translate(0, 529.2)">

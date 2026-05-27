@@ -3,7 +3,14 @@
  * Regenerates examples/demo.svg + the per-theme gallery under examples/gallery/.
  * Driven by npm run demo. Cross-platform (no shell loops), and CI uses the
  * exit code from `git diff --exit-code` afterward to verify nothing drifted.
+ *
+ * Pin TZ=UTC BEFORE importing the library — `ascii-clock` and `uptime`
+ * use `context.now.getHours()` / `getMinutes()` which read LOCAL timezone.
+ * Without this, regen on a non-UTC machine (e.g. America/New_York) writes
+ * different bytes than CI's UTC regen → demo-verify gate fails. Closes
+ * the CI byte-drift class of issues that #122 surfaced.
  */
+process.env.TZ = 'UTC';
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';

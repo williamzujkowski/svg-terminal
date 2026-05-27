@@ -2,7 +2,7 @@
   role="img" aria-label="Animated terminal showing: uptime">
   <title>Animated terminal showing: uptime</title>
   <desc>user@host:~$ uptime
-09:37:00  up 632 days,  3:14,  1 user,  load average: 0.42, 0.37, 0.31
+13:37:00  up 632 days,  3:14,  1 user,  load average: 0.42, 0.37, 0.31
 
 (last reboot: that one incident — don&apos;t touch it)
 
@@ -102,7 +102,7 @@ System health: STABLE</desc>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
       <text class="tt" fill="#e4e4e4">
-         09:37:00  up 632 days,  3:14,  1 user,  load average: 0.42, 0.37, 0.31
+         13:37:00  up 632 days,  3:14,  1 user,  load average: 0.42, 0.37, 0.31
       </text>
     </g>
 
