@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run build` — bundle with tsup → `dist/` (ESM + `.d.ts`, targets node22).
 - `npm run dev` — tsup watch mode.
-- `npm test` — vitest, single run (381 tests at v0.17.1).
+- `npm test` — vitest, single run (398 tests at v0.18.3).
 - `npm run test:watch` — vitest watch.
 - `npm test -- src/core/__tests__/markup-parser.test.ts` — single test file.
 - `npm test -- -t "fragment of test name"` — single test by name.
@@ -77,7 +77,7 @@ The `win95` theme is special-cased in `mergeConfig` to swap on its dedicated chr
 
 ### Animation primitive (`BlockResult.animation`)
 
-Single-line frame cycle. Each frame is a `string[]` (currently of length 1; multi-line tracked by #69). Renderer emits N `<text>` siblings sharing the same y, each carrying one frame's content and a discrete-opacity `<animate>` that's "1" during that frame's slot and "0" otherwise. `loop: true` (default) repeats; `loop: false` plays once and freezes on the final frame. `fps` clamps to `[1, 30]` both at the runtime boundary and in each block's own configSchema (defense in depth).
+Single-line frame cycle. Each frame is a `string[]` (currently of length 1; multi-line was tracked in #69 which closed as wontfix). Renderer emits N `<text>` siblings sharing the same y, each with `class="tt frame-cycle-N"` + per-element inline `style="animation-delay: i*frameDurMs"` driven by a CSS `@keyframes frame-cycle-N` rule in the SVG `<style>` block. Static `opacity="1"` on frame 0 / `"0"` on others is the fallback for both SMIL-stripping renderers and `prefers-reduced-motion` users — see the line-renderer section above for the full migration narrative (v0.17). `loop: true` (default) → `animation-iteration-count: infinite`; `loop: false` → `1` (animation completes once then releases to the underlying opacity attribute = frame 0 visible). `fps` clamps to `[1, 30]` both at the runtime boundary and in each block's own configSchema (defense in depth).
 
 ### Cache primitive (`BlockContext.useCache`)
 

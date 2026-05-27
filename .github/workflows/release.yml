@@ -1,0 +1,64 @@
+name: Release
+
+# Auto-moves the floating major-version tag (v1, v2, ...) on every push of
+# a matching vX.Y.Z tag. Marketplace consumers pin to `@v1` for "latest
+# inside v1"; we keep that ref moving here so they get patches without
+# action on their part. Drift between v1 and v1.x.y is the silent-stale
+# bug that #119 flagged for the marketplace publish.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'  # only triple-numeric tags; never matches v1 itself
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag to point v<major> at (e.g. v1.0.0)'
+        required: true
+
+permissions:
+  contents: write   # needs to push the moved tag
+
+jobs:
+  move-major-tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve source tag + major version
+        id: tag
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DISPATCH_TAG:-}" ]; then
+            SOURCE_TAG="$DISPATCH_TAG"
+          else
+            SOURCE_TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          # Validate shape: vN.N.N
+          if [[ ! "$SOURCE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Source tag '$SOURCE_TAG' is not in vN.N.N shape"; exit 1
+          fi
+          MAJOR_TAG="v${SOURCE_TAG#v}"; MAJOR_TAG="${MAJOR_TAG%%.*}"
+          MAJOR_TAG="v${MAJOR_TAG#v}"
+          echo "source=$SOURCE_TAG" >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR_TAG" >> "$GITHUB_OUTPUT"
+          echo "Moving $MAJOR_TAG → $SOURCE_TAG"
+
+      - name: Force-move the floating major tag
+        env:
+          SOURCE_TAG: ${{ steps.tag.outputs.source }}
+          MAJOR_TAG: ${{ steps.tag.outputs.major }}
+        run: |
+          set -euo pipefail
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag -f "$MAJOR_TAG" "$SOURCE_TAG"
+          git push -f origin "refs/tags/$MAJOR_TAG"
+          echo "::notice::Moved $MAJOR_TAG to $SOURCE_TAG"

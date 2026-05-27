@@ -1,5 +1,38 @@
 # Changelog
 
+## v1.0.0 — 2026-05-27 — GitHub Marketplace launch
+
+First stable release. svg-terminal is now published on npm and listed on the GitHub Actions Marketplace. The v0.x line is feature-complete: 47 blocks, 12 themes, full SVG sandbox compatibility, defense-in-depth XSS / DoS / shell-injection guards, CodeQL clean.
+
+### What's stable in v1
+
+- **Library** (`svg-terminal` on npm) — `generate()`, `generateStatic()`, `loadConfig()`, `mergeConfig()`, `registerBlock()`, `registerTheme()`, `inspectCache()`, plus typed re-exports of every block + theme. Strict zod schemas at every config boundary. ESM-only, Node 22+.
+- **CLI** — `svg-terminal generate / init / themes / blocks [<name>] / cache check`, with `--watch`, `--static`, `--minify`, `--strict`, `--no-cache | --refresh-cache | --frozen-cache`, `--timings`, `--explain`, `--force`.
+- **GitHub Action** (`williamzujkowski/svg-terminal@v1`) — inputs: `config`, `output`, `cache-mode`, `static`, `minify`, `commit`, `commit-message`. Outputs: `svg-path`, `svg-bytes`, `svg-sha256`, `svg-changed`. SHA-pinned dependencies, env-passed inputs, `permissions: contents: read` by default (`contents: write` only when `commit: true`).
+
+### Round-4 fixes (final pre-publish polish)
+
+- **`svg-changed` semantic corrected** when no prior SVG exists. The output was emitting `true` on first run (since `prev_sha=""` differed from `new_sha`); now emits `false` so workflows can use `if: outputs.svg-changed == 'true'` to gate commits without firing on the bootstrap.
+- **`git push` is explicit-refspec** (`HEAD:${GITHUB_REF_NAME}`) — the bare `git push` failed on the detached-HEAD checkout that `pull_request` triggers produce. Added a clear error message when `GITHUB_REF_NAME` is unset (i.e. the user wired `commit: true` to a `pull_request` event by mistake). Commit step also now skips when `svg-changed == 'false'` to avoid "nothing to commit" noise.
+- **Library `console.log` removed from `resolveTheme`** — `theme: random` rotation no longer pollutes stdout for programmatic library consumers. Gated behind `SVG_TERMINAL_VERBOSE=1` for debug.
+- **`package-lock.json` refreshed** to match `package.json` 1.0.0 (was drifted to 0.18.1).
+- **CLAUDE.md test count** updated to 398 (was stale at 381).
+- **CLAUDE.md "Animation primitive"** section corrected: described the pre-v0.17 SMIL implementation; now matches the CSS `@keyframes frame-cycle-N` migration.
+- **CONTRIBUTING.md prefers-reduced-motion** caveat fixed: frame-cycle joined the CSS-honored set in v0.17, no longer a SMIL holdout.
+
+### New: floating `v1` tag auto-mover
+
+`.github/workflows/release.yml` runs on every `vN.M.P` tag push and force-moves the floating `v<major>` tag (`v1` today) to the matching point release. Marketplace consumers pinning `@v1` get patches without action on their part; prior to this the floating tag would have silently drifted. Supports `workflow_dispatch` for manual moves if a tag needs to be repointed.
+
+### Tests
+
+- 398 passing. Lint + typecheck clean. CodeQL `security-extended` clean. Demos byte-stable (TZ=UTC pinned in `examples/build-demos.mjs`).
+
+### Backlog at v1.0.0
+
+- `#113` SSRF guard on `fetchWithTimeout` — deferred (no current block accepts arbitrary URLs).
+- Three "great ideas" filed across the session that didn't make v1: `#119` (this release closes it), language-stats coverage refinements, additional block ideas.
+
 ## v0.18.3 — 2026-05-26 — QA round 3 + CodeQL alerts
 
 Closes the 3 open CodeQL alerts + 1 design issue from a third QA + security review.

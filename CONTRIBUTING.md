@@ -85,7 +85,7 @@ A block is a small TypeScript module that exports an object implementing the `Bl
 
 - ESM only — use `.js` extensions in TypeScript imports (`from './types.js'`). `moduleResolution: 'bundler'` requires it.
 - The SVG output must remain self-contained: no `<script>`, no external `<link>`, no external fonts beyond CSS `@media` queries. GitHub's SVG sandbox strips that anyway.
-- The inline `@media (prefers-reduced-motion: reduce)` rule applies to CSS animations only. **CSS fade-ins (the prompt, output lines, animated-wrapper) honor it** — they migrated from SMIL to CSS `@keyframes fadeIn` in v0.10. **SMIL animations don't** — typed-character reveal, cursor walk, scroll, and frame-cycle animations keep running. Document this honestly in any new animated block's description, and point motion-sensitive users at `--static` for full stillness.
+- The inline `@media (prefers-reduced-motion: reduce)` rule applies to CSS animations only. **CSS fade-ins (prompt, output lines, animated-wrapper)** honor it (migrated SMIL → CSS in v0.10). **Frame cycle** on animated blocks also honors it (migrated SMIL → CSS `@keyframes frame-cycle-N` in v0.17). **The remaining SMIL holdouts** — typed-character reveal, cursor walk, scroll-on-overflow — still don't honor it. Document this honestly in any new animated block's description, and point motion-sensitive users at `--static` for full stillness.
 - Default to no comments. Add one when the WHY isn't obvious from the code — a hidden constraint, a subtle invariant, a workaround for a specific bug. Don't narrate what the code does.
 
 ## Reporting bugs / asking questions

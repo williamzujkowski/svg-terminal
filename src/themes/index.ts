@@ -69,11 +69,17 @@ export function resolveTheme(nameOrTheme: string | Theme): Theme {
   if (nameOrTheme === 'random') {
     const names = listThemes();
     const dayOfYear = Math.floor(
-      (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
+      (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000,
     );
     const idx = dayOfYear % names.length;
     const selected = names[idx]!;
-    console.log(`[svg-terminal] Theme rotation: day ${dayOfYear} → ${selected}`);
+    // Library callers must remain silent (CLAUDE.md invariant). The CLI is
+    // the only path that gets to talk to stdout/stderr — surface the picked
+    // theme there via `--explain` or `--verbose` if the user wants it.
+    // Gated env var lets debug-mode users opt back in without code changes.
+    if (process.env.SVG_TERMINAL_VERBOSE) {
+      console.error(`[svg-terminal] Theme rotation: day ${dayOfYear} → ${selected}`);
+    }
     return getTheme(selected)!;
   }
 

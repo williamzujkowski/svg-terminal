@@ -50,7 +50,7 @@ outputs:
     description: 'Hex SHA-256 of the generated SVG, for cache-busting downstream'
     value: ${{ steps.generate.outputs.sha256 }}
   svg-changed:
-    description: 'true | false — did the SVG differ from the previously-committed version? (always false on first run; meaningful when commit=true)'
+    description: 'true | false — did this run modify a pre-existing SVG? false on first run (no prior file) and false when bytes match. Use to gate commits.'
     value: ${{ steps.generate.outputs.changed }}
 
 runs:
@@ -68,7 +68,7 @@ runs:
       # users who pin the action by SHA / tag get reproducible behavior
       # instead of whatever floats on the npm registry. Bumped each action
       # release to match the published npm version.
-      run: npm install -g svg-terminal@0.18.3
+      run: npm install -g svg-terminal@1.0.0
 
     - name: Generate SVG
       id: generate
@@ -105,7 +105,17 @@ runs:
         svg-terminal generate --config "$INPUT_CONFIG" --output "$INPUT_OUTPUT" $args
         new_sha=$(sha256sum "$INPUT_OUTPUT" | cut -d' ' -f1)
         bytes=$(stat -c%s "$INPUT_OUTPUT" 2>/dev/null || stat -f%z "$INPUT_OUTPUT")
-        changed=$([ "$prev_sha" = "$new_sha" ] && echo "false" || echo "true")
+        # changed semantics (round-4 L1 fix): "did this run modify a
+        # pre-existing committed SVG?". First-ever run has no prev_sha →
+        # treat as 'false' (workflow can branch on `changed=true` to gate
+        # commits without firing on the bootstrap).
+        if [ -z "$prev_sha" ]; then
+          changed="false"
+        elif [ "$prev_sha" = "$new_sha" ]; then
+          changed="false"
+        else
+          changed="true"
+        fi
         {
           echo "size=$bytes"
           echo "sha256=$new_sha"
@@ -113,16 +123,30 @@ runs:
         } >> "$GITHUB_OUTPUT"
 
     - name: Commit SVG
-      if: inputs.commit == 'true'
+      # Only when both: caller opted into commit AND we actually changed bytes.
+      # Skipping on first run / no-op runs avoids "nothing to commit" noise.
+      if: inputs.commit == 'true' && steps.generate.outputs.changed == 'true'
       shell: bash
       env:
         INPUT_OUTPUT: ${{ inputs.output }}
         INPUT_COMMIT_MESSAGE: ${{ inputs.commit-message }}
       run: |
         # Inputs passed via env so commit-message can never break out of the
-        # `git commit -m "..."` quoting (closes M1).
+        # `git commit -m "..."` quoting (closes M1 from the v0.17.0 audit).
+        set -euo pipefail
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add "$INPUT_OUTPUT"
-        git diff --staged --quiet || git commit -m "$INPUT_COMMIT_MESSAGE"
-        git push
+        git diff --staged --quiet && exit 0  # nothing to commit
+        git commit -m "$INPUT_COMMIT_MESSAGE"
+        # Explicit refspec — round-4 M2 fix. Bare `git push` errors with
+        # "src refspec HEAD does not match any" on the detached-HEAD checkout
+        # that pull_request triggers produce. GITHUB_REF_NAME is set to the
+        # branch name for push/schedule/workflow_dispatch events; on
+        # pull_request it'd be the PR ref (refs/pull/N/merge) which is
+        # read-only — those should not be using commit: true anyway.
+        if [ -z "${GITHUB_REF_NAME:-}" ]; then
+          echo "::error::commit: true requires GITHUB_REF_NAME (use on: push / schedule / workflow_dispatch — not pull_request)"
+          exit 1
+        fi
+        git push origin "HEAD:${GITHUB_REF_NAME}"
