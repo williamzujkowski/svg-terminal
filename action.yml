@@ -60,7 +60,11 @@ runs:
       uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0 (SHA-pinned per #114 L1)
       with:
         node-version: '22'
-        cache: 'npm'
+        # NOTE: no `cache: 'npm'` — it requires a package-lock.json in the
+        # CALLER's repo, which most consumers (profile READMEs, doc repos)
+        # don't have, and the action only does a single `npm install -g`.
+        # Caching there broke the action with "Dependencies lock file is not
+        # found" (#131). The global install is fast; skip the cache.
 
     - name: Install svg-terminal
       shell: bash
@@ -68,7 +72,7 @@ runs:
       # users who pin the action by SHA / tag get reproducible behavior
       # instead of whatever floats on the npm registry. Bumped each action
       # release to match the published npm version.
-      run: npm install -g svg-terminal@1.2.1
+      run: npm install -g svg-terminal@1.2.2
 
     - name: Generate SVG
       id: generate

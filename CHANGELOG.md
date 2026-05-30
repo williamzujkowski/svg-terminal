@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.2 — 2026-05-30 — fix: action broke for consumers without a lockfile
+
+Patch release. **Fixes the GitHub Action for its primary use case.**
+
+- **`action.yml` no longer sets `cache: 'npm'` on setup-node (`#131`).** `actions/setup-node`'s npm cache requires a `package-lock.json` in the *calling* repo — but most consumers are profile-README / docs repos with no Node project, so every run failed with `Dependencies lock file is not found`. The action only does a single `npm install -g`, so the cache wasn't worth that constraint. Removing it unbreaks the action for the profile-README workflow it was built for. (Found by wiring it into a real profile repo.)
+
+No library code changed (464 tests, identical output).
+
 ## v1.2.1 — 2026-05-30 — documentation accuracy pass
 
 Docs-only patch (no code or SVG changes). A full audit (3 fan-out reviewers cross-checking docs against the source) closed real gaps:
