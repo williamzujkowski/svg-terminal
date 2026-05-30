@@ -1,5 +1,32 @@
 # Changelog
 
+## v1.2.0 — 2026-05-30 — OKLCH WCAG-AAA themes + legibility polish
+
+Doubles down on legibility and color: **12 → 20 themes**, a sharper CRT glow, and WCAG fixes to existing palettes. 464 tests.
+
+### Added
+
+- **8 OKLCH WCAG-AAA themes**, a curated smattering from the 400+ scheme collection at [williamzujkowski.github.io/oklch-terminal-themes](https://williamzujkowski.github.io/oklch-terminal-themes/) — sharp, modern, and scanline-free by default. All clear **WCAG AAA body text (≥ 7:1)** with AA prompt/comment/title-bar (verified by test). Hex is baked into static theme files — no runtime dependency added.
+  - `modus-vivendi` (neutral dark, 21:1), `oxocarbon` (IBM Carbon), `rose-pine`, `everforest`, `kanagawa`, `flexoki`, plus two **light** themes: `github-light` and `dayfox`.
+  - The 8 modern themes default `effects.scanlines: false` (crisp/sharp) via a `MODERN_THEMES` set in `mergeConfig`, mirroring the win95/CRT special-cases — user-overridable with `effects.scanlines: true`.
+
+### Changed
+
+- **Sharper CRT glow (`#126`).** The opt-in `textGlow` filter used to blur a *copy of the text itself* (`stdDeviation 0.6` core) under a wide `stdDeviation 2` halo, softening every glyph — the "glow makes it hard to read" report. It's now a single tight halo (`1.4`) behind **razor-sharp, unblurred** text. The retro themes (`amber`, `green-phosphor`, `cyberpunk`) keep their phosphor aura but read crisp. (Glow is opt-in, so no default output changed.)
+
+### Fixed
+
+- **Sub-AA reds (`#101`)** found by a WCAG contrast audit — red marks errors/important output and must be readable: `gruvbox` (2.69:1 → 4.54, the worst offender), `nord`, `solarized-dark`, `monokai`. Hue-preserving lightness nudges; no other slot touched.
+
+### Tests
+
+- 464 passing (+26: per-theme AAA contrast, scanlines-off default + override, glow-off-by-default). Byte changes are limited to the 8 new gallery SVGs + the 4 red-fixed classics; no other theme drifted.
+
+### Deferred (filed)
+
+- `#127` — lift the remaining intentionally-dim `comment` colors to AA.
+- `#128` — optional `text.fontWeight` (default 500) for extra legibility.
+
 ## v1.1.1 — 2026-05-30 — backlog cleanup (#123, #124, #125)
 
 Patch release clearing the v1.1.0 follow-up backlog. No change to valid-config SVG output (demos byte-stable). 438 tests.
