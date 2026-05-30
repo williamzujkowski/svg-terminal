@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.1.1 — 2026-05-30 — backlog cleanup (#123, #124, #125)
+
+Patch release clearing the v1.1.0 follow-up backlog. No change to valid-config SVG output (demos byte-stable). 438 tests.
+
+### Fixed
+
+- **Flaky ReDoS-guard test (`#123`).** The intermittent `1 failed | …` seen under heavy CI load was a wall-clock budget assertion, not a concurrency race — a fan-out investigation confirmed the suite is well-isolated (vitest `forks` pool). The `stripMarkup` ReDoS guard runs ~150 ms idle but crossed the old 500 ms ceiling under CPU contention; the budget is now 2 s, which still catches a real regression (which runs to multiple seconds) while tolerating contention.
+- **Over-tall animated band (`#124`).** A multi-line animated block (new in v1.1.0) taller than the visible area silently overflowed the viewport clip. `createAnimationFrames` now warns — or throws under `--strict` — when an animated band exceeds `maxVisibleLines`. `window.autoHeight` (the default) sizes to fit, so only a too-small fixed `height` (or an `autoHeight` `maxHeight` clamp) triggers it. The warning is numbers-only (log-safe). Picked via a nexus vote (100%, Option B); mid-animation scrolling remains unsupported by design.
+
+### Changed
+
+- **`--strict` flag extracted to `src/core/strict-mode.ts`** so the SVG generator can read it without a circular import; `setStrictBlockConfig` is re-exported from `src/index.ts` unchanged (public API stable).
+- **Docs (`#125`):** CONTRIBUTING now notes the dev-toolchain Node floor (≥ 22.13, eslint 10's requirement); the published runtime floor stays `>=22.0.0`. Fixed a stale `eslint v9` reference.
+
 ## v1.1.0 — 2026-05-30 — multi-line animation + SSRF hardening + GA toolchain
 
 First minor since the marketplace launch. Adds multi-line animation support (closes the long-standing #69 restriction), an SSRF guard on the public fetch surface, and moves the dev toolchain onto the current GA majors. 434 tests, byte-stable demos, lint + typecheck clean.

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run build` — bundle with tsup → `dist/` (ESM + `.d.ts`, targets node22).
 - `npm run dev` — tsup watch mode.
-- `npm test` — vitest, single run (434 tests at v1.1.0).
+- `npm test` — vitest, single run (438 tests at v1.1.1).
 - `npm run test:watch` — vitest watch.
 - `npm test -- src/core/__tests__/markup-parser.test.ts` — single test file.
 - `npm test -- -t "fragment of test name"` — single test by name.
