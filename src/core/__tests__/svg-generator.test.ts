@@ -176,6 +176,29 @@ describe('generateStaticSvg', () => {
     const svg = generateStaticSvg(lines, config);
     expect(svg).not.toContain('height="700"');
   });
+
+  it('static auto-height grows past maxHeight to show ALL content (#129)', () => {
+    // A static SVG can't scroll, so clamping to maxHeight would clip the
+    // overflow forever. With autoHeight, static must expand to full content.
+    const many = Array.from({ length: 80 }, (_, i) => `line ${i}`);
+    const config = makeConfig({
+      window: { ...DEFAULT_CONFIG.window, autoHeight: true, minHeight: 100, maxHeight: 500 },
+    });
+    const svg = generateStaticSvg(many, config);
+    const h = Number(svg.match(/<svg width="\d+" height="(\d+)"/)![1]);
+    // 80 lines × (14 × 1.8 = 25.2) ≈ 2016px of content — must exceed the 500 cap.
+    expect(h).toBeGreaterThan(500);
+    expect(h).toBeGreaterThan(1800);
+  });
+
+  it('static auto-height still honors minHeight when content is short', () => {
+    const config = makeConfig({
+      window: { ...DEFAULT_CONFIG.window, autoHeight: true, minHeight: 800, maxHeight: 2000 },
+    });
+    const svg = generateStaticSvg(lines, config);
+    const h = Number(svg.match(/<svg width="\d+" height="(\d+)"/)![1]);
+    expect(h).toBe(800); // 2 lines of content → floored to minHeight
+  });
 });
 
 describe('prompt + typed-text width pinning', () => {

@@ -654,14 +654,19 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   const { text: terminal, theme, effects, chrome } = config;
   const window = { ...config.window };
 
-  // Auto-height for static: fit all content
+  // Auto-height for static: fit ALL content. Unlike the animated path, a
+  // static SVG can't scroll, so clamping to maxHeight would silently CLIP the
+  // overflow (it can never be revealed) — see #129. So static ignores the
+  // maxHeight ceiling and grows to the full content height (minHeight still
+  // applies). This makes the static SVG the complete, accessible fallback for
+  // a tall/scrolling animated terminal (prefers-reduced-motion via <picture>).
   if (window.autoHeight) {
     const lineHeight = terminal.fontSize * terminal.lineHeight;
     const contentHeight = lines.length * lineHeight;
     const titleBarHeight = getTitleBarHeight(window);
     const chromeHeight = titleBarHeight + terminal.paddingTop + terminal.padding * 2;
     const calculated = Math.ceil(contentHeight + chromeHeight);
-    window.height = Math.max(window.minHeight, Math.min(window.maxHeight, calculated));
+    window.height = Math.max(window.minHeight, calculated);
   }
 
   const lineHeight = terminal.fontSize * terminal.lineHeight;

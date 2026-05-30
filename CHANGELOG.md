@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.3 — 2026-05-30 — fix: static fallback no longer clips tall/scrolling content
+
+- **`generateStatic` auto-height grows to full content, ignoring `maxHeight` (`#129`).** The animated SVG scrolls when content exceeds the `maxHeight` viewport, but a *static* SVG can't scroll — so clamping it to `maxHeight` permanently clipped the overflow. Static now expands to the full content height (`minHeight` still applies). This makes a tall/scrolling animated terminal pair with a **complete** reduced-motion static fallback (the `<picture>` pattern). The animated path is unchanged (still clamps + scrolls). Byte-safe: no demo/snapshot drift (the change only affects static renders whose content exceeds `maxHeight`).
+
++2 tests (static expands past maxHeight; still honors minHeight). 466 tests.
+
 ## v1.2.2 — 2026-05-30 — fix: action broke for consumers without a lockfile
 
 Patch release. **Fixes the GitHub Action for its primary use case.**

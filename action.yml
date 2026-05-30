@@ -72,7 +72,7 @@ runs:
       # users who pin the action by SHA / tag get reproducible behavior
       # instead of whatever floats on the npm registry. Bumped each action
       # release to match the published npm version.
-      run: npm install -g svg-terminal@1.2.2
+      run: npm install -g svg-terminal@1.2.3
 
     - name: Generate SVG
       id: generate

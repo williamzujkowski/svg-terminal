@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run build` — bundle with tsup → `dist/` (ESM + `.d.ts`, targets node22).
 - `npm run dev` — tsup watch mode.
-- `npm test` — vitest, single run (464 tests at v1.2.0).
+- `npm test` — vitest, single run (466 tests at v1.2.3).
 - `npm run test:watch` — vitest watch.
 - `npm test -- src/core/__tests__/markup-parser.test.ts` — single test file.
 - `npm test -- -t "fragment of test name"` — single test by name.
@@ -30,7 +30,7 @@ The library converts a declarative YAML config into a single self-contained SVG 
    - `mergeConfig` resolves the theme, builds a `TerminalConfig` from defaults in `src/core/defaults.ts`. Theme-specific auto-config lives here: `win95` auto-picks `window.style: 'win95'`, shrinks `titleBarHeight` to 22, and disables glow/scanlines unless the user overrode them.
    - Per `BlockEntry`: look up the block, validate the entry's config against `Block.configSchema` (strict zod) — failure throws `BlockConfigError` with block name + entry index. Then call `block.render(context, entry.config)`. Result yields `command` (typed line), `lines` (output), optional `animation` (`{ frames, fps, loop }` for spinners/clocks/mascots), optional `typing`/`pause` preset names.
    - Output sequences fan out into a flat `Sequence[]` that `generateSvg` converts into an `AnimationFrame[]` timeline.
-3. `generateStatic(userConfig, options?)` — skips the animation engine and renders all output lines at full opacity. Used for `--static`, accessibility fallbacks, and social-preview cards.
+3. `generateStatic(userConfig, options?)` — skips the animation engine and renders all output lines at full opacity. Used for `--static`, accessibility fallbacks, and social-preview cards. Under `autoHeight`, the static path grows to the **full content height** and does NOT clamp to `maxHeight` (#129) — a static SVG can't scroll, so clamping would permanently clip the overflow. So a tall/scrolling animated terminal (`maxHeight` viewport) pairs with a complete, full-height static fallback. `minHeight` still applies.
 
 **`GenerateOptions`** (both functions): `configPath` (anchors cachePath resolution), `cacheMode` ('normal' | 'refresh' | 'frozen' | 'off'), `now` (override `context.now` for reproducible demos/tests).
 
