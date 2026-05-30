@@ -5,11 +5,11 @@ Thanks for thinking about contributing — this project welcomes block authors, 
 ## Local loop
 
 ```bash
-npm ci                  # one-time install (Node 22+)
+npm ci                  # one-time install (runtime floor Node 22; dev toolchain needs ≥ 22.13 — eslint 10's floor)
 npm run dev             # tsup --watch — rebuild on change
 npm test                # vitest
 npm run typecheck       # tsc --noEmit
-npm run lint            # eslint v9
+npm run lint            # eslint v10
 npm run build           # production bundle into dist/
 ```
 

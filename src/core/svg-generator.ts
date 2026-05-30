@@ -20,6 +20,7 @@ import { generateAllLines } from './line-renderer.js';
 import { buildColorMap, parseMarkup, stripMarkup } from './markup-parser.js';
 import { escapeXml, roundCoord } from './xml.js';
 import { SCROLL_ANIM_DURATION } from './defaults.js';
+import { isStrict } from './strict-mode.js';
 
 // ============================================================================
 // Auto-height calculation
@@ -421,6 +422,16 @@ function createAnimationFrames(
       // carries the whole frames payload.
       if (seq.frames && seq.frames.length > 0) {
         const height = animationHeight(seq.frames);
+        // #124: an animated band taller than the visible area overflows the
+        // viewport clipPath and is silently clipped (autoHeight — the default —
+        // avoids this by sizing to fit; only a too-small FIXED height or an
+        // autoHeight maxHeight clamp reaches here). Warn, or hard-error under
+        // --strict. Message is numbers-only — no untrusted content interpolated.
+        if (height > maxVisibleLines) {
+          const msg = `[svg-terminal] An animated block is ${height} rows tall but only ${maxVisibleLines} row(s) fit the terminal — the overflow is clipped. Use window.autoHeight (default) or a taller window.height / maxHeight. (#124)`;
+          if (isStrict()) throw new Error(msg);
+          console.warn(msg);
+        }
         for (let r = 0; r < height; r++) buffer.push({ type: 'output' });
         frames.push({
           time: currentTime,

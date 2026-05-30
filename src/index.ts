@@ -23,6 +23,7 @@ import { resolvePause, resolveTyping } from './core/defaults.js';
 import { generateSvg, generateStaticSvg } from './core/svg-generator.js';
 import { getBlock, registerBuiltinBlocks } from './blocks/index.js';
 import { BlockConfigError } from './core/errors.js';
+import { isStrict, setStrict } from './core/strict-mode.js';
 import type { CacheCheckResult, CacheMode, CacheRuntime } from './core/cache.js';
 import { checkCache, flushCache, hashConfig, makeUseCache, resolveCachePath } from './core/cache.js';
 
@@ -64,15 +65,14 @@ export interface GenerateOptions {
 registerBuiltinBlocks();
 
 /**
- * Set by `setStrictBlockConfig(true)` (called by `--strict` in the CLI).
- * When true, unknown-key warnings for blocks without a configSchema become
- * BlockConfigError throws instead.
+ * Enable strict mode globally — soft warnings (unknown block-config keys for
+ * schemaless blocks; an over-tall animated band, #124) become hard errors.
+ * The flag lives in `./core/strict-mode.js` so `svg-generator.ts` can read it
+ * without importing this module (which would be circular). Re-exported here as
+ * `setStrictBlockConfig` for back-compat with the CLI + library consumers.
  */
-let STRICT_BLOCK_CONFIG = false;
-
-/** Enable strict mode globally — unknown block-config keys throw instead of warning. */
 export function setStrictBlockConfig(enabled: boolean): void {
-  STRICT_BLOCK_CONFIG = enabled;
+  setStrict(enabled);
 }
 
 /**
@@ -115,7 +115,7 @@ function validateBlockEntry(block: Block, entry: BlockEntry, index: number): voi
     const list = unknown.join(', ');
     const known = block.allowedKeys.join(', ');
     const msg = `Unknown config key(s) [${list}] for block "${block.name}" at blocks[${index}]\n  Known keys: ${known}`;
-    if (STRICT_BLOCK_CONFIG) {
+    if (isStrict()) {
       throw new BlockConfigError(block.name, index, msg);
     }
     console.warn(`[svg-terminal] warning: ${msg}`);

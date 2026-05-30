@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { generateSvg, generateStaticSvg } from '../svg-generator.js';
 import { DEFAULT_CONFIG } from '../defaults.js';
+import { setStrict } from '../strict-mode.js';
 import type { Sequence, TerminalConfig } from '../../types.js';
 
 function makeConfig(overrides: Partial<TerminalConfig> = {}): TerminalConfig {
@@ -718,6 +719,56 @@ describe('multi-line animated frames (#69)', () => {
     // H=1 → <text class="frame-cycle-N">, NOT a <g class="frame-cycle-N"> wrapper.
     expect(svg).toMatch(/<text class="tt frame-cycle-2"[^>]*>A<\/text>/);
     expect(svg).not.toMatch(/<g class="tt frame-cycle-2"/);
+  });
+});
+
+describe('over-tall animated band (#124)', () => {
+  // A 4-row animated band that cannot fit a small FIXED-height terminal.
+  const tallBand: Sequence[] = [{
+    type: 'output',
+    content: 'r0\nr1\nr2\nr3',
+    frames: [['r0', 'r1', 'r2', 'r3'], ['s0', 's1', 's2', 's3']],
+    framesFps: 2,
+    framesLoop: true,
+  }];
+  // autoHeight off + a height too small for 4 rows → maxVisibleLines < 4.
+  const fixedSmall = (): TerminalConfig =>
+    makeConfig({ window: { ...DEFAULT_CONFIG.window, autoHeight: false, height: 60 } });
+
+  afterEach(() => { setStrict(false); vi.restoreAllMocks(); }); // never leak the global flag
+
+  it('warns when the band is taller than the visible area', () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    generateSvg(tallBand, fixedSmall());
+    const w = warns.find(x => x.includes('rows tall'));
+    expect(w).toBeDefined();
+    expect(w).toContain('(#124)');
+  });
+
+  it('throws under --strict instead of warning', () => {
+    setStrict(true);
+    expect(() => generateSvg(tallBand, fixedSmall())).toThrow(/rows tall but only .* fit/);
+  });
+
+  it('does NOT warn when autoHeight sizes the terminal to fit (the default path)', () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    // makeConfig() default has autoHeight on → band fits → no overflow warning.
+    generateSvg(tallBand, makeConfig());
+    expect(warns.some(x => x.includes('rows tall'))).toBe(false);
+  });
+
+  it('the warning interpolates only numbers — no untrusted band content', () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    const seq: Sequence[] = [{
+      type: 'output', content: 'x', frames: [['<script>', 'r1', 'r2', 'r3']], framesFps: 2, framesLoop: true,
+    }];
+    generateSvg(seq, fixedSmall());
+    const w = warns.find(x => x.includes('rows tall'));
+    expect(w).toBeDefined();
+    expect(w).not.toContain('<script>'); // band content never reaches the log
   });
 });
 
