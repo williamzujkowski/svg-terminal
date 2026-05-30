@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run generate` — `tsx src/cli.ts generate` against `./terminal.yml`.
 - `npm run demo` — rebuild + regenerate the README hero SVG + 20-theme gallery (CI verifies the committed SVGs match the regen).
 - `npm run demo:regen` — just the regen step (skips the rebuild). CI uses this after `build` to save ~9s.
-- `node dist/cli.js generate --config terminal.yml --output terminal.svg [--static] [--minify] [--watch] [--no-cache | --refresh-cache | --frozen-cache] [--strict]` — built CLI surface.
+- `node dist/cli.js generate --config terminal.yml --output terminal.svg [--static] [--minify] [--watch] [--no-cache | --refresh-cache | --frozen-cache | --cache-mode <normal|refresh|frozen|off>] [--strict] [--timings] [--explain]` — built CLI surface.
 - Node ≥ 22 (the CI workflow pins `22.22.3` so a Node patch bump can't silently change the SVG byte output).
 
 ## Architecture
@@ -94,7 +94,7 @@ Both paths share the per-N `@keyframes frame-cycle-N` rule (keyed on frame *coun
 - Tests live under `src/**/__tests__/**/*.test.ts` (vitest `include` glob). SVG snapshot tests live in `src/core/__tests__/__snapshots__/`.
 - CLI is a single hand-rolled flag parser in `src/cli.ts` — no commander/yargs.
 - `npm run demo` regenerates `examples/demo.svg` + `examples/demo-static.svg` + `examples/gallery/*.svg` from `examples/demo.yml` / `examples/gallery/_template.yml`. CI runs the regen and `git diff --exit-code` on `examples/` — PR authors update the demo if they touch rendering.
-- Deprecated config fields (`animation.charAppearDuration` since v0.7, `animation.cursorBlinkCycle` since v0.8) stay in the schema for back-compat. Removal planned for v1.0.
+- Deprecated config fields (`animation.charAppearDuration` since v0.7, `animation.cursorBlinkCycle` since v0.8) stay in the schema for back-compat. Still present as of v1.2.0 — removal deferred (a no-op major-version cleanup, not yet scheduled); they're inert but accepted so old configs don't error.
 
 ## GitHub Action
 

@@ -54,6 +54,34 @@ npx svg-terminal generate --watch           # Rebuild on every save
 npx svg-terminal blocks <name>              # Inspect a block's config schema
 ```
 
+### CLI reference
+
+**Commands**
+
+| Command | Description |
+|---------|-------------|
+| `generate` | Generate the SVG from a config file |
+| `init` | Create a starter `terminal.yml` (refuses to overwrite without `--force`) |
+| `themes` | List available themes |
+| `blocks [<name>]` | List block types, or print one block's config schema |
+| `cache check` | Verify dynamic-block cache freshness (exit 1 on stale/missing) |
+
+**`generate` flags**
+
+| Flag | Description |
+|------|-------------|
+| `--config <path>` | Config file path (default `terminal.yml`) |
+| `--output <path>` | Output file path (default `terminal.svg`) |
+| `--static` | Non-animated final-frame snapshot |
+| `--minify` | Strip inter-element whitespace |
+| `--strict` | Promote soft warnings (unknown block-config keys, over-tall animated bands) to hard errors |
+| `--watch` | Re-generate on config-file change |
+| `--timings` | Print per-phase wall-clock timings to stderr |
+| `--explain` | Print the resolved config + block list as JSON to stderr |
+| `--no-cache` / `--refresh-cache` / `--frozen-cache` | Cache behavior shortcuts (off / re-fetch all / cached-only) |
+| `--cache-mode <m>` | Explicit cache mode: `normal` \| `refresh` \| `frozen` \| `off` |
+| `--version` | Print the version |
+
 ## Configuration
 
 Edit `terminal.yml`:
@@ -87,6 +115,25 @@ blocks:
       lines:
         - "[[fg:green]]Welcome to my terminal![[/fg]]"
 ```
+
+`svg-terminal init` writes a fully-commented starter `terminal.yml`. The top-level keys:
+
+| Key | Purpose |
+|-----|---------|
+| `theme` | Theme name, an inline theme object, or `random` (daily rotation) |
+| `blocks` | The ordered list of blocks to render (each `{ block, config?, command?, color?, typing?, pause? }`) |
+| `window` | Chrome + frame: `width`, `height`/`autoHeight` (+ `minHeight`/`maxHeight`), `title`, `style` (`macos`\|`win95`\|`floating`\|`minimal`\|`none`), `titleBarHeight`, `borderRadius` |
+| `terminal` | Text rendering: `fontFamily`, `fontSize`, `lineHeight`, `prompt`, `padding`/`paddingTop` |
+| `effects` | `textGlow`, `scanlines`, `vignette`, `shadow` (booleans) |
+| `animation` | Timing: `loop`, `defaultTypingDuration`, `outputLineStagger`, `commandOutputPause`, `outputEndPause`, `defaultSequencePause`, `scrollDelay` |
+| `chrome` | Title-bar/button styling: `titleFontFamily`, `titleFontSize`, `buttonRadius`, `buttonSpacing`, `dimOpacity` |
+| `accessibility` | `{ describe }` — emit the `<title>`/`<desc>` screen-reader content (default `true`) |
+| `accessibilityLabel` | Override the auto-generated `aria-label` |
+| `variables` | Arbitrary values exposed to blocks (surfaced by `--explain`) |
+| `maxDuration` | Hard cap (seconds) on the animation timeline (default 90) |
+| `scrollDuration` | Per-scroll transition duration in ms (default 100) |
+| `fetchTimeout` | Network timeout (ms) for dynamic blocks (default 10000) |
+| `cachePath` / `cacheTTL` | On-disk cache file location + entry TTL for cacheable blocks |
 
 ## Themes
 
@@ -366,17 +413,49 @@ For maximally reproducible CI, commit `.svg-terminal-cache.json` alongside `term
 
 The action commits as `github-actions[bot]`; the `commit` input only runs `git add output + git commit + git push` against the current branch. Skip `commit: true` and add your own commit step if you need signed commits or a custom author.
 
+### Inputs
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `config` | `terminal.yml` | Path to the YAML config file |
+| `output` | `terminal.svg` | Output SVG file path |
+| `cache-mode` | `normal` | Dynamic-block cache behavior: `normal` \| `refresh` \| `frozen` \| `off` |
+| `static` | `false` | Generate a non-animated SVG (final-frame snapshot) |
+| `minify` | `false` | Strip inter-element whitespace from the output |
+| `commit` | `false` | Auto-commit the generated SVG (needs `permissions: contents: write`) |
+| `commit-message` | `chore: update terminal SVG [skip ci]` | Commit message when `commit: true` |
+
+### Outputs
+
+| Output | Description |
+|--------|-------------|
+| `svg-path` | Path to the generated SVG file (echoes `output`) |
+| `svg-bytes` | Byte count of the generated SVG (integer string) |
+| `svg-size` | Alias of `svg-bytes` — same value |
+| `svg-sha256` | Hex SHA-256 of the generated SVG, for cache-busting downstream |
+| `svg-changed` | `true` \| `false` — did this run modify a pre-existing SVG? `false` on the first run (no prior file) and when bytes are unchanged. Gate commits on this. |
+
+```yaml
+- uses: williamzujkowski/svg-terminal@v1
+  id: term
+  with: { config: terminal.yml, output: terminal.svg }
+- run: echo "size=${{ steps.term.outputs.svg-bytes }} changed=${{ steps.term.outputs.svg-changed }}"
+```
+
 ## Text Markup
 
 Blocks support inline color markup:
 
 ```
 [[fg:green]]green text[[/fg]]
+[[bg:blue]][[fg:white]]white on blue[[/fg]][[/bg]]
 [[fg:cyan]][[bold]]bold cyan[[/bold]][[/fg]]
 [[dim]]dimmed text[[/dim]]
 ```
 
-Available colors: `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `orange`, `purple`, `pink`, `comment`, plus `bright_*` variants.
+Tags: `[[fg:color]]` (foreground), `[[bg:color]]` (background), `[[bold]]`, `[[dim]]` — each closed by its matching `[[/fg]]` / `[[/bg]]` / `[[/bold]]` / `[[/dim]]`, and nestable.
+
+Available colors: `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `orange`, `purple`, `pink`, `comment`, plus `bright_*` variants. Colors resolve against the active theme palette; a raw hex value also works.
 
 ## ASCII Boxes
 

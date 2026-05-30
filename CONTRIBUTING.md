@@ -55,7 +55,7 @@ A block is a small TypeScript module that exports an object implementing the `Bl
 
 1. Create `src/themes/<name>.ts` exporting a `Theme` with the full palette + three button colors. Copy `src/themes/nord.ts` as a starting point — every slot needs a value (no defaults).
 
-   The required color slots (24 in `ThemeColors`, 3 in `buttons`):
+   The required color slots (25 in `ThemeColors`, 3 in `buttons`):
 
    - **chrome:** `text`, `comment`, `background`, `titleBarBackground`, `titleBarText`, `prompt`, `cursor`
    - **standard ANSI:** `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`

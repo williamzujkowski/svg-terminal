@@ -10,7 +10,7 @@
 
 ## Test plan
 
-- [ ] `npm test` passes locally (current baseline: 220+)
+- [ ] `npm test` passes locally (current baseline: 464+)
 - [ ] `npm run typecheck` clean
 - [ ] `npm run lint` clean
 - [ ] Manually generated an SVG: `node dist/cli.js generate --config <file>` and eyeballed the result
