@@ -34,6 +34,15 @@ const THEMES = [
   'tokyo-night',
   'gruvbox',
   'high-contrast',
+  // OKLCH WCAG-AAA additions (v1.2.0)
+  'modus-vivendi',
+  'oxocarbon',
+  'rose-pine',
+  'everforest',
+  'kanagawa',
+  'flexoki',
+  'github-light',
+  'dayfox',
 ];
 
 async function writeSvg(svg, relPath) {
@@ -67,10 +76,15 @@ async function buildGallery() {
     // theme it is — was `user@svg-terminal:~` for every theme, now
     // `user@<theme>:~` so the thumbnail reads as a labeled card without
     // needing the filename.
+    // The OKLCH modern themes are meant to read crisp + sharp — preview them
+    // with their default-off scanlines (the template forces scanlines on for
+    // the classics' richer look). Drop shadow too for a clean modern card.
+    const MODERN = new Set(['modus-vivendi', 'oxocarbon', 'rose-pine', 'everforest', 'kanagawa', 'flexoki', 'github-light', 'dayfox']);
     const cfg = {
       ...tplConfig,
       theme,
       window: { ...tplConfig.window, title: `user@${theme}:~` },
+      ...(MODERN.has(theme) ? { effects: { scanlines: false, shadow: false } } : {}),
     };
     // The win95 mergeConfig path auto-applies its chrome — no per-theme override needed.
     const opts = { configPath: tplPath, cacheMode: 'off', now: FIXED_NOW };

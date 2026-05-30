@@ -38,12 +38,10 @@ hi</desc>
   <defs>
     
     
-    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="core"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="halo"/>
+    <filter id="textGlow" x="-12%" y="-12%" width="124%" height="124%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="halo"/>
       <feMerge>
         <feMergeNode in="halo"/>
-        <feMergeNode in="core"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>

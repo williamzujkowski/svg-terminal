@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run typecheck` — `tsc --noEmit` (`strict`, plus `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`).
 - `npm run lint` — ESLint v9 flat config over `src/`.
 - `npm run generate` — `tsx src/cli.ts generate` against `./terminal.yml`.
-- `npm run demo` — rebuild + regenerate the README hero SVG + 12-theme gallery (CI verifies the committed SVGs match the regen).
+- `npm run demo` — rebuild + regenerate the README hero SVG + 20-theme gallery (CI verifies the committed SVGs match the regen).
 - `npm run demo:regen` — just the regen step (skips the rebuild). CI uses this after `build` to save ~9s.
 - `node dist/cli.js generate --config terminal.yml --output terminal.svg [--static] [--minify] [--watch] [--no-cache | --refresh-cache | --frozen-cache] [--strict]` — built CLI surface.
 - Node ≥ 22 (the CI workflow pins `22.22.3` so a Node patch bump can't silently change the SVG byte output).
@@ -63,7 +63,7 @@ The library converts a declarative YAML config into a single self-contained SVG 
 
 ### Themes (`src/themes/`)
 
-12 built-in themes (`dracula`, `nord`, `monokai`, `amber`, `green-phosphor`, `cyberpunk`, `solarized-dark`, `win95`, `catppuccin`, `tokyo-night`, `gruvbox`, `high-contrast`). Each exports a `Theme` with a full `ThemeColors` palette + 3 window-button colors. `resolveTheme` accepts a name string, a `Theme` object, or `'random'` (deterministic day-of-year rotation across `listThemes()`).
+20 built-in themes. The 12 classics (`dracula`, `nord`, `monokai`, `amber`, `green-phosphor`, `cyberpunk`, `solarized-dark`, `win95`, `catppuccin`, `tokyo-night`, `gruvbox`, `high-contrast`) plus 8 OKLCH-derived WCAG-AAA additions (`modus-vivendi`, `oxocarbon`, `rose-pine`, `everforest`, `kanagawa`, `flexoki`, `github-light`, `dayfox`) sourced from https://williamzujkowski.github.io/oklch-terminal-themes/ (hex baked into static theme files — no runtime dep). The 8 modern themes default `effects.scanlines: false` via a `MODERN_THEMES` set in `mergeConfig` (crisp/sharp, mirroring the win95/CRT special-cases; user-overridable). Each exports a `Theme` with a full `ThemeColors` palette + 3 window-button colors. `resolveTheme` accepts a name string, a `Theme` object, or `'random'` (deterministic day-of-year rotation across `listThemes()`).
 
 Inline themes (passed as a `theme:` object instead of a string name) go through a strict `InlineThemeSchema` in `src/core/schema.ts` that validates every color slot against `ColorRefSchema` (hex or palette name) — defense against the H2 XSS vector closed in v0.17.1.
 

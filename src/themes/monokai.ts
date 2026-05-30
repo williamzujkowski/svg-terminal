@@ -15,7 +15,7 @@ export const monokai: Theme = {
     titleBarText: '#75715e',
     prompt: '#a6e22e',
     cursor: '#f8f8f2',
-    red: '#f92672',
+    red: '#fa4a8a',
     green: '#a6e22e',
     yellow: '#e6db74',
     blue: '#66d9ef',

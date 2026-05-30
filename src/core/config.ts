@@ -194,10 +194,22 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
   const isCrt = theme.name === 'amber' || theme.name === 'green-phosphor' || theme.name === 'cyberpunk';
   const userVignetteSet = userConfig.effects?.vignette !== undefined;
 
+  // The OKLCH WCAG-AAA additions (v1.2.0) are designed to read crisp + modern,
+  // so they default scanlines OFF — the retro CRT texture undercuts the "sharp
+  // modern" intent. Users opt back in via `effects.scanlines: true`.
+  const MODERN_THEMES = new Set([
+    'modus-vivendi', 'oxocarbon', 'rose-pine', 'everforest',
+    'kanagawa', 'flexoki', 'github-light', 'dayfox',
+  ]);
+  const isModern = MODERN_THEMES.has(theme.name);
+  const userScanlinesSet = userConfig.effects?.scanlines !== undefined;
+
   const autoEffects = isWin95 && !userConfig.effects
     ? { textGlow: false, scanlines: false, shadow: true }
     : isCrt && !userVignetteSet
     ? { vignette: true }
+    : isModern && !userScanlinesSet
+    ? { scanlines: false }
     : undefined;
 
   return {

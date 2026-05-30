@@ -31,13 +31,13 @@ Or as a GitHub Action — refresh your profile README on a schedule:
     commit: true
 ```
 
-See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (48 blocks, one preview each), and the [12-theme gallery](#themes).
+See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (48 blocks, one preview each), and the [20-theme gallery](#themes).
 
 ### What's in the box
 
 - **Declarative YAML config** — write blocks, pick a theme, run the CLI
 - **48 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single- and multi-line animation, and humor categories. Browse the [block catalog](./examples/blocks/) for previews of each
-- **12 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast (with chrome to match)
+- **20 built-in themes** — 12 classics (dracula, nord, monokai, the amber/green-phosphor/cyberpunk CRT trio, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast) plus 8 sharp, modern, **WCAG-AAA** OKLCH additions (modus-vivendi, oxocarbon, rose-pine, everforest, kanagawa, flexoki, github-light, dayfox)
 - **Frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 10 animated blocks (spinners, clock, dice, progress bar, etc.). Frames may be single- **or multi-line** as of #69 (`jumping-jack` is the reference multi-line block)
 - **Dynamic-block cache** — the 5 cacheable blocks (weather, github-stats, github-languages, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
 - **Reduced-motion respected** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins AND (since v0.17) the frame cycle. SMIL-driven typing reveal, cursor walk, and scroll-on-overflow remain animated; pair with `--static` for full stillness
@@ -105,10 +105,23 @@ blocks:
 | `gruvbox` | Gruvbox Dark medium — retro warm contrast |
 | `high-contrast` | WCAG AAA pure-black-on-white palette — accessibility / slides / projector |
 
+**OKLCH WCAG-AAA additions** — sharp, modern, scanline-free; AAA body text (≥ 7:1), derived from the [400+ OKLCH scheme collection](https://williamzujkowski.github.io/oklch-terminal-themes/):
+
+| Theme | Description |
+|-------|-------------|
+| `modus-vivendi` | Maximally-legible neutral dark (Protesilaos) — 21:1 body text |
+| `oxocarbon` | IBM Carbon — cool high-contrast modern dark |
+| `rose-pine` | Muted rosé & iris, soho dusk |
+| `everforest` | Warm forest green, cozy low-glare |
+| `kanagawa` | Hokusai ink-wash — indigo, sand, wave-crest |
+| `flexoki` | Warm paper-and-ink reading palette (Steph Ango) |
+| `github-light` | Clean professional **light** theme |
+| `dayfox` | Soft warm-cream **light** theme |
+
 Special value: `theme: random` rotates through all themes deterministically by day of year — gives you a different look every day without committing to one.
 
 <details>
-<summary>Theme gallery — click to expand all 12</summary>
+<summary>Theme gallery — click to expand all 20</summary>
 
 Each is the same 2-block config (motd + neofetch) rendered against the named theme. Source in [`examples/gallery/_template.yml`](./examples/gallery/_template.yml).
 
@@ -120,6 +133,10 @@ Each is the same 2-block config (motd + neofetch) rendered against the named the
 | **solarized-dark**<br><img src="./examples/gallery/solarized-dark.svg" width="380" alt="solarized-dark theme preview"/> | **win95**<br><img src="./examples/gallery/win95.svg" width="380" alt="win95 theme preview"/> |
 | **catppuccin**<br><img src="./examples/gallery/catppuccin.svg" width="380" alt="catppuccin theme preview"/> | **tokyo-night**<br><img src="./examples/gallery/tokyo-night.svg" width="380" alt="tokyo-night theme preview"/> |
 | **gruvbox**<br><img src="./examples/gallery/gruvbox.svg" width="380" alt="gruvbox theme preview"/> | **high-contrast**<br><img src="./examples/gallery/high-contrast.svg" width="380" alt="high-contrast theme preview"/> |
+| **modus-vivendi**<br><img src="./examples/gallery/modus-vivendi.svg" width="380" alt="modus-vivendi theme preview"/> | **oxocarbon**<br><img src="./examples/gallery/oxocarbon.svg" width="380" alt="oxocarbon theme preview"/> |
+| **rose-pine**<br><img src="./examples/gallery/rose-pine.svg" width="380" alt="rose-pine theme preview"/> | **everforest**<br><img src="./examples/gallery/everforest.svg" width="380" alt="everforest theme preview"/> |
+| **kanagawa**<br><img src="./examples/gallery/kanagawa.svg" width="380" alt="kanagawa theme preview"/> | **flexoki**<br><img src="./examples/gallery/flexoki.svg" width="380" alt="flexoki theme preview"/> |
+| **github-light**<br><img src="./examples/gallery/github-light.svg" width="380" alt="github-light theme preview"/> | **dayfox**<br><img src="./examples/gallery/dayfox.svg" width="380" alt="dayfox theme preview"/> |
 
 </details>
 

@@ -16,7 +16,7 @@ export const solarizedDark: Theme = {
     // Lifted to a brighter Solarized-family blue.
     prompt: '#4eb3e8',
     cursor: '#2aa198',
-    red: '#dc322f',
+    red: '#e66663',
     green: '#859900',
     yellow: '#b58900',
     blue: '#268bd2',

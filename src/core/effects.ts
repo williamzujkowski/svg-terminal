@@ -47,16 +47,20 @@ export function generateFilters(effects: EffectsConfig, _glowColor?: string): st
   const parts: string[] = [];
 
   if (effects.textGlow) {
-    // Two-pass blur of the SourceGraphic, then composite back over it.
-    // SourceGraphic (not SourceAlpha) makes the halo inherit the text color —
-    // green text glows green, magenta glows magenta. No theme recolor needed.
+    // A single colored halo behind RAZOR-SHARP text. The glyphs themselves are
+    // never blurred — only a blurred copy sits BEHIND the unblurred
+    // SourceGraphic (last feMergeNode = on top). The old filter also blurred a
+    // "core" copy of the text (stdDeviation 0.6) and stacked it just under the
+    // sharp layer, softening every glyph edge — that, plus a wide stdDeviation-2
+    // halo, was the "glow makes it hard to read" complaint (#126). Now: one
+    // tight halo (1.4), no core blur → phosphor aura + crisp glyphs. SourceGraphic
+    // (not SourceAlpha) makes the halo inherit each token's color (green glows
+    // green, magenta glows magenta).
     parts.push(`
-    <filter id="textGlow" x="-10%" y="-10%" width="120%" height="120%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="core"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="halo"/>
+    <filter id="textGlow" x="-12%" y="-12%" width="124%" height="124%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="halo"/>
       <feMerge>
         <feMergeNode in="halo"/>
-        <feMergeNode in="core"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>`);

@@ -219,7 +219,7 @@ Editor:    neovim
 
     <g transform="translate(0, 453.6)" class="fade-in" style="animation-delay: 4100ms">
       <text class="tt">
-        <tspan fill="#cc241d">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#98971a">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#d79921">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#458588">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#b16286">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#689d6a">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#a89984">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#d65d0e">●</tspan>
+        <tspan fill="#e86560">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#98971a">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#d79921">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#458588">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#b16286">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#689d6a">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#a89984">●</tspan><tspan fill="#ebdbb2"> </tspan><tspan fill="#d65d0e">●</tspan>
       </text>
     </g>
       </g>

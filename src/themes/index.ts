@@ -11,6 +11,16 @@ import { catppuccin } from './catppuccin.js';
 import { tokyoNight } from './tokyo-night.js';
 import { gruvbox } from './gruvbox.js';
 import { highContrast } from './high-contrast.js';
+// OKLCH-derived, WCAG-AAA body text — sourced from the 400+ scheme collection
+// at https://williamzujkowski.github.io/oklch-terminal-themes/ (v1.2.0).
+import { modusVivendi } from './modus-vivendi.js';
+import { oxocarbon } from './oxocarbon.js';
+import { rosePine } from './rose-pine.js';
+import { everforest } from './everforest.js';
+import { kanagawa } from './kanagawa.js';
+import { flexoki } from './flexoki.js';
+import { githubLight } from './github-light.js';
+import { dayfox } from './dayfox.js';
 
 /** Built-in theme registry. */
 export const themes: Record<string, Theme> = {
@@ -26,6 +36,15 @@ export const themes: Record<string, Theme> = {
   'tokyo-night': tokyoNight,
   gruvbox,
   'high-contrast': highContrast,
+  // OKLCH WCAG-AAA additions (v1.2.0)
+  'modus-vivendi': modusVivendi,
+  oxocarbon,
+  'rose-pine': rosePine,
+  everforest,
+  kanagawa,
+  flexoki,
+  'github-light': githubLight,
+  dayfox,
 };
 
 /** User-registered themes; shadow built-ins when names collide. */
@@ -92,3 +111,4 @@ export function resolveTheme(nameOrTheme: string | Theme): Theme {
 }
 
 export { dracula, nord, monokai, amber, greenPhosphor, cyberpunk, solarizedDark, win95, catppuccin, tokyoNight, gruvbox, highContrast };
+export { modusVivendi, oxocarbon, rosePine, everforest, kanagawa, flexoki, githubLight, dayfox };

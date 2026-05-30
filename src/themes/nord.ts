@@ -14,7 +14,7 @@ export const nord: Theme = {
     titleBarText: '#d8dee9',
     prompt: '#a3be8c',
     cursor: '#88c0d0',
-    red: '#bf616a',
+    red: '#d08a91',
     green: '#a3be8c',
     yellow: '#ebcb8b',
     blue: '#5e81ac',

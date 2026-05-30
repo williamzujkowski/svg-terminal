@@ -11,7 +11,7 @@ export const gruvbox: Theme = {
     titleBarText: '#ebdbb2',
     prompt: '#b8bb26',          // bright_green
     cursor: '#fabd2f',          // bright_yellow
-    red: '#cc241d',             // red
+    red: '#e86560',             // red
     green: '#98971a',           // green
     yellow: '#d79921',          // yellow
     blue: '#458588',            // blue
