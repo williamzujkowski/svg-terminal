@@ -9,6 +9,9 @@ import { isIP } from 'node:net';
 /** Default fetch timeout in milliseconds. */
 export const DEFAULT_FETCH_TIMEOUT = 10000;
 
+/** Max redirect hops to follow before giving up (each hop is SSRF-revalidated). */
+const MAX_REDIRECTS = 5;
+
 /**
  * SSRF guard (#113, M3 from the v0.17.0 audit). No built-in block takes an
  * arbitrary URL — every cacheable block hardcodes its upstream host — but
@@ -39,6 +42,7 @@ function ipv4Blocked(ip: string): boolean {
   if (a === 172 && b >= 16 && b <= 31) return true;  // 172.16.0.0/12 private
   if (a === 192 && b === 168) return true;           // 192.168.0.0/16 private
   if (a === 100 && b >= 64 && b <= 127) return true; // 100.64.0.0/10 CGNAT
+  if (a === 255 && b === 255 && parts[2] === 255 && parts[3] === 255) return true; // limited broadcast
   return false;
 }
 
@@ -64,8 +68,10 @@ function ipv6Blocked(ip: string): boolean {
 /** True if the URL's literal host is a private/loopback/link-local address or
  *  a loopback hostname. See the SSRF guard doc above for the surrounding policy. */
 function isBlockedHost(hostname: string): boolean {
-  // URL.hostname keeps brackets on IPv6 literals; strip them.
-  const host = hostname.replace(/^\[|\]$/g, '').toLowerCase();
+  // URL.hostname keeps brackets on IPv6 literals; strip them. Also strip a
+  // single trailing dot (FQDN-root form) so `localhost.` / `127.0.0.1.` —
+  // which resolvers treat identically — can't slip past the checks below.
+  const host = hostname.replace(/^\[|\]$/g, '').replace(/\.$/, '').toLowerCase();
   if (host === 'localhost' || host.endsWith('.localhost')) return true;
   const kind = isIP(host);
   if (kind === 4) return ipv4Blocked(host);
@@ -180,15 +186,41 @@ export async function fetchWithTimeout(
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: { 'User-Agent': USER_AGENT },
-    });
-    if (!response.ok) {
-      console.warn(`[svg-terminal] HTTP ${response.status} from ${safeUrlForLog(url)}`);
-      return null;
+    // Follow redirects MANUALLY so the SSRF guard re-validates every hop
+    // (#113 F1). With the default `redirect: 'follow'`, an allowed public host
+    // could 3xx to http://169.254.169.254/ or http://localhost:N/ and the
+    // guard — which only ran on the initial URL — would never see it.
+    let currentUrl = url;
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      const response = await fetch(currentUrl, {
+        signal: controller.signal,
+        headers: { 'User-Agent': USER_AGENT },
+        redirect: 'manual',
+      });
+      if (response.status >= 300 && response.status < 400 && response.headers.has('location')) {
+        let next: string;
+        try {
+          next = new URL(response.headers.get('location')!, currentUrl).toString();
+        } catch {
+          console.warn(`[svg-terminal] Bad redirect Location from ${safeUrlForLog(currentUrl)}`);
+          return null;
+        }
+        const blockedHop = fetchBlockReason(next);
+        if (blockedHop) {
+          console.warn(`[svg-terminal] Refused redirect to ${safeUrlForLog(next)}: ${blockedHop}`);
+          return null;
+        }
+        currentUrl = next;
+        continue;
+      }
+      if (!response.ok) {
+        console.warn(`[svg-terminal] HTTP ${response.status} from ${safeUrlForLog(currentUrl)}`);
+        return null;
+      }
+      return response;
     }
-    return response;
+    console.warn(`[svg-terminal] Too many redirects (>${MAX_REDIRECTS}) fetching ${safeUrlForLog(url)}`);
+    return null;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.includes('abort')) {

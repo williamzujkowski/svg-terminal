@@ -195,6 +195,9 @@ describe('SSRF guard (#113) — fetchWithTimeout host/scheme policy', () => {
     ['cloud metadata IP', 'http://169.254.169.254/latest/meta-data/'],
     ['localhost name', 'http://localhost:8080/admin'],
     ['*.localhost name', 'http://api.localhost/'],
+    ['trailing-dot localhost', 'http://localhost./'],
+    ['trailing-dot loopback IP', 'http://127.0.0.1./'],
+    ['limited broadcast', 'http://255.255.255.255/'],
     ['loopback 127.x', 'http://127.0.0.1:5000/'],
     ['loopback 127.x (other)', 'https://127.255.255.254/'],
     ['private 10.x', 'http://10.0.0.5/'],
@@ -237,6 +240,39 @@ describe('SSRF guard (#113) — fetchWithTimeout host/scheme policy', () => {
       expect(result?.ok).toBe(true);
     });
   }
+
+  it('refuses a redirect to a blocked host without fetching it (#113 F1)', async () => {
+    const warns: string[] = [];
+    vi.spyOn(console, 'warn').mockImplementation((m: string) => { warns.push(m); });
+    const spy = vi.fn().mockResolvedValueOnce(
+      new Response(null, { status: 302, headers: { location: 'http://169.254.169.254/latest/' } }),
+    );
+    globalThis.fetch = spy;
+    const result = await fetchWithTimeout('https://redirector.example.com/');
+    expect(result).toBeNull();
+    expect(spy).toHaveBeenCalledOnce(); // the metadata host is NEVER fetched
+    expect(warns.some(w => w.includes('Refused redirect'))).toBe(true);
+  });
+
+  it('follows a redirect to an allowed host', async () => {
+    const spy = vi.fn()
+      .mockResolvedValueOnce(new Response(null, { status: 301, headers: { location: 'https://final.example.com/data' } }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }));
+    globalThis.fetch = spy;
+    const result = await fetchWithTimeout('https://start.example.com/');
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(result?.ok).toBe(true);
+  });
+
+  it('gives up after too many redirects', async () => {
+    const spy = vi.fn().mockResolvedValue(
+      new Response(null, { status: 302, headers: { location: 'https://loop.example.com/next' } }),
+    );
+    globalThis.fetch = spy;
+    const result = await fetchWithTimeout('https://loop.example.com/');
+    expect(result).toBeNull();
+    expect(spy.mock.calls.length).toBeLessThanOrEqual(6); // MAX_REDIRECTS + 1
+  });
 
   it('the refusal reason is logged with a scrubbed URL (no query string)', async () => {
     const warns: string[] = [];
