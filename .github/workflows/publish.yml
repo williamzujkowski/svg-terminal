@@ -1,0 +1,98 @@
+name: Publish
+
+# On every vX.Y.Z tag push: validate, extract the matching CHANGELOG section,
+# cut the GitHub Release from it (CHANGELOG.md is the single source of truth for
+# release notes), then publish to npm via OIDC trusted publishing — no
+# long-lived NPM_TOKEN. The floating `v<major>` tag is moved by release.yml,
+# which triggers on the same tags in parallel.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write   # create the GitHub Release
+  id-token: write   # OIDC token for npm trusted publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
+        with:
+          node-version: '22.22.3'   # matches the CI byte-stability pin
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Upgrade npm for OIDC trusted publishing
+        # Trusted publishing (no token) requires npm >= 11.5.1; node 22.22.3
+        # ships npm 10.x.
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify tag matches package.json version
+        env:
+          TZ: UTC
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "::error::Tag v$TAG does not match package.json version $PKG — bump package.json + CHANGELOG before tagging."
+            exit 1
+          fi
+          echo "version=$PKG" >> "$GITHUB_ENV"
+
+      - name: Gate — typecheck + lint + test + build + byte-stable demos
+        env:
+          TZ: UTC
+        run: |
+          set -euo pipefail
+          npm run typecheck
+          npm run lint
+          npm test
+          npm run build
+          npm run demo:regen
+          git diff --exit-code examples/ || {
+            echo "::error::examples/ drifted — run 'npm run demo' and commit before tagging.";
+            exit 1;
+          }
+
+      - name: Extract this version's CHANGELOG section
+        run: |
+          set -euo pipefail
+          # Lines from "## v<version> " up to (not including) the next "## " header.
+          awk -v hdr="## v${version} " '
+            index($0, hdr) == 1 { f = 1; print; next }
+            /^## / { if (f) exit }
+            f { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "::error::No CHANGELOG.md section found for v${version}."
+            exit 1
+          fi
+          echo "----- release notes -----"; cat RELEASE_NOTES.md
+
+      - name: Create GitHub Release from the CHANGELOG section
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release create "${GITHUB_REF_NAME}" \
+            --verify-tag \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md
+
+      - name: Publish to npm (OIDC trusted publishing — no token)
+        # npm detects the GitHub Actions OIDC environment and exchanges the
+        # id-token for a short-lived publish credential; provenance is attached
+        # automatically. Requires the trusted publisher to be configured on
+        # npmjs.com for this repo + workflow.
+        run: npm publish --access public
