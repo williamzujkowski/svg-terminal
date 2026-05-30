@@ -233,8 +233,11 @@ export interface Sequence {
   pause?: number;
   /** Delay before this sequence starts in ms */
   delay?: number;
-  /** Optional multi-frame payload — output sequences only. Each entry is one frame's content (newline-separated lines). Triggers frame-cycle rendering. */
-  frames?: string[];
+  /** Optional multi-frame payload — output sequences only. Each entry is one
+   *  frame; each frame is an array of rows. Multi-line frames are supported
+   *  (#69) — single-row frames (the common case) are `[oneLine]`. Triggers
+   *  frame-cycle rendering. */
+  frames?: string[][];
   /** Frames per second when `frames` is set (default 4, capped at 30). */
   framesFps?: number;
   /** Loop frames forever when set (default true). */
@@ -256,8 +259,9 @@ export interface AnimationFrame {
   typingDuration?: number;
   scrollLines?: number;
   bufferStart?: number;
-  /** Multi-frame payload — present only on add-output frames spawned from animated blocks. */
-  frames?: string[];
+  /** Multi-frame payload — present only on add-output frames spawned from
+   *  animated blocks. Each frame is an array of rows (#69 multi-line). */
+  frames?: string[][];
   framesFps?: number;
   framesLoop?: boolean;
   /** Width-pinning opt-in from BlockResult.pinWidth. */

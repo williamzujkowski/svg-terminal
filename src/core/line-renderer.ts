@@ -233,36 +233,68 @@ function buildRevealClip(
  */
 function generateAnimatedOutputLine(
   y: number,
-  frames: string[],
+  frames: string[][],
   color: string,
   startTime: number,
   colorMap: Record<string, string>,
   chrome: ChromeConfig,
   fps: number,
   loop: boolean,
+  lineHeight: number,
 ): string {
   const n = frames.length;
   // Total cycle duration in ms. frameDur = 1000/fps, cycle = n * frameDur.
   const frameDurMs = 1000 / fps;
   const cycleMs = Math.round(n * frameDurMs);
   const iter = loop ? 'infinite' : '1';
+  const height = Math.max(1, ...frames.map(f => f.length));
+  // animation shorthand for frame i: <name> <duration> <timing> <delay> <iter>.
+  // Per-frame delay positions each frame's visible window into its slot.
+  const animFor = (i: number): string =>
+    `animation: frame-cycle-${n} ${cycleMs}ms linear ${Math.round(i * frameDurMs)}ms ${iter}`;
+  // Resolve one row to its { fill attr, escaped/styled content } — markup is
+  // resolved per ROW so a multi-line frame can style each line independently (#69).
+  const renderRow = (row: string): { fill: string; content: string } => {
+    const styled = hasMarkup(row);
+    return {
+      fill: styled ? '' : ` fill="${escapeXml(color)}"`,
+      content: styled
+        ? generateStyledText(parseMarkup(row, colorMap, color), color, chrome.dimOpacity)
+        : escapeXml(row),
+    };
+  };
 
-  const textElements = frames.map((frame, i) => {
-    const styled = hasMarkup(frame);
-    const textContent = styled
-      ? generateStyledText(parseMarkup(frame, colorMap, color), color, chrome.dimOpacity)
-      : escapeXml(frame);
-    const textFill = styled ? '' : ` fill="${escapeXml(color)}"`;
-    // animation shorthand: <name> <duration> <timing> <delay> <iter>.
-    // Per-frame delay positions each text's visible window into its slot.
-    const delayMs = Math.round(i * frameDurMs);
-    const anim = `animation: frame-cycle-${n} ${cycleMs}ms linear ${delayMs}ms ${iter}`;
-    return `<text class="tt frame-cycle-${n}"${textFill} opacity="${i === 0 ? '1' : '0'}" style="${anim}">${textContent}</text>`;
-  }).join('');
+  let body: string;
+  if (height === 1) {
+    // Single-row frames (the common case — all 9 built-in animated blocks).
+    // Opacity animation lives on the <text> itself. Attribute order (class,
+    // fill, opacity, style) MUST stay exactly as below — this path is the
+    // #69 byte-identical merge gate, so existing snapshots + demos don't move.
+    body = frames.map((frame, i) => {
+      const { fill, content } = renderRow(frame[0] ?? '');
+      return `<text class="tt frame-cycle-${n}"${fill} opacity="${i === 0 ? '1' : '0'}" style="${animFor(i)}">${content}</text>`;
+    }).join('');
+  } else {
+    // Multi-row frames (#69): wrap each frame's H rows in a <g class="frame-cycle-N">
+    // and animate the GROUP's opacity (one animation per frame, not per row).
+    // `.tt` font-family/size/white-space inherit from the group to the rows.
+    // Ragged frames pad to `height` with empty rows so a shorter frame can't
+    // bleed a taller frame's rows through. Static opacity (frame-0 "1", rest
+    // "0") is the SMIL-stripping + reduced-motion fallback, same contract as
+    // the single-row path.
+    body = frames.map((frame, i) => {
+      const rows: string[] = [];
+      for (let r = 0; r < height; r++) {
+        const { fill, content } = renderRow(frame[r] ?? '');
+        rows.push(`<text y="${roundCoord(r * lineHeight)}"${fill}>${content}</text>`);
+      }
+      return `<g class="tt frame-cycle-${n}" opacity="${i === 0 ? '1' : '0'}" style="${animFor(i)}">${rows.join('')}</g>`;
+    }).join('');
+  }
 
   return `
     <g transform="translate(0, ${y})"${fadeInStyle(startTime)}>
-      ${textElements}
+      ${body}
     </g>`;
 }
 
@@ -340,6 +372,7 @@ export function generateAllLines(
             chromeConfig,
             frame.framesFps ?? 4,
             frame.framesLoop ?? true,
+            lineHeight,
           ),
         );
       } else {

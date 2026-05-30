@@ -36,10 +36,10 @@ The library converts a declarative YAML config into a single self-contained SVG 
 
 ### Blocks (`src/blocks/`)
 
-47 built-in blocks, all implementing `Block` from `src/types.ts` with a strict zod `configSchema`. Registered into a `Map` by `src/blocks/registry.ts`; `registerBuiltinBlocks()` runs on import of `src/index.ts`. Third parties call `registerBlock({ name, configSchema, render })` before `generate`.
+48 built-in blocks, all implementing `Block` from `src/types.ts` with a strict zod `configSchema`. Registered into a `Map` by `src/blocks/registry.ts`; `registerBuiltinBlocks()` runs on import of `src/index.ts`. Third parties call `registerBlock({ name, configSchema, render })` before `generate`.
 
 - **Dynamic blocks** (`weather`, `github-stats`, `github-languages`, `quote`, `fun-fact`) are marked `cacheable: true` and call `context.useCache(key, getter)` to participate in the on-disk cache (`.svg-terminal-cache.json`). They fall back to static defaults on fetch failure.
-- **Animated blocks** (9 of the 47: `loading-spinner`, `heartbeat`, `spinning-gear`, `blinking-eyes`, `countdown`, `ascii-clock`, `progress-bar`, `bouncing-dot`, `dice-roll`) populate `BlockResult.animation`. Single-line frames only — multi-line is a known restriction (issue #69).
+- **Animated blocks** (10 of the 48: `loading-spinner`, `heartbeat`, `spinning-gear`, `blinking-eyes`, `countdown`, `ascii-clock`, `progress-bar`, `bouncing-dot`, `dice-roll`, `jumping-jack`) populate `BlockResult.animation`. Frames may be **multi-line as of #69** — `jumping-jack` is the reference multi-line block; single-line frames remain the common case and render byte-identically to before (the renderer branches on frame height).
 - The `Block.allowedKeys` legacy field exists for downstream third-party compat; every built-in uses `configSchema` instead.
 
 ### SVG rendering (`src/core/`)
@@ -77,7 +77,11 @@ The `win95` theme is special-cased in `mergeConfig` to swap on its dedicated chr
 
 ### Animation primitive (`BlockResult.animation`)
 
-Single-line frame cycle. Each frame is a `string[]` (currently of length 1; multi-line was tracked in #69 which closed as wontfix). Renderer emits N `<text>` siblings sharing the same y, each with `class="tt frame-cycle-N"` + per-element inline `style="animation-delay: i*frameDurMs"` driven by a CSS `@keyframes frame-cycle-N` rule in the SVG `<style>` block. Static `opacity="1"` on frame 0 / `"0"` on others is the fallback for both SMIL-stripping renderers and `prefers-reduced-motion` users — see the line-renderer section above for the full migration narrative (v0.17). `loop: true` (default) → `animation-iteration-count: infinite`; `loop: false` → `1` (animation completes once then releases to the underlying opacity attribute = frame 0 visible). `fps` clamps to `[1, 30]` both at the runtime boundary and in each block's own configSchema (defense in depth).
+Frame cycle. Each frame is a `string[]` of rows (`BlockAnimation.frames` is `string[][]`); rows are carried losslessly through the timeline (`Sequence.frames` / `AnimationFrame.frames` are `string[][]` — #69 nexus B-PIPELINE, no join/split round-trip). The renderer branches on frame height (`generateAnimatedOutputLine`, `src/core/line-renderer.ts`):
+  - **Single-row frames** (the common case, all single-line animated blocks): N `<text class="tt frame-cycle-N">` siblings at the same y, each with inline `style="animation: frame-cycle-N …"`. This path is **byte-identical** to before #69 — the merge gate.
+  - **Multi-row frames** (`jumping-jack`): each frame is a `<g class="tt frame-cycle-N">` wrapping H `<text>` rows at `y = row*lineHeight`; the opacity animation lives on the **group** (one per frame, not per row). `.tt` font-family/size/`white-space` inherit from the group to the rows. Ragged frames pad to the tallest with empty rows. The timeline reserves `H = max(frame rows)` buffer lines (`animationHeight()` in `svg-generator.ts`) so auto-height + scroll geometry account for the full band.
+
+Both paths share the per-N `@keyframes frame-cycle-N` rule (keyed on frame *count*, height-independent) emitted in the SVG `<style>` block. Static `opacity="1"` on frame 0 / `"0"` on others is the fallback for both SMIL-stripping renderers and `prefers-reduced-motion` users — see the line-renderer section above for the full migration narrative (v0.17). `loop: true` (default) → `animation-iteration-count: infinite`; `loop: false` → `1` (animation completes once then releases to the underlying opacity attribute = frame 0 visible). `fps` clamps to `[1, 30]` both at the runtime boundary and in each block's own configSchema (defense in depth).
 
 ### Cache primitive (`BlockContext.useCache`)
 

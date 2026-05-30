@@ -25,12 +25,23 @@ import { SCROLL_ANIM_DURATION } from './defaults.js';
 // Auto-height calculation
 // ============================================================================
 
+/** Vertical rows an animated sequence occupies = the TALLEST frame. Frames
+ *  overlap in time (only one is visible per cycle slot), so the block's height
+ *  is max(frame rows), never the sum. Ragged frames pad up to this. #69. */
+function animationHeight(frames: string[][]): number {
+  return Math.max(1, ...frames.map(f => f.length));
+}
+
 /** Count total output lines from sequences (commands + output lines). */
 function countTotalLines(sequences: Sequence[]): number {
   let total = 0;
   for (const seq of sequences) {
     if (seq.type === 'command') {
       total += 1;
+    } else if (seq.frames && seq.frames.length > 0) {
+      // Animated output occupies the tallest frame's row count, not its
+      // (frame-0) content line count — ragged frames could be taller. #69.
+      total += animationHeight(seq.frames);
     } else {
       total += seq.content.split('\n').length;
     }
@@ -403,15 +414,19 @@ function createAnimationFrames(
         continue;
       }
 
-      // Animated output: emit one buffer line + one add-output carrying the frames payload.
-      // v1 restriction: every frame must be single-line. Multi-line spinners/mascots come later.
+      // Animated output: reserve H = tallest-frame rows in the buffer so
+      // auto-height, scroll geometry, and subsequent line y-positions account
+      // for the block's full height (#69 multi-line). lineIndex is the TOP row;
+      // the renderer draws each row downward from there. One add-output frame
+      // carries the whole frames payload.
       if (seq.frames && seq.frames.length > 0) {
-        buffer.push({ type: 'output' });
+        const height = animationHeight(seq.frames);
+        for (let r = 0; r < height; r++) buffer.push({ type: 'output' });
         frames.push({
           time: currentTime,
           type: 'add-output',
-          lineIndex: buffer.length - 1,
-          content: seq.frames[0]!, // frame 0 acts as the static fallback
+          lineIndex: buffer.length - height, // top row of the reserved band
+          content: seq.frames[0]!.join('\n'), // frame 0 acts as the static fallback
           color: seq.color,
           frames: seq.frames,
           framesFps: seq.framesFps,

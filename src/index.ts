@@ -162,7 +162,9 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
       pause: resolvePause(entry.pause ?? result.pause),
       pinWidth: result.pinWidth,
       ...(result.animation ? {
-        frames: result.animation.frames.map(f => f.join('\n')),
+        // Carry frames as string[][] (rows preserved) straight through the
+        // timeline — no lossy join/split round-trip (#69, nexus B-PIPELINE).
+        frames: result.animation.frames,
         framesFps: Math.min(30, Math.max(1, result.animation.fps ?? 4)),
         framesLoop: result.animation.loop ?? true,
       } : {}),

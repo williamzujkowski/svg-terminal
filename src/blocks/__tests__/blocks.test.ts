@@ -401,6 +401,31 @@ describe('v0.7 animated blocks', () => {
     });
   }
 
+  it('jumping-jack: every frame is multi-line (3 rows) — exercises #69', async () => {
+    const block = getBlock('jumping-jack')!;
+    expect(block).toBeDefined();
+    const result = await block.render(context, {});
+    expect(result.animation).toBeDefined();
+    expect(result.animation!.frames.length).toBe(2);
+    // The defining property: each frame is an array of >1 rows.
+    for (const frame of result.animation!.frames) {
+      expect(frame.length).toBe(3);
+    }
+    // Static fallback is frame 0's full 3 rows.
+    expect(result.lines).toEqual(result.animation!.frames[0]);
+    expect(result.lines.length).toBe(3);
+  });
+
+  it('jumping-jack: paints every row in the configured color', async () => {
+    const block = getBlock('jumping-jack')!;
+    const result = await block.render(context, { color: 'cyan' });
+    for (const frame of result.animation!.frames) {
+      for (const row of frame) {
+        expect(row).toContain('[[fg:cyan]]');
+      }
+    }
+  });
+
   it('countdown: frame count = from + 1 ("go" frame)', async () => {
     const block = getBlock('countdown')!;
     const result = await block.render(context, { from: 3 });

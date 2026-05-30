@@ -274,7 +274,7 @@ describe('SMIL-stripped fallback', () => {
     // frame 0. Now the <g> has no opacity attribute, so frame 0 shows.
     const seq: Sequence[] = [
       { type: 'output', content: 'pre' },
-      { type: 'output', content: 'spin', frames: [' / ', ' - ', ' \\ ', ' | '], framesFps: 4, framesLoop: true },
+      { type: 'output', content: 'spin', frames: [[' / '], [' - '], [' \\ '], [' | ']], framesFps: 4, framesLoop: true },
     ];
     const svg = generateSvg(seq, makeConfig());
     expect(svg).not.toMatch(/<g[^>]*opacity="0"/);
@@ -399,7 +399,7 @@ describe('prefers-reduced-motion (CSS fade-ins, #71)', () => {
     const seq: Sequence[] = [
       { type: 'command', content: 'hi' },
       { type: 'output', content: 'world' },
-      { type: 'output', content: 'spin', frames: ['/', '-', '\\', '|'], framesFps: 4, framesLoop: true },
+      { type: 'output', content: 'spin', frames: [['/'], ['-'], ['\\'], ['|']], framesFps: 4, framesLoop: true },
     ];
     const svg = generateSvg(seq, makeConfig());
     // At least 3 fade-in elements: prompt text, output line group, animated group.
@@ -559,7 +559,7 @@ describe('animated output (frame-cycle) — CSS @keyframes (#69)', () => {
     {
       type: 'output',
       content: 'A',
-      frames: ['A', 'B', 'C'],
+      frames: [['A'], ['B'], ['C']],
       framesFps: 3,
       framesLoop: true,
     },
@@ -601,7 +601,7 @@ describe('animated output (frame-cycle) — CSS @keyframes (#69)', () => {
     const seq: Sequence[] = [{
       type: 'output',
       content: 'A',
-      frames: ['A', 'B'],
+      frames: [['A'], ['B']],
       framesFps: 2,
       framesLoop: false,
     }];
@@ -623,8 +623,8 @@ describe('animated output (frame-cycle) — CSS @keyframes (#69)', () => {
   it('deduplicates @keyframes rules — same N → one rule', () => {
     // Two animated blocks with the same frame count (3) share one keyframes rule.
     const seq: Sequence[] = [
-      { type: 'output', content: 'A', frames: ['A','B','C'], framesFps: 3, framesLoop: true },
-      { type: 'output', content: 'X', frames: ['X','Y','Z'], framesFps: 3, framesLoop: true },
+      { type: 'output', content: 'A', frames: [['A'],['B'],['C']], framesFps: 3, framesLoop: true },
+      { type: 'output', content: 'X', frames: [['X'],['Y'],['Z']], framesFps: 3, framesLoop: true },
     ];
     const svg = generateSvg(seq, makeConfig());
     const matches = (svg.match(/@keyframes frame-cycle-3/g) ?? []).length;
@@ -634,6 +634,90 @@ describe('animated output (frame-cycle) — CSS @keyframes (#69)', () => {
   it('does not emit any frame-cycle keyframes when no animated blocks exist', () => {
     const svg = generateSvg(basicSequences, makeConfig());
     expect(svg).not.toContain('@keyframes frame-cycle-');
+  });
+});
+
+describe('multi-line animated frames (#69)', () => {
+  // Two 3-row frames. Default lineHeight = 14 × 1.8 = 25.2 → roundCoord → 25/50.
+  const ml: Sequence[] = [{
+    type: 'output',
+    content: 'r0\nr1\nr2',
+    frames: [['r0', 'r1', 'r2'], ['s0', 's1', 's2']],
+    framesFps: 2,
+    framesLoop: true,
+  }];
+
+  it('wraps each frame in a <g class="frame-cycle-N"> of stacked <text> rows', () => {
+    const svg = generateSvg(ml, makeConfig());
+    // Two groups, one per frame; each carries the frame-cycle class + animation.
+    const groups = svg.match(/<g class="tt frame-cycle-2" opacity="[01]" style="animation: frame-cycle-2 [^"]+">.*?<\/g>/g) ?? [];
+    expect(groups).toHaveLength(2);
+    // No per-<text> frame-cycle class in the multi-row path — it lives on the <g>.
+    expect(svg).not.toMatch(/<text class="tt frame-cycle-2"/);
+  });
+
+  it('stacks rows at y = row * lineHeight (0, 25, 50)', () => {
+    const svg = generateSvg(ml, makeConfig());
+    expect(svg).toContain('<text y="0" fill="#e4e4e4">r0</text>');
+    expect(svg).toContain('<text y="25" fill="#e4e4e4">r1</text>');
+    expect(svg).toContain('<text y="50" fill="#e4e4e4">r2</text>');
+  });
+
+  it('frame 0 group opacity="1", others "0" — SMIL-strip + reduced-motion fallback', () => {
+    const svg = generateSvg(ml, makeConfig());
+    expect(svg).toMatch(/<g class="tt frame-cycle-2" opacity="1"[^>]*>(<text[^>]*>(r0|r1|r2)<\/text>)/);
+    expect(svg).toMatch(/<g class="tt frame-cycle-2" opacity="0"[^>]*>(<text[^>]*>(s0|s1|s2)<\/text>)/);
+  });
+
+  it('reserves H rows of vertical space (next output line lands below the band)', () => {
+    // An animated 3-row block followed by a plain output line: the plain line
+    // must render at lineIndex 3 (y = roundLineY(3 × 25.2) = 75.6), not overlap
+    // the animation band. If the buffer reserved only 1 row, it'd land at 25.2.
+    const seq: Sequence[] = [
+      { type: 'output', content: 'r0\nr1\nr2', frames: [['r0', 'r1', 'r2']], framesFps: 2, framesLoop: true },
+      { type: 'output', content: 'after' },
+    ];
+    const svg = generateSvg(seq, makeConfig());
+    expect(svg).toMatch(/translate\(0, 75\.6\)"[^>]*>\s*<text class="tt"[^>]*>\s*after/);
+    expect(svg).not.toContain('translate(0, 25.2)'); // would mean only 1 row reserved
+  });
+
+  it('pads ragged frames to the tallest with empty trailing rows', () => {
+    // Frame 0 is 2 rows, frame 1 is 3 rows → height 3; frame 0 gets an empty row 2.
+    const seq: Sequence[] = [{
+      type: 'output',
+      content: 'a0\na1',
+      frames: [['a0', 'a1'], ['b0', 'b1', 'b2']],
+      framesFps: 2,
+      framesLoop: true,
+    }];
+    const svg = generateSvg(seq, makeConfig());
+    // Frame 0's group ends with an empty row at y=50.
+    expect(svg).toMatch(/<g class="tt frame-cycle-2" opacity="1"[^>]*>.*?<text y="50" fill="[^"]*"><\/text><\/g>/);
+  });
+
+  it('resolves markup per row (each line styles independently)', () => {
+    const seq: Sequence[] = [{
+      type: 'output',
+      content: 'plain\nstyled',
+      frames: [['plain', '[[fg:red]]styled[[/fg]]']],
+      framesFps: 2,
+      framesLoop: true,
+    }];
+    const svg = generateSvg(seq, makeConfig());
+    // Row 0 plain (fill on <text>), row 1 styled (tspan, no <text> fill).
+    expect(svg).toContain('<text y="0" fill="#e4e4e4">plain</text>');
+    expect(svg).toMatch(/<text y="25"><tspan fill="[^"]*">styled<\/tspan><\/text>/);
+  });
+
+  it('single-row frames still take the byte-identical <text>-per-frame path', () => {
+    const seq: Sequence[] = [{
+      type: 'output', content: 'A', frames: [['A'], ['B']], framesFps: 2, framesLoop: true,
+    }];
+    const svg = generateSvg(seq, makeConfig());
+    // H=1 → <text class="frame-cycle-N">, NOT a <g class="frame-cycle-N"> wrapper.
+    expect(svg).toMatch(/<text class="tt frame-cycle-2"[^>]*>A<\/text>/);
+    expect(svg).not.toMatch(/<g class="tt frame-cycle-2"/);
   });
 });
 

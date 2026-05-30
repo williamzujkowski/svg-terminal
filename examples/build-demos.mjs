@@ -80,7 +80,7 @@ async function buildGallery() {
 
 /**
  * Per-block catalog (closes #118): one SVG per block + an index README so
- * users can SEE what each of the 47 built-ins renders, not just read the
+ * users can SEE what each of the 48 built-ins renders, not just read the
  * one-line description. CI's `git diff --exit-code` keeps it in sync.
  *
  * For blocks that need required config to render meaningfully (weather,
@@ -96,7 +96,7 @@ const BLOCK_CATALOG_CONFIG = {
   'github-stats': { username: 'octocat' },
   'github-languages': { username: 'octocat' },
   // motd shows weather embed if weather is set — keep static for the catalog
-  motd: { title: 'WELCOME', subtitle: 'A 47-block catalog' },
+  motd: { title: 'WELCOME', subtitle: 'A 48-block catalog' },
   // quote + fun-fact normally fetch random content per render — pin to a
   // fixed fallback string so the catalog SVG is byte-stable across regen
   // passes (CI gate: `npm run demo:regen && git diff --exit-code examples/`).

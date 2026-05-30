@@ -18,7 +18,7 @@ Generate animated SVG terminals from a declarative YAML config. The output is a 
 ```bash
 npx svg-terminal init                       # writes terminal.yml
 npx svg-terminal generate                   # writes terminal.svg
-npx svg-terminal blocks                     # lists all 47 blocks
+npx svg-terminal blocks                     # lists all 48 blocks
 ```
 
 Or as a GitHub Action — refresh your profile README on a schedule:
@@ -31,14 +31,14 @@ Or as a GitHub Action — refresh your profile README on a schedule:
     commit: true
 ```
 
-See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (47 blocks, one preview each), and the [12-theme gallery](#themes).
+See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (48 blocks, one preview each), and the [12-theme gallery](#themes).
 
 ### What's in the box
 
 - **Declarative YAML config** — write blocks, pick a theme, run the CLI
-- **47 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single-line animation, and humor categories. Browse the [block catalog](./examples/blocks/) for previews of each
+- **48 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single- and multi-line animation, and humor categories. Browse the [block catalog](./examples/blocks/) for previews of each
 - **12 built-in themes** — dracula, nord, monokai, amber, green-phosphor, cyberpunk, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast (with chrome to match)
-- **Single-line frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 9 animated blocks (spinners, clock, dice, progress bar, etc.). Multi-line is a known restriction
+- **Frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 10 animated blocks (spinners, clock, dice, progress bar, etc.). Frames may be single- **or multi-line** as of #69 (`jumping-jack` is the reference multi-line block)
 - **Dynamic-block cache** — the 5 cacheable blocks (weather, github-stats, github-languages, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
 - **Reduced-motion respected** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins AND (since v0.17) the frame cycle. SMIL-driven typing reveal, cursor walk, and scroll-on-overflow remain animated; pair with `--static` for full stillness
 - **Schema-validated, XSS-safe** — strict zod schema on every config field; user-controllable values are escaped at SVG emit sites. See [SECURITY.md](./SECURITY.md)
@@ -125,7 +125,7 @@ Each is the same 2-block config (motd + neofetch) rendered against the named the
 
 ## Blocks
 
-Run `svg-terminal blocks` to list all 47 (cacheable ones marked `*`), or `svg-terminal blocks <name>` to print one block's config schema directly without grepping the source.
+Run `svg-terminal blocks` to list all 48 (cacheable ones marked `*`), or `svg-terminal blocks <name>` to print one block's config schema directly without grepping the source.
 
 | Block | Description |
 |-------|-------------|
@@ -172,6 +172,7 @@ Run `svg-terminal blocks` to list all 47 (cacheable ones marked `*`), or `svg-te
 | `progress-bar` | Fake build progress bar that fills 0% → 100% |
 | `bouncing-dot` | Single glyph bouncing left ↔ right |
 | `dice-roll` | N d6 dice that tumble and land on a result |
+| `jumping-jack` | Multi-line stick figure doing jumping jacks (reference multi-line animation) |
 | `palette-swatch` | One-line render of all 16 theme palette colors |
 | `semver-bump` | Current semver + bump preview (major/minor/patch) |
 | `ascii-calendar` | Current-month calendar grid with today highlighted |
@@ -230,7 +231,7 @@ accessibility:
   describe: false   # default true — emit <desc> with full content
 ```
 
-**Reduced-motion caveat.** The SVG emits an inline `@media (prefers-reduced-motion: reduce)` rule, but it only applies to CSS animations. The typing reveal, cursor walk, scroll, and frame-cycle animations are SMIL (`<animate>` elements) and SMIL doesn't read the same CSS media query. Users who set the OS-level reduced-motion preference will still see full-speed animation. If that's a problem for your audience, generate with `--static` — same content, no motion at all.
+**Reduced-motion caveat.** The SVG emits an inline `@media (prefers-reduced-motion: reduce)` rule, which applies to CSS animations — the fade-ins and the frame cycle (single- and multi-line) honor it (migrated SMIL → CSS in v0.17). The remaining SMIL holdouts — typing reveal, cursor walk, and scroll-on-overflow — don't read the same CSS media query, so users who set the OS-level reduced-motion preference still see those animate. If that's a problem for your audience, generate with `--static` — same content, no motion at all.
 
 ### Caching API responses
 

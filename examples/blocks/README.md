@@ -1,6 +1,6 @@
 # Block catalog
 
-47 built-in blocks. One SVG per block; click a thumbnail to view full size.
+48 built-in blocks. One SVG per block; click a thumbnail to view full size.
 
 Regenerate: `npm run demo` (auto-built from `listBlocks()` so a new block gets a catalog row for free).
 
@@ -53,5 +53,6 @@ Regenerate: `npm run demo` (auto-built from `listBlocks()` so a new block gets a
 | `semver-bump` | Current semver + bump preview (major/minor/patch) | <img src="./semver-bump.svg" alt="semver-bump preview" width="320"/> |
 | `ascii-calendar` | Current-month calendar grid with today highlighted | <img src="./ascii-calendar.svg" alt="ascii-calendar preview" width="320"/> |
 | `toc` | Auto-generates a markdown anchor-link table of contents | <img src="./toc.svg" alt="toc preview" width="320"/> |
+| `jumping-jack` | A multi-line stick figure doing jumping jacks | <img src="./jumping-jack.svg" alt="jumping-jack preview" width="320"/> |
 
 `*` = cacheable block (participates in the on-disk dynamic-block cache).

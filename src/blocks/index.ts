@@ -50,6 +50,7 @@ import { paletteSwatchBlock } from './palette-swatch.js';
 import { semverBumpBlock } from './semver-bump.js';
 import { asciiCalendarBlock } from './ascii-calendar.js';
 import { tocBlock } from './toc.js';
+import { jumpingJackBlock } from './jumping-jack.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -101,6 +102,7 @@ export function registerBuiltinBlocks(): void {
     semverBumpBlock,
     asciiCalendarBlock,
     tocBlock,
+    jumpingJackBlock,
   ]);
 }
 
@@ -152,3 +154,4 @@ export { paletteSwatchBlock } from './palette-swatch.js';
 export { semverBumpBlock } from './semver-bump.js';
 export { asciiCalendarBlock } from './ascii-calendar.js';
 export { tocBlock } from './toc.js';
+export { jumpingJackBlock } from './jumping-jack.js';
