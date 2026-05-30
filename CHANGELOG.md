@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.1.0 — 2026-05-30 — multi-line animation + SSRF hardening + GA toolchain
+
+First minor since the marketplace launch. Adds multi-line animation support (closes the long-standing #69 restriction), an SSRF guard on the public fetch surface, and moves the dev toolchain onto the current GA majors. 434 tests, byte-stable demos, lint + typecheck clean.
+
+### Added
+
+- **Multi-line animated frames (`#69`).** The animation primitive's frames can now span multiple rows — an ASCII mascot, a multi-row spinner — not just one line. `BlockAnimation.frames` was already `string[][]`; the rows are now carried losslessly through the internal timeline (the `\n`-join/split round-trip is gone) and the renderer branches on frame height:
+  - **Single-row frames** (every existing animated block): unchanged, **byte-identical** output — the merge gate that keeps all demos + snapshots stable.
+  - **Multi-row frames**: each frame is a `<g class="frame-cycle-N">` wrapping H `<text>` rows, opacity animation on the group; the timeline reserves `H = max(frame rows)` so auto-height + scroll geometry stay correct; ragged frames pad to the tallest; markup resolves per row. Same reduced-motion + SMIL-strip fallback contract (frame-0 group visible).
+  - Design picked via a nexus consensus vote (85.7% supermajority, Option B + B-PIPELINE).
+- **`jumping-jack` block** — a 3-row stick figure doing jumping jacks; the reference multi-line animated block. **48 blocks / 10 animated** now.
+
+### Security
+
+- **SSRF guard on `fetchWithTimeout` (`#113`, M3).** The public fetch surface now refuses non-`http(s)` schemes and literal private / loopback / link-local hosts (`127/8`, `10/8`, `172.16/12`, `192.168/16`, `169.254/16` incl. cloud metadata, `100.64/10`, `0/8`, broadcast, `::1`, `fe80::/10`, `fc00::/7`, IPv4-mapped equivalents, `localhost` incl. the trailing-dot form) before any network I/O. **Redirects are followed manually and re-validated on every hop** (capped at 5) so an allowed host can't 3xx into a blocked one. Defense-in-depth for third-party `registerBlock` consumers — a synchronous literal-host check; DNS rebinding is out of scope (documented). Found + hardened via an adversarial self-review (redirect re-validation, trailing-dot `localhost.`, and broadcast were review findings, fixed before release).
+
+### Changed
+
+- **Dev toolchain on GA majors:** TypeScript 5.9 → 6.0, ESLint 9 → 10 (with `@eslint/js` now an explicit devDep — eslint 10 no longer exposes it transitively), Vitest on 4.x. `tsconfig` gains `types: ["node"]` (TS6 stopped auto-including `@types/node` globals) and `ignoreDeprecations: "6.0"` (silences the `baseUrl` deprecation that tsup's DTS build trips; revisit at TS7). `@types/node` stays on `^22` to track the `engines` floor. GitHub Actions were already SHA-pinned to current majors (checkout v6, setup-node v6, codeql v3); Node stays on the 22 LTS line for byte-stability.
+- **Docs:** README + CLAUDE.md updated for multi-line + the 48-block count; fixed a stale README reduced-motion caveat that still listed frame-cycle as SMIL (it's been CSS since v0.17).
+
+### Tests
+
+- 434 passing (+36: 11 multi-line, 25 SSRF). Lint + typecheck clean. Demos byte-stable (single-line animation output unchanged; new `jumping-jack` catalog SVG + a `47→48` count bump are the only example deltas).
+
+### Known follow-ups
+
+- `#124` — a multi-line block taller than the viewport clips instead of scrolling (LOW; autoHeight handles the common path).
+- `#125` — `engines.node` floor is looser than eslint 10's dev requirement (dev-only).
+- `#123` — an intermittent parallel-test flake observed once during validation.
+
 ## v1.0.0 — 2026-05-27 — GitHub Marketplace launch
 
 First stable release. svg-terminal is now published on npm and listed on the GitHub Actions Marketplace. The v0.x line is feature-complete: 47 blocks, 12 themes, full SVG sandbox compatibility, defense-in-depth XSS / DoS / shell-injection guards, CodeQL clean.
