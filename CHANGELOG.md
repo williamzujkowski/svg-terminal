@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.2.1 — 2026-05-30 — documentation accuracy pass
+
+Docs-only patch (no code or SVG changes). A full audit (3 fan-out reviewers cross-checking docs against the source) closed real gaps:
+
+- **GitHub Action outputs documented.** The README's Action section listed inputs only — all five outputs (`svg-path`, `svg-bytes`, `svg-size`, `svg-sha256`, `svg-changed`) were undocumented, so `svg-changed` (the commit-gating signal) was undiscoverable. Added Inputs + Outputs tables and an example reading them.
+- **CLI reference added.** `--minify`, `--strict`, `--timings`, `--explain`, `--cache-mode` were documented nowhere user-facing — added a full commands + flags reference.
+- **Config keys documented.** `chrome`, `variables`, `maxDuration`, `scrollDuration`, `fetchTimeout`, `accessibilityLabel` were absent from the README — added a top-level-keys table. Documented the `[[bg:color]]` markup tag + raw-hex colors.
+- **Stale counts fixed.** `package.json` description ("47 blocks, 12 themes" → 48 / 20, shown on npm); CONTRIBUTING `ThemeColors` slot count (24 → 25); PR-template test baseline (220+ → 464+); CLAUDE.md built-CLI line (added `--cache-mode`/`--timings`/`--explain`) and a passed "removal planned for v1.0" deprecation note.
+
+Every documented key/flag/output was verified against `schema.ts` / `cli.ts` / `action.yml`.
+
 ## v1.2.0 — 2026-05-30 — OKLCH WCAG-AAA themes + legibility polish
 
 Doubles down on legibility and color: **12 → 20 themes**, a sharper CRT glow, and WCAG fixes to existing palettes. 464 tests.

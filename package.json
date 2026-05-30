@@ -1,6 +1,6 @@
 {
   "name": "svg-terminal",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Generate animated SVG terminals for GitHub READMEs from a declarative YAML config. 48 built-in blocks, 20 themes, zero runtime deps in the output.",
   "type": "module",
   "main": "dist/index.js",
