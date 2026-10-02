@@ -15,7 +15,7 @@ process.env.TZ = 'UTC';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { generate, generateStatic, getBlock, listBlocks } from '../dist/index.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));

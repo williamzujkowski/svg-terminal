@@ -4,7 +4,7 @@
  */
 
 import type { AnimationConfig, AnimationFrame, ChromeConfig, StyledSpan, TerminalTextConfig, ThemeColors } from '../types.js';
-import { buildColorMap, hasMarkup, parseMarkup } from './markup-parser.js';
+import { buildColorMap, hasMarkup, parseMarkup, resolveColor } from './markup-parser.js';
 import { escapeXml, getTextWidth, roundCoord } from './xml.js';
 import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHROME } from './defaults.js';
 
@@ -366,7 +366,7 @@ export function generateAllLines(
           generateAnimatedOutputLine(
             y,
             frame.frames,
-            frame.color ?? colors.text,
+            resolveColor(frame.color ?? colors.text, colorMap, colors.text),
             frame.time,
             colorMap,
             chromeConfig,
@@ -381,7 +381,7 @@ export function generateAllLines(
           generateOutputLine(
             y,
             frame.content ?? '',
-            frame.color ?? colors.text,
+            resolveColor(frame.color ?? colors.text, colorMap, colors.text),
             frame.time,
             colorMap,
             chromeConfig,

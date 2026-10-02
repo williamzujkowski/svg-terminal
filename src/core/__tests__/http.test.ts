@@ -1,6 +1,61 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { fetchWithTimeout, fetchJson, fetchText } from '../http.js';
 
+describe.each([
+  ['JSON', fetchJson],
+  ['text', fetchText],
+] as const)('%s body failures', (_name, read) => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('times out and cancels a stalled body after headers arrive', async () => {
+    vi.useFakeTimers();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const cancel = vi.fn();
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) { controller.enqueue(new TextEncoder().encode('{"partial":')); },
+      cancel,
+    });
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response(body));
+    const pending = read('https://example.com/slow?token=secret', 50);
+    await vi.advanceTimersByTimeAsync(50);
+    await expect(pending).resolves.toBeNull();
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Timeout after 50ms'));
+    expect(warn.mock.calls.flat().join(' ')).not.toContain('token=secret');
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('returns null when a body stream fails', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const body = new ReadableStream({
+      start(controller) { controller.error(new Error('connection reset while reading')); },
+    });
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response(body));
+    await expect(read('https://example.com/broken')).resolves.toBeNull();
+  });
+
+  it('shares a single deadline across redirects and body consumption', async () => {
+    vi.useFakeTimers();
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const cancel = vi.fn();
+    globalThis.fetch = vi.fn()
+      .mockImplementationOnce(() => new Promise(resolve => setTimeout(() => resolve(
+        new Response(null, { status: 302, headers: { location: '/final' } }),
+      ), 30)))
+      .mockResolvedValueOnce(new Response(new ReadableStream({ cancel })));
+    const pending = read('https://example.com/start', 50);
+    await vi.advanceTimersByTimeAsync(50);
+    await expect(pending).resolves.toBeNull();
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+});
+
 describe('fetchWithTimeout', () => {
   const originalFetch = globalThis.fetch;
 

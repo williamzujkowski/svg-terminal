@@ -110,15 +110,19 @@ describe('minifySvg', () => {
     expect(minifySvg('   \n  \n  ')).toBe('');
   });
 
-  it('does not collapse a single newline+indent inside text nodes (regression guard)', () => {
-    // A newline inside <text> would be unusual but should not be eaten.
-    // The \n\s+ regex collapses leading indent on continuation lines, which
-    // matches both inter-tag indent AND text-internal indent. This test
-    // documents that current behavior: text-internal newlines DO get
-    // collapsed to single \n. The acceptance criterion is that inter-word
-    // spaces survive.
+  it('preserves newline and indentation inside text nodes', () => {
     const svg = '<text>line1\n  line2</text>';
-    expect(minifySvg(svg)).toBe('<text>line1\nline2</text>');
+    expect(minifySvg(svg)).toBe(svg);
+  });
+
+  it('preserves whitespace-only spans and spacing between spans', () => {
+    const svg = '<text><tspan>   </tspan><tspan>A</tspan>   <tspan>B</tspan></text>';
+    expect(minifySvg(svg)).toBe(svg);
+  });
+
+  it('preserves quoted attributes, comments, CDATA, and xml:space subtrees', () => {
+    const svg = '<svg>\n<g xml:space="preserve"><g>  </g>\n</g>\n<text data-label="a > b">x</text>\n<!-- <text> -->\n<![CDATA[  <g>  ]]>\n</svg>';
+    expect(minifySvg(svg)).toBe('<svg><g xml:space="preserve"><g>  </g>\n</g><text data-label="a > b">x</text><!-- <text> --><![CDATA[  <g>  ]]></svg>');
   });
 });
 

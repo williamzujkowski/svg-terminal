@@ -1,7 +1,7 @@
 /**
  * Pure helpers extracted from `src/cli.ts` so they can be unit-tested without
  * spawning a child process. The CLI itself stays hand-rolled (no
- * commander/yargs — deliberate per CLAUDE.md) and re-imports these.
+ * commander/yargs — deliberate per AGENTS.md) and re-imports these.
  *
  * Everything in this file MUST be a pure function. No I/O, no `process.exit`,
  * no `console.log` — the CLI is the only place that talks to stdout/stderr.
@@ -44,25 +44,26 @@ export function humanAge(seconds: number): string {
 /**
  * Collapse inter-element whitespace in an SVG string.
  *
- * Conservative — only strips whitespace that sits **between** tags. The two
- * regexes are deliberately narrow:
- *   - `/>\s+</g`  collapses newlines/indent between `</foo>` and `<bar>`.
- *   - `/\n\s+/g` collapses leading indent on a continuation line.
- *
- * What this MUST NOT touch:
- *   - Attribute values (no `\s` inside `"…"`).
- *   - Text-node content inside `<text>` — the SVG sets `white-space: pre` so
- *     a literal space in a label is meaningful. The `>\s+<` pattern only
- *     matches when whitespace is bracketed by `>` then `<`, so `<text>hello
- *     world</text>` keeps its space (the space is between `>` and `w`).
- *
- * The final `^\s+|\s+$` trims the document edges.
+ * Keep text containers and xml:space="preserve" subtrees intact, including
+ * whitespace-only spans. Tokenizing tags also preserves quoted attributes,
+ * comments, and CDATA without confusing their contents with XML structure.
  */
 export function minifySvg(svg: string): string {
-  return svg
-    .replace(/>\s+</g, '><')
-    .replace(/\n\s+/g, '\n')
-    .replace(/^\s+|\s+$/g, '');
+  const tokens = svg.match(/<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<(?:"[^"]*"|'[^']*'|[^'">])*>|[^<]+/g) ?? [];
+  const preserve: boolean[] = [];
+  return tokens.map(token => {
+    if (token.startsWith('</')) {
+      preserve.pop();
+    } else if (/^<[A-Za-z]/.test(token) && !token.endsWith('/>')) {
+      const name = /^<([\w:-]+)/.exec(token)?.[1];
+      const textContainer = /^(?:text|tspan|textPath|title|desc|style)$/.test(name ?? '');
+      const space = /\bxml:space\s*=\s*["'](preserve|default)["']/.exec(token)?.[1];
+      preserve.push(textContainer || space === 'preserve' || (space !== 'default' && (preserve.at(-1) ?? false)));
+    } else if (!token.startsWith('<') && !preserve.at(-1) && /^\s+$/.test(token)) {
+      return '';
+    }
+    return token;
+  }).join('').trim();
 }
 
 /**
@@ -123,8 +124,7 @@ function isCacheMode(s: string): s is CacheMode {
  * - A `value` flag consumes the next token. Missing value → throws.
  * - Tokens not starting with `--` are positional.
  * - `--` ends flag parsing (POSIX convention); everything after is positional.
- * - Unknown `--foo` flags accumulate in `unknown` (caller decides whether to
- *   error or warn — the CLI today doesn't validate, but tests do).
+ * - Unknown `--foo` flags accumulate in `unknown` (the CLI warns for generate).
  */
 export interface FlagSpec {
   boolean?: readonly string[];

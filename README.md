@@ -324,6 +324,8 @@ svg-terminal generate --no-cache            # bypass cache entirely (don't read,
 
 Custom blocks declare a strict zod `configSchema` so typos throw `BlockConfigError` at config-load time instead of silently falling back to defaults. Skipping the schema is allowed but discouraged — see [CONTRIBUTING.md](./CONTRIBUTING.md#adding-a-new-block).
 
+Both `generate()` and `generateStatic()` pass the schema's parsed object to `render()`, including defaults and transformations. The schema must produce an object.
+
 ```typescript
 import { z } from 'zod';
 import { registerBlock, generate } from 'svg-terminal';
@@ -420,6 +422,7 @@ The action commits as `github-actions[bot]`; the `commit` input only runs `git a
 | `config` | `terminal.yml` | Path to the YAML config file |
 | `output` | `terminal.svg` | Output SVG file path |
 | `cache-mode` | `normal` | Dynamic-block cache behavior: `normal` \| `refresh` \| `frozen` \| `off` |
+| `strict` | `false` | Treat config warnings and over-tall animated bands as errors |
 | `static` | `false` | Generate a non-animated SVG (final-frame snapshot) |
 | `minify` | `false` | Strip inter-element whitespace from the output |
 | `commit` | `false` | Auto-commit the generated SVG (needs `permissions: contents: write`) |

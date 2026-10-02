@@ -33,7 +33,7 @@ export async function loadConfig(filePath: string): Promise<UserConfig> {
     throw new ConfigError(`Cannot read config file: ${filePath}\n  ${(err as Error).message}`);
   }
 
-  const { default: yaml } = await import('js-yaml');
+  const yaml = await import('js-yaml');
   let parsed: unknown;
   try {
     parsed = yaml.load(raw);

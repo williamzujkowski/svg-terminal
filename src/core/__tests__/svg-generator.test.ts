@@ -795,6 +795,34 @@ describe('over-tall animated band (#124)', () => {
   });
 });
 
+describe('animated bands near the bottom of the viewport', () => {
+  const sequences: Sequence[] = [
+    { type: 'command', content: 'echo', typingDuration: 100 },
+    { type: 'output', content: 'one\ntwo\nthree' },
+    { type: 'command', content: 'exercise', typingDuration: 100 },
+    { type: 'output', content: 'head\nbody\nfeet', frames: [['head', 'body', 'feet'], ['HEAD', 'BODY', 'FEET']] },
+  ];
+
+  it.each([false, true])('scrolls the full band into view with autoHeight=%s', autoHeight => {
+    const config = makeConfig({ window: { ...DEFAULT_CONFIG.window, autoHeight, height: 200, minHeight: 100, maxHeight: 200 } });
+    const svg = generateSvg(sequences, config);
+    const scroll = /<animateTransform[\s\S]*?values="([^"]+)"[\s\S]*?dur="([\d.]+)ms"/.exec(svg);
+    expect(scroll).not.toBeNull();
+    const finalY = Number(scroll![1]!.split(';').at(-1)!.split(' ')[1]);
+    const band = /translate\(0, ([\d.]+)\)" class="fade-in" style="animation-delay: ([\d.]+)ms">\s*<g class="tt frame-cycle-2"/.exec(svg);
+    expect(band).not.toBeNull();
+    const lastRowY = finalY + Number(band![1]) + 2 * config.text.fontSize * config.text.lineHeight;
+    expect(lastRowY).toBeLessThan(200 - config.text.padding);
+    expect(Number(band![2])).toBeGreaterThanOrEqual(Number(scroll![2]));
+  });
+
+  it('resolves palette colors on animated frames', () => {
+    const config = makeConfig();
+    const svg = generateSvg([{ type: 'output', content: 'a', frames: [['a'], ['b']], color: 'brightRed' }], config);
+    expect(svg).toContain(`class="tt frame-cycle-2" fill="${config.theme.colors.brightRed}"`);
+  });
+});
+
 describe('accessibility', () => {
   const a11ySeq: Sequence[] = [
     { type: 'command', content: 'whoami', typingDuration: 200 },

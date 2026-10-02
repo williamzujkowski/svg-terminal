@@ -130,23 +130,29 @@ const MAX_RESPONSE_BYTES = 1024 * 1024;
  * Read a Response body but abort when MAX_RESPONSE_BYTES is exceeded.
  * Returns the buffered text or null if the cap fires.
  */
-async function readCappedText(response: Response, url: string): Promise<string | null> {
+async function readCappedText(response: Response, url: string, signal: AbortSignal): Promise<string | null> {
   // Fast path: respect Content-Length when present.
   const contentLength = response.headers.get('content-length');
   if (contentLength && Number(contentLength) > MAX_RESPONSE_BYTES) {
+    void response.body?.cancel().catch(() => {});
     console.warn(`[svg-terminal] Response too large (${contentLength} bytes, cap ${MAX_RESPONSE_BYTES}) from ${safeUrlForLog(url)}`);
     return null;
   }
   // Stream the body so we can short-circuit even when Content-Length is absent
-  // or lies. We're past the timeout's headers-arrived window here.
+  // or lies. The request deadline remains active throughout the body read.
   const reader = response.body?.getReader();
   if (!reader) return response.text(); // edge: no body stream (test mocks)
+
+  const cancel = (): void => { void reader.cancel().catch(() => {}); };
+  signal.addEventListener('abort', cancel, { once: true });
+  if (signal.aborted) cancel();
 
   const chunks: Uint8Array[] = [];
   let total = 0;
   try {
     while (true) {
       const { done, value } = await reader.read();
+      signal.throwIfAborted();
       if (done) break;
       total += value.length;
       if (total > MAX_RESPONSE_BYTES) {
@@ -157,6 +163,7 @@ async function readCappedText(response: Response, url: string): Promise<string |
       chunks.push(value);
     }
   } finally {
+    signal.removeEventListener('abort', cancel);
     reader.releaseLock();
   }
   return new TextDecoder().decode(Buffer.concat(chunks));
@@ -167,13 +174,14 @@ declare const __PKG_VERSION__: string;
 const USER_AGENT = `svg-terminal/${typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev'}`;
 
 /**
- * Fetch a URL with a timeout. Returns the Response or null on failure.
- * Never throws — all errors are caught and logged.
+ * Share redirect validation, deadline enforcement, and fallback handling.
+ * The consumer runs inside the same deadline as the network request.
  */
-export async function fetchWithTimeout(
+async function withTimedResponse<T>(
   url: string,
-  timeoutMs: number = DEFAULT_FETCH_TIMEOUT,
-): Promise<Response | null> {
+  timeoutMs: number,
+  consume: (response: Response, signal: AbortSignal) => Promise<T>,
+): Promise<T | null> {
   // SSRF guard (#113) — refuse private/loopback/link-local hosts + non-http(s)
   // schemes before any network I/O. See fetchBlockReason / the guard doc above.
   const blocked = fetchBlockReason(url);
@@ -183,93 +191,103 @@ export async function fetchWithTimeout(
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let timer: ReturnType<typeof setTimeout>;
+  const deadline = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error('The operation was aborted'));
+      controller.abort();
+    }, timeoutMs);
+  });
 
   try {
-    // Follow redirects MANUALLY so the SSRF guard re-validates every hop
-    // (#113 F1). With the default `redirect: 'follow'`, an allowed public host
-    // could 3xx to http://169.254.169.254/ or http://localhost:N/ and the
-    // guard — which only ran on the initial URL — would never see it.
-    let currentUrl = url;
-    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-      const response = await fetch(currentUrl, {
-        signal: controller.signal,
-        headers: { 'User-Agent': USER_AGENT },
-        redirect: 'manual',
-      });
-      if (response.status >= 300 && response.status < 400 && response.headers.has('location')) {
-        let next: string;
-        try {
-          next = new URL(response.headers.get('location')!, currentUrl).toString();
-        } catch {
-          console.warn(`[svg-terminal] Bad redirect Location from ${safeUrlForLog(currentUrl)}`);
+    return await Promise.race([deadline, (async () => {
+      // Follow redirects MANUALLY so the SSRF guard re-validates every hop
+      // (#113 F1). With the default `redirect: 'follow'`, an allowed public host
+      // could 3xx to http://169.254.169.254/ or http://localhost:N/ and the
+      // guard — which only ran on the initial URL — would never see it.
+      let currentUrl = url;
+      for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+        const response = await fetch(currentUrl, {
+          signal: controller.signal,
+          headers: { 'User-Agent': USER_AGENT },
+          redirect: 'manual',
+        });
+        if (controller.signal.aborted) {
+          void response.body?.cancel().catch(() => {});
           return null;
         }
-        const blockedHop = fetchBlockReason(next);
-        if (blockedHop) {
-          console.warn(`[svg-terminal] Refused redirect to ${safeUrlForLog(next)}: ${blockedHop}`);
+        if (response.status >= 300 && response.status < 400 && response.headers.has('location')) {
+          void response.body?.cancel().catch(() => {});
+          let next: string;
+          try {
+            next = new URL(response.headers.get('location')!, currentUrl).toString();
+          } catch {
+            console.warn(`[svg-terminal] Bad redirect Location from ${safeUrlForLog(currentUrl)}`);
+            return null;
+          }
+          const blockedHop = fetchBlockReason(next);
+          if (blockedHop) {
+            console.warn(`[svg-terminal] Refused redirect to ${safeUrlForLog(next)}: ${blockedHop}`);
+            return null;
+          }
+          currentUrl = next;
+          continue;
+        }
+        if (!response.ok) {
+          void response.body?.cancel().catch(() => {});
+          console.warn(`[svg-terminal] HTTP ${response.status} from ${safeUrlForLog(currentUrl)}`);
           return null;
         }
-        currentUrl = next;
-        continue;
+        return consume(response, controller.signal);
       }
-      if (!response.ok) {
-        console.warn(`[svg-terminal] HTTP ${response.status} from ${safeUrlForLog(currentUrl)}`);
-        return null;
-      }
-      return response;
-    }
-    console.warn(`[svg-terminal] Too many redirects (>${MAX_REDIRECTS}) fetching ${safeUrlForLog(url)}`);
-    return null;
+      console.warn(`[svg-terminal] Too many redirects (>${MAX_REDIRECTS}) fetching ${safeUrlForLog(url)}`);
+      return null;
+    })()]);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    if (message.includes('abort')) {
+    if (controller.signal.aborted || message.toLowerCase().includes('abort')) {
       console.warn(`[svg-terminal] Timeout after ${timeoutMs}ms fetching ${safeUrlForLog(url)}`);
     } else {
       console.warn(`[svg-terminal] Fetch failed for ${safeUrlForLog(url)}: ${message}`);
     }
     return null;
   } finally {
-    clearTimeout(timer);
+    clearTimeout(timer!);
   }
 }
 
 /**
- * Fetch JSON from a URL with a timeout. Returns parsed data or null.
- * Never throws — all errors are caught and logged.
+ * Fetch response headers with a timeout. Callers consuming the returned body
+ * manage their own deadline; fetchJson/fetchText include body consumption.
  */
+export async function fetchWithTimeout(
+  url: string,
+  timeoutMs: number = DEFAULT_FETCH_TIMEOUT,
+): Promise<Response | null> {
+  return withTimedResponse(url, timeoutMs, async response => response);
+}
+
+/** Fetch JSON with one deadline covering redirects, headers, and body. */
 export async function fetchJson<T = unknown>(
   url: string,
   timeoutMs: number = DEFAULT_FETCH_TIMEOUT,
 ): Promise<T | null> {
-  const response = await fetchWithTimeout(url, timeoutMs);
-  if (!response) return null;
-
-  const text = await readCappedText(response, url);
-  if (text === null) return null;
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    console.warn(`[svg-terminal] Invalid JSON from ${safeUrlForLog(url)}`);
-    return null;
-  }
+  return withTimedResponse(url, timeoutMs, async (response, signal) => {
+    const text = await readCappedText(response, url, signal);
+    if (text === null) return null;
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      console.warn(`[svg-terminal] Invalid JSON from ${safeUrlForLog(url)}`);
+      return null;
+    }
+  });
 }
 
-/**
- * Fetch plain text from a URL with a timeout. Returns text or null.
- * Never throws — all errors are caught and logged.
- */
+/** Fetch text with one deadline covering redirects, headers, and body. */
 export async function fetchText(
   url: string,
   timeoutMs: number = DEFAULT_FETCH_TIMEOUT,
 ): Promise<string | null> {
-  const response = await fetchWithTimeout(url, timeoutMs);
-  if (!response) return null;
-
-  try {
-    return await readCappedText(response, url);
-  } catch {
-    console.warn(`[svg-terminal] Failed to read text from ${safeUrlForLog(url)}`);
-    return null;
-  }
+  return withTimedResponse(url, timeoutMs, (response, signal) => readCappedText(response, url, signal));
 }

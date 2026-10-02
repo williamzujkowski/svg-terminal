@@ -27,6 +27,10 @@ inputs:
     description: 'Strip inter-element whitespace from the output'
     required: false
     default: 'false'
+  strict:
+    description: 'Treat config warnings and over-tall animated bands as errors'
+    required: false
+    default: 'false'
   commit:
     description: 'Auto-commit the generated SVG'
     required: false
@@ -72,7 +76,7 @@ runs:
       # users who pin the action by SHA / tag get reproducible behavior
       # instead of whatever floats on the npm registry. Bumped each action
       # release to match the published npm version.
-      run: npm install -g svg-terminal@1.2.3
+      run: npm install -g svg-terminal@1.3.0
 
     - name: Generate SVG
       id: generate
@@ -87,26 +91,26 @@ runs:
         INPUT_CACHE_MODE: ${{ inputs.cache-mode }}
         INPUT_STATIC: ${{ inputs.static }}
         INPUT_MINIFY: ${{ inputs.minify }}
+        INPUT_STRICT: ${{ inputs.strict }}
       run: |
         set -euo pipefail
-        # Compose the optional flags into a single $args string. Empty by default;
-        # only adds the flag when the input was set to a non-default value.
-        args=""
+        args=()
         case "$INPUT_CACHE_MODE" in
-          refresh) args="$args --refresh-cache" ;;
-          frozen)  args="$args --frozen-cache" ;;
-          off)     args="$args --no-cache" ;;
+          refresh) args+=(--refresh-cache) ;;
+          frozen)  args+=(--frozen-cache) ;;
+          off)     args+=(--no-cache) ;;
           normal|"") : ;;
           *) echo "::error::Unknown cache-mode '$INPUT_CACHE_MODE'"; exit 1 ;;
         esac
-        if [ "$INPUT_STATIC" = "true" ]; then args="$args --static"; fi
-        if [ "$INPUT_MINIFY" = "true" ]; then args="$args --minify"; fi
+        if [ "$INPUT_STATIC" = "true" ]; then args+=(--static); fi
+        if [ "$INPUT_MINIFY" = "true" ]; then args+=(--minify); fi
+        if [ "$INPUT_STRICT" = "true" ]; then args+=(--strict); fi
         # Capture pre-existing SVG content (if any) so we can compute svg-changed.
         prev_sha=""
         if [ -f "$INPUT_OUTPUT" ]; then
           prev_sha=$(sha256sum "$INPUT_OUTPUT" | cut -d' ' -f1)
         fi
-        svg-terminal generate --config "$INPUT_CONFIG" --output "$INPUT_OUTPUT" $args
+        svg-terminal generate --config "$INPUT_CONFIG" --output "$INPUT_OUTPUT" "${args[@]}"
         new_sha=$(sha256sum "$INPUT_OUTPUT" | cut -d' ' -f1)
         bytes=$(stat -c%s "$INPUT_OUTPUT" 2>/dev/null || stat -f%z "$INPUT_OUTPUT")
         # changed semantics (round-4 L1 fix): "did this run modify a

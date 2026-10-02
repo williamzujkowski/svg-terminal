@@ -17,7 +17,7 @@ import type {
 } from '../types.js';
 import { generateDefs, generateFilters } from './effects.js';
 import { generateAllLines } from './line-renderer.js';
-import { buildColorMap, parseMarkup, stripMarkup } from './markup-parser.js';
+import { buildColorMap, parseMarkup, resolveColor, stripMarkup } from './markup-parser.js';
 import { escapeXml, roundCoord } from './xml.js';
 import { SCROLL_ANIM_DURATION } from './defaults.js';
 import { isStrict } from './strict-mode.js';
@@ -433,6 +433,14 @@ function createAnimationFrames(
           console.warn(msg);
         }
         for (let r = 0; r < height; r++) buffer.push({ type: 'output' });
+        // Make room for the whole band before it appears. Its rows move
+        // together; scrolling during the frame cycle is unnecessary.
+        const overflow = buffer.length - bufferStart - Math.max(maxVisibleLines, height);
+        if (overflow > 0) {
+          bufferStart += overflow;
+          frames.push({ time: currentTime, type: 'scroll', scrollLines: overflow, bufferStart });
+          currentTime += scrollDuration + anim.scrollDelay;
+        }
         frames.push({
           time: currentTime,
           type: 'add-output',
@@ -649,8 +657,12 @@ function renderStaticStyledText(
   }).join('');
 }
 
-/** Generate a static (non-animated) SVG terminal showing all content. */
-export function generateStaticSvg(lines: string[], config: TerminalConfig): string {
+/** Generate a static SVG. Optional per-line colors accept hex or palette names. */
+export function generateStaticSvg(
+  lines: string[],
+  config: TerminalConfig,
+  lineColors: readonly (string | undefined)[] = [],
+): string {
   const { text: terminal, theme, effects, chrome } = config;
   const window = { ...config.window };
 
@@ -681,12 +693,13 @@ export function generateStaticSvg(lines: string[], config: TerminalConfig): stri
   const showShadow = effects.shadow && window.style !== 'none';
 
   const lineElements = lines.map((line, i) => {
+    const color = resolveColor(lineColors[i] ?? theme.colors.text, colorMap, theme.colors.text);
     const y = roundCoord(i * lineHeight);
     const hasMarkupTags = line.includes('[[');
     const textContent = hasMarkupTags
-      ? renderStaticStyledText(line, colorMap, theme.colors.text, chrome.dimOpacity)
+      ? renderStaticStyledText(line, colorMap, color, chrome.dimOpacity)
       : escapeXml(line);
-    const fill = hasMarkupTags ? '' : ` fill="${escapeXml(theme.colors.text)}"`;
+    const fill = hasMarkupTags ? '' : ` fill="${escapeXml(color)}"`;
 
     return `
       <text class="tt" y="${y}"${fill}>

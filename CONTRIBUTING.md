@@ -1,6 +1,6 @@
 # Contributing to svg-terminal
 
-Thanks for thinking about contributing — this project welcomes block authors, theme authors, and bug fixers. The library is small and the moving parts are well-documented in `CLAUDE.md`; read that first for the architectural tour.
+Thanks for thinking about contributing — this project welcomes block authors, theme authors, and bug fixers. The library is small and the moving parts are well-documented in `AGENTS.md`; read that first for the architectural tour.
 
 ## Local loop
 

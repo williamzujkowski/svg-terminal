@@ -1,12 +1,12 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to coding agents working in this repository.
 
 ## Commands
 
 - `npm run build` — bundle with tsup → `dist/` (ESM + `.d.ts`, targets node22).
 - `npm run dev` — tsup watch mode.
-- `npm test` — vitest, single run (466 tests at v1.2.3).
+- `npm test` — vitest, single run (505 tests at v1.3.0).
 - `npm run test:watch` — vitest watch.
 - `npm test -- src/core/__tests__/markup-parser.test.ts` — single test file.
 - `npm test -- -t "fragment of test name"` — single test by name.

@@ -17,7 +17,7 @@
  */
 
 import { z } from 'zod';
-import type { Block, BlockContext, BlockEntry, Sequence, UserConfig } from './types.js';
+import type { Block, BlockContext, BlockEntry, BlockResult, Sequence, UserConfig } from './types.js';
 import { mergeConfig } from './core/config.js';
 import { resolvePause, resolveTyping } from './core/defaults.js';
 import { generateSvg, generateStaticSvg } from './core/svg-generator.js';
@@ -81,12 +81,16 @@ export function setStrictBlockConfig(enabled: boolean): void {
  * - allowedKeys present → warn on unknown keys (or throw under --strict).
  * - neither → no-op.
  */
-function validateBlockEntry(block: Block, entry: BlockEntry, index: number): void {
+function validateBlockEntry(block: Block, entry: BlockEntry, index: number): Record<string, unknown> {
   const cfg = entry.config ?? {};
 
   if (block.configSchema) {
     try {
-      block.configSchema.parse(cfg);
+      const parsed: unknown = block.configSchema.parse(cfg);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new BlockConfigError(block.name, index, `Config schema for block "${block.name}" at blocks[${index}] must produce an object`);
+      }
+      return parsed as Record<string, unknown>;
     } catch (err) {
       if (err instanceof z.ZodError) {
         const issues = err.issues.map(i => {
@@ -100,7 +104,6 @@ function validateBlockEntry(block: Block, entry: BlockEntry, index: number): voi
       }
       throw err;
     }
-    return;
   }
 
   if (block.allowedKeys) {
@@ -110,7 +113,7 @@ function validateBlockEntry(block: Block, entry: BlockEntry, index: number): voi
       'command', 'color', 'typing', 'pause',
     ]);
     const unknown = Object.keys(cfg).filter(k => !allow.has(k));
-    if (unknown.length === 0) return;
+    if (unknown.length === 0) return cfg;
 
     const list = unknown.join(', ');
     const known = block.allowedKeys.join(', ');
@@ -120,6 +123,23 @@ function validateBlockEntry(block: Block, entry: BlockEntry, index: number): voi
     }
     console.warn(`[svg-terminal] warning: ${msg}`);
   }
+  return cfg;
+}
+
+/** Resolve, validate, and render a block consistently for both SVG paths. */
+async function renderBlockEntry(
+  entry: BlockEntry,
+  index: number,
+  context: BlockContext,
+  options: GenerateOptions,
+): Promise<BlockResult> {
+  const block = getBlock(entry.block);
+  if (!block) {
+    throw new Error(`Unknown block "${entry.block}". Register it with registerBlock() or use a built-in block.`);
+  }
+  const result = await block.render(context, validateBlockEntry(block, entry, index));
+  if (result.fallback) options.onCacheEvent?.('fallback', entry.block);
+  return result;
 }
 
 /**
@@ -135,16 +155,7 @@ export async function generate(userConfig: UserConfig, options: GenerateOptions 
 
   for (let i = 0; i < userConfig.blocks.length; i++) {
     const entry = userConfig.blocks[i]!;
-    const block = getBlock(entry.block);
-    if (!block) {
-      throw new Error(
-        `Unknown block "${entry.block}". Register it with registerBlock() or use a built-in block.`,
-      );
-    }
-    validateBlockEntry(block, entry, i);
-
-    const result = await block.render(context, entry.config ?? {});
-    if (result.fallback) options.onCacheEvent?.('fallback', entry.block);
+    const result = await renderBlockEntry(entry, i, context, options);
 
     // Command sequence — pause after typing before output appears
     sequences.push({
@@ -195,7 +206,7 @@ export function inspectCache(userConfig: UserConfig, configPath: string): {
     entries.push({
       blockName: entry.block,
       entryIndex: i,
-      key: `${entry.block}:${hashConfig(entry.config ?? {})}`,
+      key: `${entry.block}:${hashConfig(validateBlockEntry(block, entry, i))}`,
     });
   }
 
@@ -259,28 +270,22 @@ export async function generateStatic(userConfig: UserConfig, options: GenerateOp
   assertHasBlocks(userConfig);
   const config = mergeConfig(userConfig);
   const allLines: string[] = [];
+  const lineColors: Array<string | undefined> = [];
 
   const { context, cacheRuntime } = buildContext(userConfig, config, options);
 
   for (let i = 0; i < userConfig.blocks.length; i++) {
     const entry = userConfig.blocks[i]!;
-    const block = getBlock(entry.block);
-    if (!block) {
-      throw new Error(
-        `Unknown block "${entry.block}". Register it with registerBlock() or use a built-in block.`,
-      );
-    }
-    validateBlockEntry(block, entry, i);
-
-    const result = await block.render(context, entry.config ?? {});
-    if (result.fallback) options.onCacheEvent?.('fallback', entry.block);
+    const result = await renderBlockEntry(entry, i, context, options);
     const prompt = config.text.prompt;
     allLines.push(`${prompt}${entry.command ?? result.command}`);
+    lineColors.push(undefined);
     allLines.push(...result.lines);
+    lineColors.push(...result.lines.map(() => entry.color ?? result.color));
   }
 
   if (cacheRuntime) flushCache(cacheRuntime);
-  return generateStaticSvg(allLines, config);
+  return generateStaticSvg(allLines, config, lineColors);
 }
 
 // Re-export public API

@@ -39,6 +39,9 @@ updates:
     open-pull-requests-limit: 5
     # Pin actions to SHA via dependabot; group minor/patch bumps.
     groups:
+      codeql:
+        patterns:
+          - "github/codeql-action*"
       gh-actions-minor-patch:
         update-types:
           - "minor"

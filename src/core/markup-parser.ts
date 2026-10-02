@@ -14,6 +14,7 @@ import type { StyledSpan, ThemeColors } from '../types.js';
 /** Build a color lookup map from theme colors. */
 export function buildColorMap(colors: ThemeColors): Record<string, string> {
   return {
+    ...Object.fromEntries(Object.entries(colors).map(([name, color]) => [name.toLowerCase(), color])),
     // Standard terminal colors — black uses theme background
     black: colors.background,
     red: colors.red,
@@ -54,7 +55,8 @@ export function resolveColor(
   if (colorName.startsWith('#')) {
     return HEX_COLOR_RE.test(colorName) ? colorName : fallback;
   }
-  return colorMap[colorName.toLowerCase()] ?? fallback;
+  const key = colorName.toLowerCase();
+  return Object.hasOwn(colorMap, key) ? colorMap[key] ?? fallback : fallback;
 }
 
 /** Parse [[style]] markup into styled spans. */

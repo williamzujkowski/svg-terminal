@@ -92,7 +92,7 @@ export function resolveTheme(nameOrTheme: string | Theme): Theme {
     );
     const idx = dayOfYear % names.length;
     const selected = names[idx]!;
-    // Library callers must remain silent (CLAUDE.md invariant). The CLI is
+    // Library callers must remain silent (AGENTS.md invariant). The CLI is
     // the only path that gets to talk to stdout/stderr — surface the picked
     // theme there via `--explain` or `--verbose` if the user wants it.
     // Gated env var lets debug-mode users opt back in without code changes.

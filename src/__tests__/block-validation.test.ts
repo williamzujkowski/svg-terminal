@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeAll, afterEach, vi } from 'vitest';
-import { generate, setStrictBlockConfig } from '../index.js';
+import { z } from 'zod';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { generate, generateStatic, inspectCache, mergeConfig, setStrictBlockConfig } from '../index.js';
+import { hashConfig } from '../core/cache.js';
 import { registerBlock } from '../blocks/index.js';
 import { BlockConfigError } from '../core/errors.js';
 import type { Block } from '../types.js';
@@ -12,6 +17,67 @@ beforeAll(() => {
 afterEach(() => {
   setStrictBlockConfig(false);
   vi.restoreAllMocks();
+});
+
+describe.each([['animated', generate], ['static', generateStatic]] as const)('%s block rendering', (_name, render) => {
+  it('passes schema defaults and transformed values to the block', async () => {
+    const blockRender = vi.fn((_ctx, cfg: Record<string, unknown>) => ({
+      command: 'test', lines: [String(cfg['label'])],
+    }));
+    registerBlock({
+      name: 'parsed-config-test',
+      configSchema: z.object({ label: z.string().trim(), count: z.number().default(3) }).strict(),
+      render: blockRender,
+    });
+    const input = { label: '  hello  ' };
+    await render({ blocks: [{ block: 'parsed-config-test', config: input }] });
+    expect(blockRender.mock.calls[0]?.[1]).toEqual({ label: 'hello', count: 3 });
+    expect(input).toEqual({ label: '  hello  ' });
+  });
+
+  it('rejects a schema that produces a non-object before calling render', async () => {
+    const blockRender = vi.fn(() => ({ command: 'test', lines: [] }));
+    registerBlock({ name: 'non-object-schema-test', configSchema: z.object({}).transform(() => null), render: blockRender });
+    await expect(render({ blocks: [{ block: 'non-object-schema-test' }] })).rejects.toBeInstanceOf(BlockConfigError);
+    expect(blockRender).not.toHaveBeenCalled();
+  });
+
+  it('inspects the same cache key used by a block with schema defaults', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'svg-terminal-parsed-cache-'));
+    try {
+      registerBlock({
+        name: 'parsed-cache-test', cacheable: true,
+        configSchema: z.object({ label: z.string().default('default') }).strict(),
+        async render(context, cfg) {
+          const value = await context.useCache!(`parsed-cache-test:${hashConfig(cfg)}`, async () => 'cached');
+          return { command: 'test', lines: [value] };
+        },
+      });
+      const config = { blocks: [{ block: 'parsed-cache-test' }] };
+      const configPath = join(dir, 'terminal.yml');
+      await render(config, { configPath });
+      expect(inspectCache(config, configPath).results[0]?.status).toBe('OK');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it.each(['comment', 'red', 'brightRed', 'titleBarText', '#123abc'])('resolves entry color %s using the theme', async color => {
+    const config = { blocks: [{ block: 'custom', color, config: { lines: ['COLOR_TEST'] } }] };
+    const theme = mergeConfig(config).theme;
+    const expected = color.startsWith('#') ? color : theme.colors[color as keyof typeof theme.colors];
+    const svg = await render(config);
+    expect(svg).toMatch(new RegExp(`<text[^>]*fill="${expected}"[^>]*>\\s*COLOR_TEST\\s*</text>`));
+  });
+
+  it('preserves block colors and lets entry colors override them', async () => {
+    const theme = mergeConfig({ blocks: [{ block: 'custom' }] }).theme;
+    const blocks = [{ block: 'custom', config: { color: 'red', lines: ['BLOCK_COLOR'] } }];
+    expect(await render({ blocks })).toMatch(new RegExp(`<text[^>]*fill="${theme.colors.red}"[^>]*>\\s*BLOCK_COLOR\\s*</text>`));
+    expect(await render({ blocks: [{ ...blocks[0]!, color: 'comment' }] })).toMatch(
+      new RegExp(`<text[^>]*fill="${theme.colors.comment}"[^>]*>\\s*BLOCK_COLOR\\s*</text>`),
+    );
+  });
 });
 
 describe('generate() programmatic guards', () => {

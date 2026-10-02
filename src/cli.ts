@@ -16,7 +16,7 @@ import { basename, dirname, resolve } from 'node:path';
 import { generate, generateStatic, getBlock, inspectCache, listBlocks, loadConfig, mergeConfig, setStrictBlockConfig } from './index.js';
 import { themes } from './themes/index.js';
 import { ConfigError, BlockConfigError } from './core/errors.js';
-import { formatModeTag, formatZodType, humanAge, isZodOptional, minifySvg, resolveCacheMode, scrubSecrets } from './core/cli-helpers.js';
+import { formatModeTag, formatZodType, humanAge, isZodOptional, minifySvg, parseFlags, resolveCacheMode, scrubSecrets } from './core/cli-helpers.js';
 
 // Injected by tsup `define`; falls back to '0.0.0-dev' under `tsx src/cli.ts`.
 declare const __PKG_VERSION__: string;
@@ -25,38 +25,10 @@ const VERSION = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.
 const args = process.argv.slice(2);
 const command = args[0];
 
-function getFlag(name: string): string | undefined {
-  const idx = args.indexOf(`--${name}`);
-  if (idx === -1) return undefined;
-  return args[idx + 1];
-}
-
-function hasFlag(name: string): boolean {
-  return args.includes(`--${name}`);
-}
-
-/** Flags accepted by `svg-terminal generate`. Any `--foo` not in this set
- *  triggers a stderr warning so users catch typos like `--no-chache`. */
-const GENERATE_KNOWN_FLAGS = new Set([
-  'config', 'output', 'static', 'minify', 'strict', 'watch',
-  'no-cache', 'refresh-cache', 'frozen-cache', 'cache-mode',
-  'timings', 'explain',
-]);
-
-/** Warn (don't fail) on unknown `--flag` tokens. Skips value-position tokens
- *  by tracking which flags take a value. */
-function warnUnknownFlags(tokens: readonly string[], known: ReadonlySet<string>): void {
-  const valueFlags = new Set(['config', 'output', 'cache-mode']);
-  for (let i = 0; i < tokens.length; i++) {
-    const tok = tokens[i]!;
-    if (!tok.startsWith('--')) continue;
-    const name = tok.slice(2);
-    if (!known.has(name)) {
-      console.error(`\x1b[33m[svg-terminal] warning: unknown flag "${tok}" — ignoring\x1b[0m`);
-    }
-    if (valueFlags.has(name)) i++; // skip the value token
-  }
-}
+const GENERATE_BOOLEAN_FLAGS = [
+  'static', 'minify', 'strict', 'watch', 'no-cache', 'refresh-cache',
+  'frozen-cache', 'timings', 'explain', 'version',
+] as const;
 
 /** Pretty-print an error inside the watch loop without crashing the watcher. */
 function formatWatchError(err: unknown): void {
@@ -68,6 +40,12 @@ function formatWatchError(err: unknown): void {
 }
 
 async function main(): Promise<void> {
+  const parsed = parseFlags(args, {
+    boolean: command === 'init' ? ['force', 'version'] : GENERATE_BOOLEAN_FLAGS,
+    value: ['config', 'output', 'cache-mode'],
+  });
+  const getFlag = (name: string): string | undefined => parsed.values[name];
+  const hasFlag = (name: string): boolean => parsed.booleans.has(name);
   if (hasFlag('version') || command === '--version') {
     console.log(`svg-terminal ${VERSION}`);
     return;
@@ -78,7 +56,9 @@ async function main(): Promise<void> {
       // Warn early on typo'd flags. Silent flag-ignore is the worst class of
       // CLI bug — `--no-chache` would silently fall back to normal cache mode
       // while the user thinks they bypassed it.
-      warnUnknownFlags(args.slice(1), GENERATE_KNOWN_FLAGS);
+      for (const flag of parsed.unknown) {
+        console.error(`\x1b[33m[svg-terminal] warning: unknown flag "${flag}" — ignoring\x1b[0m`);
+      }
       const configPath = getFlag('config') ?? 'terminal.yml';
       const outputPath = getFlag('output') ?? 'terminal.svg';
       const isStatic = hasFlag('static');
@@ -87,7 +67,11 @@ async function main(): Promise<void> {
       const watch = hasFlag('watch');
       const timings = hasFlag('timings');
       const explain = hasFlag('explain');
-      const cacheMode = resolveCacheMode(args);
+      const cacheFlags = [...parsed.booleans].map(name => `--${name}`);
+      if (parsed.values['cache-mode'] !== undefined) {
+        cacheFlags.push('--cache-mode', parsed.values['cache-mode']);
+      }
+      const cacheMode = resolveCacheMode(cacheFlags);
 
       setStrictBlockConfig(strict);
       const resolvedConfigPath = resolve(configPath);
@@ -359,7 +343,7 @@ blocks:
     }
 
     case 'blocks': {
-      const target = args[1];
+      const target = parsed.positional[1];
       if (target) {
         // Single-block inspection: print description, cacheable tag, and the
         // config schema's fields. Each field as `name: type` with (required)
@@ -405,7 +389,7 @@ blocks:
     }
 
     case 'cache': {
-      const sub = args[1];
+      const sub = parsed.positional[1];
       if (sub !== 'check') {
         console.error('Usage: svg-terminal cache check [--config <path>]');
         process.exit(1);

@@ -41,6 +41,11 @@ describe('resolveColor', () => {
   it('returns fallback for unknown color names', () => {
     expect(resolveColor('nonexistent', colorMap, fallback)).toBe(fallback);
   });
+
+  it('treats inherited object keys as unknown colors', () => {
+    expect(resolveColor('constructor', colorMap, fallback)).toBe(fallback);
+    expect(resolveColor('__proto__', colorMap, fallback)).toBe(fallback);
+  });
 });
 
 // ============================================================================

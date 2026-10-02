@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.3.0 — 2026-10-02 — rendering fixes, reliable fetches, and strict Action input
+
+- Keep dynamic JSON/text fetch deadlines active through redirects and body reads; return fallback data on stream failures.
+- Scroll complete animated bands into view before they appear.
+- Resolve output colors against the active theme and preserve color overrides in static SVGs.
+- Share block rendering between animated and static generation, including schema defaults and transformations.
+- Preserve whitespace in text spans when minifying SVGs.
+- Use the tested CLI flag parser to reject missing values and honor `--`.
+- Expose the GitHub Action's `strict` input.
+- Upgrade js-yaml to 5.4.1 with compatible imports in the loader and demo script.
+- Update CodeQL init/analyze together to 4.37.4 and group future CodeQL dependency updates.
+
 ## v1.2.3 — 2026-05-30 — fix: static fallback no longer clips tall/scrolling content
 
 - **`generateStatic` auto-height grows to full content, ignoring `maxHeight` (`#129`).** The animated SVG scrolls when content exceeds the `maxHeight` viewport, but a *static* SVG can't scroll — so clamping it to `maxHeight` permanently clipped the overflow. Static now expands to the full content height (`minHeight` still applies). This makes a tall/scrolling animated terminal pair with a **complete** reduced-motion static fallback (the `<picture>` pattern). The animated path is unchanged (still clamps + scrolls). Byte-safe: no demo/snapshot drift (the change only affects static renders whose content exceeds `maxHeight`).
