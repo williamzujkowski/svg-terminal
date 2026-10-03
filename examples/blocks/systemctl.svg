@@ -104,51 +104,35 @@ Memory: 42.0M
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 2100ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">● </tspan><tspan fill="#8be9fd">dev-mode.service</tspan><tspan fill="#e4e4e4"> - Development Mode Service</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">● </tspan><tspan fill="#8be9fd">dev-mode.service</tspan><tspan fill="#e4e4e4"> - Development Mode Service</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 2150ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">     </tspan><tspan fill="#bd93f9">Loaded:</tspan><tspan fill="#e4e4e4"> loaded (/etc/systemd/dev-mode.service; </tspan><tspan fill="#50fa7b">enabled</tspan><tspan fill="#e4e4e4">)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">     </tspan><tspan fill="#bd93f9">Loaded:</tspan><tspan fill="#e4e4e4"> loaded (/etc/systemd/dev-mode.service; </tspan><tspan fill="#50fa7b">enabled</tspan><tspan fill="#e4e4e4">)</tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 2200ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">     </tspan><tspan fill="#bd93f9">Active:</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">active (running)</tspan><tspan fill="#e4e4e4"> since boot</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">     </tspan><tspan fill="#bd93f9">Active:</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">active (running)</tspan><tspan fill="#e4e4e4"> since boot</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 2250ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">   </tspan><tspan fill="#bd93f9">Main PID:</tspan><tspan fill="#e4e4e4"> 1337 (dev-mode)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">   </tspan><tspan fill="#bd93f9">Main PID:</tspan><tspan fill="#e4e4e4"> 1337 (dev-mode)</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 2300ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">      </tspan><tspan fill="#bd93f9">Tasks:</tspan><tspan fill="#e4e4e4"> ∞</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">      </tspan><tspan fill="#bd93f9">Tasks:</tspan><tspan fill="#e4e4e4"> ∞</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 2350ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">     </tspan><tspan fill="#bd93f9">Memory:</tspan><tspan fill="#e4e4e4"> 42.0M</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">     </tspan><tspan fill="#bd93f9">Memory:</tspan><tspan fill="#e4e4e4"> 42.0M</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 2400ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">2026-05-25 13:37:00 dev-mode.service[1337]: </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> Service started successfully</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">2026-05-25 13:37:00 dev-mode.service[1337]: </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> Service started successfully</tspan></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 2450ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">2026-05-25 13:37:00 dev-mode.service[1337]: </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> Maximum productivity achieved</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">2026-05-25 13:37:00 dev-mode.service[1337]: </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> Maximum productivity achieved</tspan></text>
     </g>
       </g>
     </g>

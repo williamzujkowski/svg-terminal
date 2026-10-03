@@ -103,45 +103,31 @@ PID  USER     S CPU% MEM%  Command
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 2100ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">CPU</tspan><tspan fill="#e4e4e4">████████████████░░░░  </tspan><tspan fill="#ffffff">80.5%</tspan><tspan fill="#e4e4e4">]   </tspan><tspan fill="#f1fa8c">Tasks:</tspan><tspan fill="#e4e4e4"> 13, </tspan><tspan fill="#50fa7b">1 running</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">CPU</tspan><tspan fill="#e4e4e4">████████████████░░░░  </tspan><tspan fill="#ffffff">80.5%</tspan><tspan fill="#e4e4e4">]   </tspan><tspan fill="#f1fa8c">Tasks:</tspan><tspan fill="#e4e4e4"> 13, </tspan><tspan fill="#50fa7b">1 running</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 2150ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">Mem</tspan><tspan fill="#e4e4e4">██████████░░░░░░░░░░  </tspan><tspan fill="#ffffff">50.0%</tspan><tspan fill="#e4e4e4">]   </tspan><tspan fill="#f1fa8c">Load:</tspan><tspan fill="#e4e4e4"> 0.42 0.37 0.31</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">Mem</tspan><tspan fill="#e4e4e4">██████████░░░░░░░░░░  </tspan><tspan fill="#ffffff">50.0%</tspan><tspan fill="#e4e4e4">]   </tspan><tspan fill="#f1fa8c">Load:</tspan><tspan fill="#e4e4e4"> 0.42 0.37 0.31</tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 2200ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 2250ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">PID</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">USER</tspan><tspan fill="#e4e4e4">     </tspan><tspan fill="#8be9fd">S</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">CPU%</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">MEM%</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">Command</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">PID</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">USER</tspan><tspan fill="#e4e4e4">     </tspan><tspan fill="#8be9fd">S</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">CPU%</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">MEM%</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">Command</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 2300ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">1337  </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">dev     </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">R</tspan><tspan fill="#e4e4e4">  99.9   5.0  </tspan><tspan fill="#ffffff">coding --premium</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">1337  </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">dev     </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">R</tspan><tspan fill="#e4e4e4">  99.9   5.0  </tspan><tspan fill="#ffffff">coding --premium</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 2350ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">2048  </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">dev     </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">S</tspan><tspan fill="#e4e4e4">  42.0   3.7  </tspan><tspan fill="#ffffff">family --priority=max</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">2048  </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">dev     </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">S</tspan><tspan fill="#e4e4e4">  42.0   3.7  </tspan><tspan fill="#ffffff">family --priority=max</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 2400ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">4096  </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">dev     </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">S</tspan><tspan fill="#e4e4e4">  15.2   2.1  </tspan><tspan fill="#ffffff">security-scanner</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">4096  </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">dev     </tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">S</tspan><tspan fill="#e4e4e4">  15.2   2.1  </tspan><tspan fill="#ffffff">security-scanner</tspan></text>
     </g>
       </g>
     </g>

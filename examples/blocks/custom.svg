@@ -97,9 +97,7 @@ Hello, World!</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        Hello, World!
-      </text>
+      <text class="tt" fill="#e4e4e4">Hello, World!</text>
     </g>
       </g>
     </g>

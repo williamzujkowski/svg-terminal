@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.1 — 2026-10-03 — continuous box borders and mobile README layouts
+
+- Render complete terminal box borders as SVG strokes so they remain continuous across line spacing and font fallbacks, including on phones.
+- Position colored box content consistently, including emoji, without shifting the right border.
+- Remove accidental formatting whitespace from terminal text nodes and retain fractional row positions in static output.
+- Add a compact 360px README demo with shorter commands and bars, retaining all six desktop demo blocks.
+- Select mobile images at viewport widths up to 600px and static images for reduced-motion visitors through the README's picture element.
+- Generate both mobile SVG variants in the existing demo workflow and document responsive README embedding.
+
+515 tests passing; desktop/mobile layouts reviewed at 320, 390, 600, 601, 768, and 1440 pixels.
+
 ## v1.3.0 — 2026-10-02 — rendering fixes, reliable fetches, and strict Action input
 
 - Keep dynamic JSON/text fetch deadlines active through redirects and body reads; return fallback data on stream failures.

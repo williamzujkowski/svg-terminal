@@ -84,9 +84,7 @@ hi</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1200ms">
-      <text class="tt" fill="#e4e4e4">
-        dev
-      </text>
+      <text class="tt" fill="#e4e4e4">dev</text>
     </g>
 
     <g transform="translate(0, 50.4)">
@@ -103,9 +101,7 @@ hi</desc>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 3650ms">
-      <text class="tt">
-        <tspan fill="#50fa7b">hi</tspan>
-      </text>
+      <text class="tt"><tspan fill="#50fa7b">hi</tspan></text>
     </g>
       </g>
     </g>

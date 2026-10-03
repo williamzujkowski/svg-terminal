@@ -17,6 +17,7 @@ import type {
 } from '../types.js';
 import { generateDefs, generateFilters } from './effects.js';
 import { generateAllLines } from './line-renderer.js';
+import { renderBoxRow } from './box-renderer.js';
 import { buildColorMap, parseMarkup, resolveColor, stripMarkup } from './markup-parser.js';
 import { escapeXml, roundCoord } from './xml.js';
 import { SCROLL_ANIM_DURATION } from './defaults.js';
@@ -694,7 +695,9 @@ export function generateStaticSvg(
 
   const lineElements = lines.map((line, i) => {
     const color = resolveColor(lineColors[i] ?? theme.colors.text, colorMap, theme.colors.text);
-    const y = roundCoord(i * lineHeight);
+    const y = +(i * lineHeight).toFixed(1);
+    const box = renderBoxRow(line, colorMap, color, terminal.fontSize, lineHeight, chrome.dimOpacity);
+    if (box !== undefined) return `<g transform="translate(0, ${y})">${box}</g>`;
     const hasMarkupTags = line.includes('[[');
     const textContent = hasMarkupTags
       ? renderStaticStyledText(line, colorMap, color, chrome.dimOpacity)
@@ -702,9 +705,7 @@ export function generateStaticSvg(
     const fill = hasMarkupTags ? '' : ` fill="${escapeXml(color)}"`;
 
     return `
-      <text class="tt" y="${y}"${fill}>
-        ${textContent}
-      </text>`;
+      <text class="tt" y="${y}"${fill}>${textContent}</text>`;
   }).join('');
 
   return `<svg width="${window.width}" height="${window.height}" viewBox="0 0 ${window.width} ${window.height}" xmlns="http://www.w3.org/2000/svg"

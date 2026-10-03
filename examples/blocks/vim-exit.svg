@@ -108,75 +108,51 @@ type  :wq  to save and quit
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#6272a4">~                              VIM - Vi IMproved</tspan>
-      </text>
+      <text class="tt"><tspan fill="#6272a4">~                              VIM - Vi IMproved</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt">
-        <tspan fill="#6272a4">~                                                </tspan>
-      </text>
+      <text class="tt"><tspan fill="#6272a4">~                                                </tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#6272a4">~                version 9.1.0                   </tspan>
-      </text>
+      <text class="tt"><tspan fill="#6272a4">~                version 9.1.0                   </tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt">
-        <tspan fill="#6272a4">~       by Bram Moolenaar et al.                 </tspan>
-      </text>
+      <text class="tt"><tspan fill="#6272a4">~       by Bram Moolenaar et al.                 </tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#6272a4">~                                                </tspan>
-      </text>
+      <text class="tt"><tspan fill="#6272a4">~                                                </tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt">
-        <tspan fill="#f1fa8c">How do you exit this thing?</tspan>
-      </text>
+      <text class="tt"><tspan fill="#f1fa8c">How do you exit this thing?</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  type  </tspan><tspan fill="#8be9fd">:q</tspan><tspan fill="#e4e4e4">   to quit</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  type  </tspan><tspan fill="#8be9fd">:q</tspan><tspan fill="#e4e4e4">   to quit</tspan></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  type  </tspan><tspan fill="#8be9fd">:q!</tspan><tspan fill="#e4e4e4">  to force-quit without saving</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  type  </tspan><tspan fill="#8be9fd">:q!</tspan><tspan fill="#e4e4e4">  to force-quit without saving</tspan></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  type  </tspan><tspan fill="#8be9fd">:wq</tspan><tspan fill="#e4e4e4">  to save and quit</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  type  </tspan><tspan fill="#8be9fd">:wq</tspan><tspan fill="#e4e4e4">  to save and quit</tspan></text>
     </g>
 
     <g transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 2000ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 302.4)" class="fade-in" style="animation-delay: 2050ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">  (you were never in insert mode anyway)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">  (you were never in insert mode anyway)</tspan></text>
     </g>
       </g>
     </g>

@@ -101,33 +101,23 @@ OK.
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        [sudo] password for dev:
-      </text>
+      <text class="tt" fill="#e4e4e4">[sudo] password for dev:</text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#50fa7b">OK.</tspan>
-      </text>
+      <text class="tt"><tspan fill="#50fa7b">OK.</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">  (Reference: https://xkcd.com/149/)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">  (Reference: https://xkcd.com/149/)</tspan></text>
     </g>
       </g>
     </g>

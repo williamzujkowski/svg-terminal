@@ -1,0 +1,106 @@
+<svg width="360" height="771" viewBox="0 0 360 771" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-label="Static terminal showing 33 lines">
+  <title>Static terminal showing 33 lines</title>
+  <desc>$ cat /etc/motd
+SVG-TERMINAL v2026.05
+Animated SVGs for your README.
+Declarative YAML in.
+$ neofetch
+dev@svg-terminal
+OS:        TerminalOS v1.0
+Shell:     bash 5.2
+Uptime:    a long time
+Role:      Library Author
+Location:  localhost
+Languages: TypeScript, SVG, SMIL
+Editor:    vim
+
+● ● ● ● ● ● ● ●
+$ gh api users/octocat/repos
+TypeScript  █████░░░░░░░  42%
+Rust        ███░░░░░░░░░  24%
+Python      ██░░░░░░░░░░  18%
+Go          █░░░░░░░░░░░  11%
+Lua         █░░░░░░░░░░░   5%
+$ date +%H:%M:%S
+uptime  13:37:00
+$ made-with --love
+built with care
+$ palette
+theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
+  <style>.tt { font-family: JetBrains Mono, Fira Code, Ubuntu Mono, Consolas, Monaco, monospace; font-size: 14px; white-space: pre; }</style>
+  <defs>
+    
+    
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.55"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="terminalViewport">
+      <rect x="0" y="40" width="360" height="731"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#shadow)">
+    
+    <rect x="0" y="0" width="360" height="771"
+          rx="12" ry="12"
+          fill="#0a0e27"/>
+    
+    <rect x="0" y="0" width="360" height="40"
+          rx="12" ry="12"
+          fill="#151b2e"/>
+    <rect x="0" y="16" width="360" height="16"
+          fill="#151b2e"/>
+    <g id="window-controls">
+      <circle cx="14" cy="16" r="6" fill="#ff5f57" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="34" cy="16" r="6" fill="#ffbd2e" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+      <circle cx="54" cy="16" r="6" fill="#28ca42" stroke="rgba(0,0,0,0.18)" stroke-width="0.5"/>
+    </g>
+    <text x="180" y="24.55"
+          font-family="-apple-system, BlinkMacSystemFont, &apos;Segoe UI&apos;, Helvetica, Arial, sans-serif" font-size="13"
+          fill="#e0e6ed" text-anchor="middle">
+      svg-terminal — demo
+    </text>
+    <rect x="0" y="40" width="360"
+          height="731" fill="#0a0e27"/>
+    <g clip-path="url(#terminalViewport)">
+      <g transform="translate(12, 54)">
+        
+      <text class="tt" y="0" fill="#e4e4e4">$ cat /etc/motd</text><g transform="translate(0, 21)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 5.6V-6.02Q3.08 -6.02 3.08 -6.02H299.32Q299.32 -6.02 299.32 -6.02V5.6M5.32 5.6V-3.78Q5.32 -3.78 5.32 -3.78H297.08Q297.08 -3.78 297.08 -3.78V5.6"/></g><g transform="translate(0, 42)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V5.6M299.32 -15.4V5.6M5.32 -15.4V5.6M297.08 -15.4V5.6"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="302.4" lengthAdjust="spacingAndGlyphs">                                    </tspan></text></g><g transform="translate(0, 63)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V5.6M299.32 -15.4V5.6M5.32 -15.4V5.6M297.08 -15.4V5.6"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="302.4" lengthAdjust="spacingAndGlyphs">  SVG-TERMINAL v2026.05             </tspan></text></g><g transform="translate(0, 84)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V5.6M299.32 -15.4V5.6M5.32 -15.4V5.6M297.08 -15.4V5.6"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="302.4" lengthAdjust="spacingAndGlyphs">  Animated SVGs for your README.    </tspan></text></g><g transform="translate(0, 105)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V5.6M299.32 -15.4V5.6M5.32 -15.4V5.6M297.08 -15.4V5.6"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="302.4" lengthAdjust="spacingAndGlyphs">                                    </tspan></text></g><g transform="translate(0, 126)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V5.6M299.32 -15.4V5.6M5.32 -15.4V5.6M297.08 -15.4V5.6"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="302.4" lengthAdjust="spacingAndGlyphs">  Declarative YAML in.              </tspan></text></g><g transform="translate(0, 147)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V5.6M299.32 -15.4V5.6M5.32 -15.4V5.6M297.08 -15.4V5.6"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="302.4" lengthAdjust="spacingAndGlyphs">                                    </tspan></text></g><g transform="translate(0, 168)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -15.4V-3.78Q3.08 -3.78 3.08 -3.78H299.32Q299.32 -3.78 299.32 -3.78V-15.4M5.32 -15.4V-6.02Q5.32 -6.02 5.32 -6.02H297.08Q297.08 -6.02 297.08 -6.02V-15.4"/></g>
+      <text class="tt" y="189" fill="#e4e4e4">$ neofetch</text>
+      <text class="tt" y="210"><tspan fill="#8be9fd">dev@svg-terminal</tspan></text>
+      <text class="tt" y="231"><tspan fill="#8be9fd">────────────────</tspan></text>
+      <text class="tt" y="252"><tspan fill="#8be9fd">OS</tspan><tspan fill="#e4e4e4">:        TerminalOS v1.0</tspan></text>
+      <text class="tt" y="273"><tspan fill="#8be9fd">Shell</tspan><tspan fill="#e4e4e4">:     bash 5.2</tspan></text>
+      <text class="tt" y="294"><tspan fill="#8be9fd">Uptime</tspan><tspan fill="#e4e4e4">:    a long time</tspan></text>
+      <text class="tt" y="315"><tspan fill="#8be9fd">Role</tspan><tspan fill="#e4e4e4">:      Library Author</tspan></text>
+      <text class="tt" y="336"><tspan fill="#8be9fd">Location</tspan><tspan fill="#e4e4e4">:  localhost</tspan></text>
+      <text class="tt" y="357"><tspan fill="#8be9fd">Languages</tspan><tspan fill="#e4e4e4">: TypeScript, SVG, SMIL</tspan></text>
+      <text class="tt" y="378"><tspan fill="#8be9fd">Editor</tspan><tspan fill="#e4e4e4">:    vim</tspan></text>
+      <text class="tt" y="399" fill="#e4e4e4"></text>
+      <text class="tt" y="420"><tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan></text>
+      <text class="tt" y="441" fill="#e4e4e4">$ gh api users/octocat/repos</text>
+      <text class="tt" y="462"><tspan fill="#8be9fd">TypeScript</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">█████░░░░░░░</tspan><tspan fill="#e4e4e4">  42%</tspan></text>
+      <text class="tt" y="483"><tspan fill="#50fa7b">Rust      </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">███░░░░░░░░░</tspan><tspan fill="#e4e4e4">  24%</tspan></text>
+      <text class="tt" y="504"><tspan fill="#f1fa8c">Python    </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">██░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  18%</tspan></text>
+      <text class="tt" y="525"><tspan fill="#ff79c6">Go        </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#ff79c6">█░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  11%</tspan></text>
+      <text class="tt" y="546"><tspan fill="#729fcf">Lua       </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#729fcf">█░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">   5%</tspan></text>
+      <text class="tt" y="567" fill="#e4e4e4">$ date +%H:%M:%S</text>
+      <text class="tt" y="588"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan></text>
+      <text class="tt" y="609" fill="#e4e4e4">$ made-with --love</text>
+      <text class="tt" y="630"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan></text>
+      <text class="tt" y="651" fill="#e4e4e4">$ palette</text>
+      <text class="tt" y="672"><tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan></text>
+      </g>
+    </g>
+    
+    
+  </g>
+</svg>

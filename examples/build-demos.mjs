@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Regenerates examples/demo.svg + the per-theme gallery under examples/gallery/.
+ * Regenerates desktop/mobile heroes, the theme gallery, and block catalog.
  * Driven by npm run demo. Cross-platform (no shell loops), and CI uses the
  * exit code from `git diff --exit-code` afterward to verify nothing drifted.
  *
@@ -60,11 +60,13 @@ const FIXED_NOW = new Date('2026-05-25T13:37:00Z');
 
 async function buildHero() {
   console.log('hero:');
-  const cfgPath = resolve(HERE, 'demo.yml');
-  const userConfig = yaml.load(readFileSync(cfgPath, 'utf-8'));
-  const opts = { configPath: cfgPath, cacheMode: 'off', now: FIXED_NOW };
-  await writeSvg(await generate(userConfig, opts), 'examples/demo.svg');
-  await writeSvg(await generateStatic(userConfig, opts), 'examples/demo-static.svg');
+  for (const name of ['demo', 'demo-mobile']) {
+    const cfgPath = resolve(HERE, `${name}.yml`);
+    const userConfig = yaml.load(readFileSync(cfgPath, 'utf-8'));
+    const opts = { configPath: cfgPath, cacheMode: 'off', now: FIXED_NOW };
+    await writeSvg(await generate(userConfig, opts), `examples/${name}.svg`);
+    await writeSvg(await generateStatic(userConfig, opts), `examples/${name}-static.svg`);
+  }
 }
 
 async function buildGallery() {

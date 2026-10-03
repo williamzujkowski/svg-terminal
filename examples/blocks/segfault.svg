@@ -108,75 +108,51 @@ Tip: it was a null pointer. it is always a null pointer.</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#ff5555">Segmentation fault (core dumped)</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#e4e4e4" opacity="0.6">(a.out)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ff5555">Segmentation fault (core dumped)</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#e4e4e4" opacity="0.6">(a.out)</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  fault address:  </tspan><tspan fill="#8be9fd">0xDEADBEEF</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  fault address:  </tspan><tspan fill="#8be9fd">0xDEADBEEF</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  rip:            </tspan><tspan fill="#8be9fd">0xCAFEBABE</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  rip:            </tspan><tspan fill="#8be9fd">0xCAFEBABE</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  rsp:            </tspan><tspan fill="#ff5555">CORRUPTED</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  rsp:            </tspan><tspan fill="#ff5555">CORRUPTED</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt">
-        <tspan fill="#f1fa8c">backtrace:</tspan>
-      </text>
+      <text class="tt"><tspan fill="#f1fa8c">backtrace:</tspan></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  #0  0x4141414141 in </tspan><tspan fill="#8be9fd">main</tspan><tspan fill="#e4e4e4"> ()</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  #0  0x4141414141 in </tspan><tspan fill="#8be9fd">main</tspan><tspan fill="#e4e4e4"> ()</tspan></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  #1  0x4242424242 in </tspan><tspan fill="#8be9fd">definitely_not_a_bug</tspan><tspan fill="#e4e4e4"> ()</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  #1  0x4242424242 in </tspan><tspan fill="#8be9fd">definitely_not_a_bug</tspan><tspan fill="#e4e4e4"> ()</tspan></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  #2  0x???        in </tspan><tspan fill="#ff5555">&lt;corrupted&gt;</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  #2  0x???        in </tspan><tspan fill="#ff5555">&lt;corrupted&gt;</tspan></text>
     </g>
 
     <g transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 2000ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 302.4)" class="fade-in" style="animation-delay: 2050ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">  Tip: it was a null pointer. it is always a null pointer.</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">  Tip: it was a null pointer. it is always a null pointer.</tspan></text>
     </g>
       </g>
     </g>

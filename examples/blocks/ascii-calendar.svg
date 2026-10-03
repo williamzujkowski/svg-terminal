@@ -104,51 +104,35 @@ Su Mo Tu We Th Fr Sa
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">May 2026</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">May 2026</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms">
-      <text class="tt" fill="#e4e4e4">
-        Su Mo Tu We Th Fr Sa
-      </text>
+      <text class="tt" fill="#e4e4e4">Su Mo Tu We Th Fr Sa</text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms">
-      <text class="tt" fill="#e4e4e4">
-                        1  2
-      </text>
+      <text class="tt" fill="#e4e4e4">                1  2</text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms">
-      <text class="tt" fill="#e4e4e4">
-         3  4  5  6  7  8  9
-      </text>
+      <text class="tt" fill="#e4e4e4"> 3  4  5  6  7  8  9</text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms">
-      <text class="tt" fill="#e4e4e4">
-        10 11 12 13 14 15 16
-      </text>
+      <text class="tt" fill="#e4e4e4">10 11 12 13 14 15 16</text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms">
-      <text class="tt" fill="#e4e4e4">
-        17 18 19 20 21 22 23
-      </text>
+      <text class="tt" fill="#e4e4e4">17 18 19 20 21 22 23</text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1100ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">24 </tspan><tspan fill="#50fa7b" font-weight="bold">25</tspan><tspan fill="#e4e4e4"> 26 27 28 29 30</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">24 </tspan><tspan fill="#50fa7b" font-weight="bold">25</tspan><tspan fill="#e4e4e4"> 26 27 28 29 30</tspan></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1150ms">
-      <text class="tt" fill="#e4e4e4">
-        31                  
-      </text>
+      <text class="tt" fill="#e4e4e4">31                  </text>
     </g>
       </g>
     </g>

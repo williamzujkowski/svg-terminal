@@ -52,12 +52,8 @@ world</desc>
     <g clip-path="url(#terminalViewport)">
       <g transform="translate(12, 54)">
         
-      <text class="tt" y="0" fill="#e4e4e4">
-        hello
-      </text>
-      <text class="tt" y="25">
-        <tspan fill="#8be9fd">world</tspan>
-      </text>
+      <text class="tt" y="0" fill="#e4e4e4">hello</text>
+      <text class="tt" y="25.2"><tspan fill="#8be9fd">world</tspan></text>
       </g>
     </g>
     

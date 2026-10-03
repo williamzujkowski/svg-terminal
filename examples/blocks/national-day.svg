@@ -96,42 +96,12 @@
       <animate attributeName="x" values="109;109;117;125;133;141;149;157;165;173;181;189;197;205;213;221;229;237;245;253;261;269;277;285;293;301;309;317;325;333;341;349;357;365;373;381;389;397" keyTimes="0.0000;0.0270;0.0541;0.0811;0.1081;0.1351;0.1622;0.1892;0.2162;0.2432;0.2703;0.2973;0.3243;0.3514;0.3784;0.4054;0.4324;0.4595;0.4865;0.5135;0.5405;0.5676;0.5946;0.6216;0.6486;0.6757;0.7027;0.7297;0.7568;0.7838;0.8108;0.8378;0.8649;0.8919;0.9189;0.9459;0.9730;1.0000" calcMode="discrete" begin="0ms" dur="1200ms" fill="freeze"/>
     </rect>
     </g>
-
-    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        ╭───────────────────────────────────────────────────────────────────╮
-      </text>
-    </g>
-
-    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        │                                                                   │
-      </text>
-    </g>
-
-    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt" fill="#e4e4e4">
-        │ 💻 Today is National Coding Day                                   │
-      </text>
-    </g>
-
-    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-        │   &quot;Write some code!&quot;                                              │
-      </text>
-    </g>
-
-    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt" fill="#e4e4e4">
-        │                                                                   │
-      </text>
-    </g>
-
-    <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt" fill="#e4e4e4">
-        ╰───────────────────────────────────────────────────────────────────╯
-      </text>
-    </g>
+<g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 7.7V-0.7Q4.2 -4.9 8.4 -4.9H571.2Q575.4 -4.9 575.4 -0.7V7.7"/></g>
+<g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  💻 Today is National Coding Day                                    </tspan></text></g>
+<g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">    &quot;Write some code!&quot;                                               </tspan></text></g>
+<g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V-9.1Q4.2 -4.9 8.4 -4.9H571.2Q575.4 -4.9 575.4 -9.1V-17.5"/></g>
       </g>
     </g>
     

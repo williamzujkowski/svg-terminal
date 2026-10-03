@@ -9,9 +9,14 @@
 
 Generate animated SVG terminals from a declarative YAML config. The output is a single self-contained SVG that works inside GitHub's sandbox — no script, no external assets.
 
-![svg-terminal demo](./examples/demo.svg)
+<picture>
+  <source media="(max-width: 600px) and (prefers-reduced-motion: reduce)" srcset="./examples/demo-mobile-static.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="./examples/demo-static.svg">
+  <source media="(max-width: 600px)" srcset="./examples/demo-mobile.svg">
+  <img src="./examples/demo.svg" alt="svg-terminal demo">
+</picture>
 
-<sub>Demo above is the actual SVG this library produces. Source: [`examples/demo.yml`](./examples/demo.yml). Regenerate with `npm run demo`.</sub>
+<sub>Demo above is the actual SVG this library produces. Sources: [`desktop`](./examples/demo.yml) / [`mobile`](./examples/demo-mobile.yml). Reduced-motion visitors see a static version. Regenerate with `npm run demo`.</sub>
 
 ### Try in 60 seconds
 
@@ -296,6 +301,32 @@ accessibility:
 ```
 
 **Reduced-motion caveat.** The SVG emits an inline `@media (prefers-reduced-motion: reduce)` rule, which applies to CSS animations — the fade-ins and the frame cycle (single- and multi-line) honor it (migrated SMIL → CSS in v0.17). The remaining SMIL holdouts — typing reveal, cursor walk, and scroll-on-overflow — don't read the same CSS media query, so users who set the OS-level reduced-motion preference still see those animate. If that's a problem for your audience, generate with `--static` — same content, no motion at all.
+
+### Mobile README images
+
+An SVG scales as an image; its terminal lines do not reflow when the README gets narrower. Generate a separate mobile config with a narrower `window.width`, a short prompt and commands, shorter bars, and content split into lines. See [the 360px mobile demo config](./examples/demo-mobile.yml); it uses the same six blocks as the desktop demo.
+
+Generate both layouts and their static fallbacks:
+
+```bash
+svg-terminal generate --config terminal.yml --output terminal.svg
+svg-terminal generate --config terminal-mobile.yml --output terminal-mobile.svg
+svg-terminal generate --config terminal.yml --output terminal-static.svg --static
+svg-terminal generate --config terminal-mobile.yml --output terminal-mobile-static.svg --static
+```
+
+Use `<picture>` in your GitHub README to select the mobile layout at viewport widths up to 600px and the static layout for visitors who prefer reduced motion. Source order matters: put the combined condition first.
+
+```html
+<picture>
+  <source media="(max-width: 600px) and (prefers-reduced-motion: reduce)" srcset="./terminal-mobile-static.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="./terminal-static.svg">
+  <source media="(max-width: 600px)" srcset="./terminal-mobile.svg">
+  <img src="./terminal.svg" alt="Terminal introduction">
+</picture>
+```
+
+The breakpoint checks the browser viewport width. The `<img>` supplies the desktop fallback for Markdown viewers that do not support `<picture>`.
 
 ### Caching API responses
 

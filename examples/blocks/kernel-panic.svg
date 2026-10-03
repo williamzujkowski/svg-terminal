@@ -111,93 +111,63 @@ collecting error info... 100%</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#729fcf" font-weight="bold">:( </tspan>
-      </text>
+      <text class="tt"><tspan fill="#729fcf" font-weight="bold">:( </tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#ffffff">Your terminal ran into a problem and needs to think things over.</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ffffff">Your terminal ran into a problem and needs to think things over.</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  Stop code:  </tspan><tspan fill="#8be9fd">CRITICAL_PROCESS_DIED</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  Stop code:  </tspan><tspan fill="#8be9fd">CRITICAL_PROCESS_DIED</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  Process:    </tspan><tspan fill="#8be9fd">hopes_and_dreams.exe</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  Process:    </tspan><tspan fill="#8be9fd">hopes_and_dreams.exe</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt" fill="#e4e4e4">
-          Started:    Monday 09:01
-      </text>
+      <text class="tt" fill="#e4e4e4">  Started:    Monday 09:01</text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt" fill="#e4e4e4">
-          Crashed:    Monday 09:02
-      </text>
+      <text class="tt" fill="#e4e4e4">  Crashed:    Monday 09:02</text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt">
-        <tspan fill="#ffffff">What you can try:</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ffffff">What you can try:</tspan></text>
     </g>
 
     <g transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 2000ms">
-      <text class="tt" fill="#e4e4e4">
-          • Reduce coffee intake (not recommended)
-      </text>
+      <text class="tt" fill="#e4e4e4">  • Reduce coffee intake (not recommended)</text>
     </g>
 
     <g transform="translate(0, 302.4)" class="fade-in" style="animation-delay: 2050ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • Recompile with </tspan><tspan fill="#8be9fd">-O0</tspan><tspan fill="#e4e4e4"> and pray</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • Recompile with </tspan><tspan fill="#8be9fd">-O0</tspan><tspan fill="#e4e4e4"> and pray</tspan></text>
     </g>
 
     <g transform="translate(0, 327.6)" class="fade-in" style="animation-delay: 2100ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • </tspan><tspan fill="#50fa7b">git commit --all</tspan><tspan fill="#e4e4e4"> just in case</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • </tspan><tspan fill="#50fa7b">git commit --all</tspan><tspan fill="#e4e4e4"> just in case</tspan></text>
     </g>
 
     <g transform="translate(0, 352.8)" class="fade-in" style="animation-delay: 2150ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 378)" class="fade-in" style="animation-delay: 2200ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">  collecting error info... 100%</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">  collecting error info... 100%</tspan></text>
     </g>
       </g>
     </g>

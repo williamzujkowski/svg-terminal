@@ -106,63 +106,43 @@ Proceed? [y/N] _
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#ff5555">bash: fork-bomb pattern detected</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ff5555">bash: fork-bomb pattern detected</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt" fill="#e4e4e4">
-        Running this will:
-      </text>
+      <text class="tt" fill="#e4e4e4">Running this will:</text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-          • spawn processes until the kernel gives up
-      </text>
+      <text class="tt" fill="#e4e4e4">  • spawn processes until the kernel gives up</text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt" fill="#e4e4e4">
-          • turn your laptop fan into a leaf blower
-      </text>
+      <text class="tt" fill="#e4e4e4">  • turn your laptop fan into a leaf blower</text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • leave only </tspan><tspan fill="#8be9fd">REISUB</tspan><tspan fill="#e4e4e4"> as escape</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • leave only </tspan><tspan fill="#8be9fd">REISUB</tspan><tspan fill="#e4e4e4"> as escape</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt">
-        <tspan fill="#f1fa8c">Proceed? [y/N]</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#e4e4e4" opacity="0.6">_</tspan>
-      </text>
+      <text class="tt"><tspan fill="#f1fa8c">Proceed? [y/N]</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#e4e4e4" opacity="0.6">_</tspan></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">  (just kidding, nothing was actually executed)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">  (just kidding, nothing was actually executed)</tspan></text>
     </g>
       </g>
     </g>

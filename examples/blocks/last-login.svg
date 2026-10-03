@@ -100,27 +100,19 @@ dev      pts/0   Fri  09:00 - still logged in   (actually working?)</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">dev      pts/0   Tue  03:47 - still logged in   </tspan><tspan fill="#e4e4e4" opacity="0.6">(debugging sleep.c)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">dev      pts/0   Tue  03:47 - still logged in   </tspan><tspan fill="#e4e4e4" opacity="0.6">(debugging sleep.c)</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">dev      pts/1   Mon  23:12 - 23:13  (00:01)   </tspan><tspan fill="#e4e4e4" opacity="0.6">(oops wrong button)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">dev      pts/1   Mon  23:12 - 23:13  (00:01)   </tspan><tspan fill="#e4e4e4" opacity="0.6">(oops wrong button)</tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">dev      pts/0   Mon  14:33 - 14:34  (00:01)   </tspan><tspan fill="#e4e4e4" opacity="0.6">(left slack open)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">dev      pts/0   Mon  14:33 - 14:34  (00:01)   </tspan><tspan fill="#e4e4e4" opacity="0.6">(left slack open)</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">dev      pts/0   Fri  09:00 - still logged in   </tspan><tspan fill="#e4e4e4" opacity="0.6">(actually working?)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">dev      pts/0   Fri  09:00 - still logged in   </tspan><tspan fill="#e4e4e4" opacity="0.6">(actually working?)</tspan></text>
     </g>
       </g>
     </g>

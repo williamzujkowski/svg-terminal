@@ -76,99 +76,31 @@ theme: █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █</desc>
     <g clip-path="url(#terminalViewport)">
       <g transform="translate(12, 54)">
         
-      <text class="tt" y="0" fill="#e4e4e4">
-        you@svg-terminal:~$ cat /etc/motd
-      </text>
-      <text class="tt" y="25" fill="#e4e4e4">
-        ╔════════════════════════════════════════════════════════════════════════════════════════╗
-      </text>
-      <text class="tt" y="50" fill="#e4e4e4">
-        ║                                                                                        ║
-      </text>
-      <text class="tt" y="76" fill="#e4e4e4">
-        ║ SVG-TERMINAL v2026.05                                                                  ║
-      </text>
-      <text class="tt" y="101" fill="#e4e4e4">
-        ║ Animated terminals in your README, declarative YAML in.                                ║
-      </text>
-      <text class="tt" y="126" fill="#e4e4e4">
-        ║                                                                                        ║
-      </text>
-      <text class="tt" y="151" fill="#e4e4e4">
-        ╚════════════════════════════════════════════════════════════════════════════════════════╝
-      </text>
-      <text class="tt" y="176" fill="#e4e4e4">
-        you@svg-terminal:~$ neofetch --ascii_distro svg-terminal
-      </text>
-      <text class="tt" y="202">
-        <tspan fill="#8be9fd">dev@svg-terminal</tspan>
-      </text>
-      <text class="tt" y="227">
-        <tspan fill="#8be9fd">────────────────</tspan>
-      </text>
-      <text class="tt" y="252">
-        <tspan fill="#8be9fd">OS</tspan><tspan fill="#e4e4e4">:        TerminalOS v1.0</tspan>
-      </text>
-      <text class="tt" y="277">
-        <tspan fill="#8be9fd">Shell</tspan><tspan fill="#e4e4e4">:     bash 5.2</tspan>
-      </text>
-      <text class="tt" y="302">
-        <tspan fill="#8be9fd">Uptime</tspan><tspan fill="#e4e4e4">:    a long time</tspan>
-      </text>
-      <text class="tt" y="328">
-        <tspan fill="#8be9fd">Role</tspan><tspan fill="#e4e4e4">:      Library Author</tspan>
-      </text>
-      <text class="tt" y="353">
-        <tspan fill="#8be9fd">Location</tspan><tspan fill="#e4e4e4">:  localhost</tspan>
-      </text>
-      <text class="tt" y="378">
-        <tspan fill="#8be9fd">Languages</tspan><tspan fill="#e4e4e4">: TypeScript, SVG, SMIL</tspan>
-      </text>
-      <text class="tt" y="403">
-        <tspan fill="#8be9fd">Editor</tspan><tspan fill="#e4e4e4">:    vim (still trying to exit)</tspan>
-      </text>
-      <text class="tt" y="428" fill="#e4e4e4">
-        
-      </text>
-      <text class="tt" y="454">
-        <tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan>
-      </text>
-      <text class="tt" y="479" fill="#e4e4e4">
-        you@svg-terminal:~$ gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;
-      </text>
-      <text class="tt" y="504">
-        <tspan fill="#8be9fd">TypeScript</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">██████████░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  42%</tspan>
-      </text>
-      <text class="tt" y="529">
-        <tspan fill="#50fa7b">Rust      </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">██████░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  24%</tspan>
-      </text>
-      <text class="tt" y="554">
-        <tspan fill="#f1fa8c">Python    </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">████░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  18%</tspan>
-      </text>
-      <text class="tt" y="580">
-        <tspan fill="#ff79c6">Go        </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#ff79c6">███░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  11%</tspan>
-      </text>
-      <text class="tt" y="605">
-        <tspan fill="#729fcf">Lua       </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#729fcf">█░░░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">   5%</tspan>
-      </text>
-      <text class="tt" y="630" fill="#e4e4e4">
-        you@svg-terminal:~$ date +%H:%M:%S
-      </text>
-      <text class="tt" y="655">
-        <tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan>
-      </text>
-      <text class="tt" y="680" fill="#e4e4e4">
-        you@svg-terminal:~$ made-with --love
-      </text>
-      <text class="tt" y="706">
-        <tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan>
-      </text>
-      <text class="tt" y="731" fill="#e4e4e4">
-        you@svg-terminal:~$ palette
-      </text>
-      <text class="tt" y="756">
-        <tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan>
-      </text>
+      <text class="tt" y="0" fill="#e4e4e4">you@svg-terminal:~$ cat /etc/motd</text><g transform="translate(0, 25.2)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 7.7V-6.02Q3.08 -6.02 3.08 -6.02H752.92Q752.92 -6.02 752.92 -6.02V7.7M5.32 7.7V-3.78Q5.32 -3.78 5.32 -3.78H750.68Q750.68 -3.78 750.68 -3.78V7.7"/></g><g transform="translate(0, 50.4)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M752.92 -17.5V7.7M5.32 -17.5V7.7M750.68 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="756" lengthAdjust="spacingAndGlyphs">                                                                                          </tspan></text></g><g transform="translate(0, 75.6)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M752.92 -17.5V7.7M5.32 -17.5V7.7M750.68 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="756" lengthAdjust="spacingAndGlyphs">  SVG-TERMINAL v2026.05                                                                   </tspan></text></g><g transform="translate(0, 100.8)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M752.92 -17.5V7.7M5.32 -17.5V7.7M750.68 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="756" lengthAdjust="spacingAndGlyphs">  Animated terminals in your README, declarative YAML in.                                 </tspan></text></g><g transform="translate(0, 126)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M752.92 -17.5V7.7M5.32 -17.5V7.7M750.68 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="756" lengthAdjust="spacingAndGlyphs">                                                                                          </tspan></text></g><g transform="translate(0, 151.2)"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V-3.78Q3.08 -3.78 3.08 -3.78H752.92Q752.92 -3.78 752.92 -3.78V-17.5M5.32 -17.5V-6.02Q5.32 -6.02 5.32 -6.02H750.68Q750.68 -6.02 750.68 -6.02V-17.5"/></g>
+      <text class="tt" y="176.4" fill="#e4e4e4">you@svg-terminal:~$ neofetch --ascii_distro svg-terminal</text>
+      <text class="tt" y="201.6"><tspan fill="#8be9fd">dev@svg-terminal</tspan></text>
+      <text class="tt" y="226.8"><tspan fill="#8be9fd">────────────────</tspan></text>
+      <text class="tt" y="252"><tspan fill="#8be9fd">OS</tspan><tspan fill="#e4e4e4">:        TerminalOS v1.0</tspan></text>
+      <text class="tt" y="277.2"><tspan fill="#8be9fd">Shell</tspan><tspan fill="#e4e4e4">:     bash 5.2</tspan></text>
+      <text class="tt" y="302.4"><tspan fill="#8be9fd">Uptime</tspan><tspan fill="#e4e4e4">:    a long time</tspan></text>
+      <text class="tt" y="327.6"><tspan fill="#8be9fd">Role</tspan><tspan fill="#e4e4e4">:      Library Author</tspan></text>
+      <text class="tt" y="352.8"><tspan fill="#8be9fd">Location</tspan><tspan fill="#e4e4e4">:  localhost</tspan></text>
+      <text class="tt" y="378"><tspan fill="#8be9fd">Languages</tspan><tspan fill="#e4e4e4">: TypeScript, SVG, SMIL</tspan></text>
+      <text class="tt" y="403.2"><tspan fill="#8be9fd">Editor</tspan><tspan fill="#e4e4e4">:    vim (still trying to exit)</tspan></text>
+      <text class="tt" y="428.4" fill="#e4e4e4"></text>
+      <text class="tt" y="453.6"><tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan></text>
+      <text class="tt" y="478.8" fill="#e4e4e4">you@svg-terminal:~$ gh api users/octocat/repos --jq &apos;[.[].language] | group_by(.) | …&apos;</text>
+      <text class="tt" y="504"><tspan fill="#8be9fd">TypeScript</tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#8be9fd">██████████░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  42%</tspan></text>
+      <text class="tt" y="529.2"><tspan fill="#50fa7b">Rust      </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">██████░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  24%</tspan></text>
+      <text class="tt" y="554.4"><tspan fill="#f1fa8c">Python    </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">████░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  18%</tspan></text>
+      <text class="tt" y="579.6"><tspan fill="#ff79c6">Go        </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#ff79c6">███░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">  11%</tspan></text>
+      <text class="tt" y="604.8"><tspan fill="#729fcf">Lua       </tspan><tspan fill="#e4e4e4">  </tspan><tspan fill="#729fcf">█░░░░░░░░░░░░░░░░░░░░░░░</tspan><tspan fill="#e4e4e4">   5%</tspan></text>
+      <text class="tt" y="630" fill="#e4e4e4">you@svg-terminal:~$ date +%H:%M:%S</text>
+      <text class="tt" y="655.2"><tspan fill="#e4e4e4">uptime  </tspan><tspan fill="#8be9fd">13:37:00</tspan></text>
+      <text class="tt" y="680.4" fill="#e4e4e4">you@svg-terminal:~$ made-with --love</text>
+      <text class="tt" y="705.6"><tspan fill="#ff5555">   </tspan><tspan fill="#e4e4e4"> built with care</tspan></text>
+      <text class="tt" y="730.8" fill="#e4e4e4">you@svg-terminal:~$ palette</text>
+      <text class="tt" y="756"><tspan fill="#e4e4e4">theme: </tspan><tspan fill="#ff5555">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff6e6e">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#69ff94">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffa5">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#d6acff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff92df">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#a4ffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">█</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#6272a4">█</tspan></text>
       </g>
     </g>
     

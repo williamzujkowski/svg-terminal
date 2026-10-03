@@ -103,45 +103,31 @@ Table of Contents
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms">
-      <text class="tt">
-        <tspan fill="#8be9fd" font-weight="bold">Table of Contents</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd" font-weight="bold">Table of Contents</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • Introduction  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #introduction</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • Introduction  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #introduction</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • Getting Started  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #getting-started</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • Getting Started  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #getting-started</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • Configuration  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #configuration</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • Configuration  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #configuration</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • Examples  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #examples</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • Examples  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #examples</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1100ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  • Contributing  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #contributing</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  • Contributing  </tspan><tspan fill="#e4e4e4" opacity="0.6">→ #contributing</tspan></text>
     </g>
       </g>
     </g>

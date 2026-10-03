@@ -97,9 +97,7 @@ trend: ▂▄▁▇▅█▆▃▅▇  (min 2, max 9, n=10)</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">trend: </tspan><tspan fill="#50fa7b">▂▄▁▇▅█▆▃▅▇</tspan><tspan fill="#e4e4e4">  (min 2, max 9, n=10)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">trend: </tspan><tspan fill="#50fa7b">▂▄▁▇▅█▆▃▅▇</tspan><tspan fill="#e4e4e4">  (min 2, max 9, n=10)</tspan></text>
     </g>
       </g>
     </g>

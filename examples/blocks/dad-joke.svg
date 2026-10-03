@@ -98,66 +98,16 @@ A: Because light attracts bugs!</desc>
       <animate attributeName="x" values="109;109;117;125;133;141;149;157;165;173;181;189;197;205;213;221;229;237;245;253;261;269;277;285;293;301;309;317;325;333;341;349;357;365;373" keyTimes="0.0000;0.0294;0.0588;0.0882;0.1176;0.1471;0.1765;0.2059;0.2353;0.2647;0.2941;0.3235;0.3529;0.3824;0.4118;0.4412;0.4706;0.5000;0.5294;0.5588;0.5882;0.6176;0.6471;0.6765;0.7059;0.7353;0.7647;0.7941;0.8235;0.8529;0.8824;0.9118;0.9412;0.9706;1.0000" calcMode="discrete" begin="0ms" dur="1800ms" fill="freeze"/>
     </rect>
     </g>
-
-    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 2100ms">
-      <text class="tt" fill="#e4e4e4">
-        ╔═══════════════════════════════════════════════════════════════════╗
-      </text>
-    </g>
-
-    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 2150ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 2200ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ DAD JOKE OF THE DAY - May 25                                      ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 2250ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ Category: CLASSIC                                                 ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 2300ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 2350ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ Q: Why do programmers prefer dark mode?                           ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 2400ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 2450ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ A: Because light attracts bugs!                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 2500ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 2550ms">
-      <text class="tt" fill="#e4e4e4">
-        ╚═══════════════════════════════════════════════════════════════════╝
-      </text>
-    </g>
+<g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 2100ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 7.7V-6.02Q3.08 -6.02 3.08 -6.02H576.52Q576.52 -6.02 576.52 -6.02V7.7M5.32 7.7V-3.78Q5.32 -3.78 5.32 -3.78H574.28Q574.28 -3.78 574.28 -3.78V7.7"/></g>
+<g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 2150ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 2200ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  DAD JOKE OF THE DAY - May 25                                       </tspan></text></g>
+<g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 2250ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  Category: CLASSIC                                                  </tspan></text></g>
+<g transform="translate(0, 126)" class="fade-in" style="animation-delay: 2300ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 2350ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  Q: Why do programmers prefer dark mode?                            </tspan></text></g>
+<g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 2400ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 2450ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  A: Because light attracts bugs!                                    </tspan></text></g>
+<g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 2500ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 252)" class="fade-in" style="animation-delay: 2550ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V-3.78Q3.08 -3.78 3.08 -3.78H576.52Q576.52 -3.78 576.52 -3.78V-17.5M5.32 -17.5V-6.02Q5.32 -6.02 5.32 -6.02H574.28Q574.28 -6.02 574.28 -6.02V-17.5"/></g>
       </g>
     </g>
     

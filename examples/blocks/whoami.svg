@@ -97,9 +97,7 @@ uid=1000(dev) gid=1000(dev) groups=1000(dev),100(users),27(sudo),999(docker)</de
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">uid=1000(</tspan><tspan fill="#50fa7b">dev</tspan><tspan fill="#e4e4e4">) gid=1000(dev) groups=1000(dev),100(users),27(sudo),999(docker)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">uid=1000(</tspan><tspan fill="#50fa7b">dev</tspan><tspan fill="#e4e4e4">) gid=1000(dev) groups=1000(dev),100(users),27(sudo),999(docker)</tspan></text>
     </g>
       </g>
     </g>

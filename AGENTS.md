@@ -6,14 +6,14 @@ This file provides guidance to coding agents working in this repository.
 
 - `npm run build` — bundle with tsup → `dist/` (ESM + `.d.ts`, targets node22).
 - `npm run dev` — tsup watch mode.
-- `npm test` — vitest, single run (505 tests at v1.3.0).
+- `npm test` — vitest, single run (515 tests at v1.3.1).
 - `npm run test:watch` — vitest watch.
 - `npm test -- src/core/__tests__/markup-parser.test.ts` — single test file.
 - `npm test -- -t "fragment of test name"` — single test by name.
 - `npm run typecheck` — `tsc --noEmit` (`strict`, plus `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`).
 - `npm run lint` — ESLint v9 flat config over `src/`.
 - `npm run generate` — `tsx src/cli.ts generate` against `./terminal.yml`.
-- `npm run demo` — rebuild + regenerate the README hero SVG + 20-theme gallery (CI verifies the committed SVGs match the regen).
+- `npm run demo` — rebuild + regenerate desktop/mobile README heroes (animated and static), the 20-theme gallery, and block catalog (CI verifies the committed SVGs match the regen).
 - `npm run demo:regen` — just the regen step (skips the rebuild). CI uses this after `build` to save ~9s.
 - `node dist/cli.js generate --config terminal.yml --output terminal.svg [--static] [--minify] [--watch] [--no-cache | --refresh-cache | --frozen-cache | --cache-mode <normal|refresh|frozen|off>] [--strict] [--timings] [--explain]` — built CLI surface.
 - Node ≥ 22 (the CI workflow pins `22.22.3` so a Node patch bump can't silently change the SVG byte output).
@@ -48,6 +48,7 @@ The library converts a declarative YAML config into a single self-contained SVG 
 - `line-renderer.ts` — per-line SVG.
   - Commands: ONE `<clipPath>` per command line whose `width` discretely steps as each character should appear (v0.7 consolidation — replaced N per-char `<tspan opacity="0"><animate/></tspan>`). The cursor walks via ONE `<animate attributeName="x" calcMode="discrete">` (v0.7) whose values are **lag-by-one** (cursor sits ON the just-emerged char, not after) and stays solid throughout typing (v0.8.1 fix — no mid-typing blink). Prompt fades in via CSS `.fade-in` class + per-element `style="animation-delay: ${startTime}ms"` (v0.10 — was SMIL `<animate opacity>`, migrated for `prefers-reduced-motion` compliance).
   - Output: CSS `.fade-in` class on the line `<g>` with per-element `style="animation-delay: …ms"`. v0.10 replaced the SMIL `<animate opacity>` + `<set>` pair with this CSS form so reduced-motion users see instant appearance instead of fade. Y position is `roundLineY(i * lineHeight)` (`.toFixed(1)`) — fractional y avoids the +1 px wobble that integer rounding produced on every 5th row (v0.9).
+  - Complete box rows use `box-renderer.ts` on both animated and static paths: SVG strokes join at row midpoints, and styled text runs have explicit column positions/widths. Borders therefore stay continuous across line spacing and mobile font fallbacks. Partial box drawing art stays text. Keep formatting whitespace outside `<text>` nodes: `.tt` preserves whitespace, including accidental template indentation. Static rows also retain fractional y coordinates so their border segments meet.
   - Animated blocks: N `<text>` siblings at the same y. v0.17 migrated cycling from per-frame SMIL `<animate attributeName="opacity">` to CSS `@keyframes frame-cycle-N` (one rule per unique frame count, emitted in the SVG `<style>` block by svg-generator.ts; deduplicated across same-N animated blocks). Each frame's text element carries `class="tt frame-cycle-N"` + inline `style="animation: frame-cycle-N {cycleMs}ms linear {i*frameDurMs}ms {loop ? 'infinite' : '1'}"`. The wrapping `<g>` carries the CSS `.fade-in` for its initial appearance (v0.10). Static `opacity="1"` on frame 0 / `"0"` on others is the fallback for SMIL-stripping renderers AND for `prefers-reduced-motion` users — in both cases the CSS animation doesn't drive opacity and the static attribute wins.
   - **Non-SMIL renderers**: every line group has no static `opacity="0"`, and clip-path rects have their FINAL width as the static attribute (not 0). SMIL-stripping renderers (OG scrapers, npm-readme, RSS) see the fully-rendered final frame. The `setHold` helper pins the SMIL start value via `<set>` for the typing reveal so the animation still plays where SMIL is honored.
 - `cache.ts` — JSON cache file (`{ version: 1, entries: { ... } }`). `flushCache` prunes entries older than `cacheTTL` before writing. `resolveCachePath` guards against `..`-traversal AND symlink-escape — both sides are realpath'd before the `startsWith` check (v0.9, closed #84). `makeUseCache` throws on `ttl < 0`.
@@ -93,7 +94,7 @@ Both paths share the per-N `@keyframes frame-cycle-N` rule (keyed on frame *coun
 - Public types live in `src/types.ts`; re-exported via `export type *` from `src/index.ts`. New public surfaces (blocks, themes, helpers) get re-exported there so they appear in `dist/`.
 - Tests live under `src/**/__tests__/**/*.test.ts` (vitest `include` glob). SVG snapshot tests live in `src/core/__tests__/__snapshots__/`.
 - CLI is a single hand-rolled flag parser in `src/cli.ts` — no commander/yargs.
-- `npm run demo` regenerates `examples/demo.svg` + `examples/demo-static.svg` + `examples/gallery/*.svg` from `examples/demo.yml` / `examples/gallery/_template.yml`. CI runs the regen and `git diff --exit-code` on `examples/` — PR authors update the demo if they touch rendering.
+- `npm run demo` regenerates desktop/mobile hero SVGs (animated + static), gallery SVGs, and the block catalog. Hero configs are `examples/demo.yml` / `examples/demo-mobile.yml`; gallery config is `examples/gallery/_template.yml`. The README selects mobile at viewport widths ≤600px, with reduced-motion static sources first. CI runs the regen and `git diff --exit-code` on `examples/` — PR authors update the demo if they touch rendering.
 - Deprecated config fields (`animation.charAppearDuration` since v0.7, `animation.cursorBlinkCycle` since v0.8) stay in the schema for back-compat. Still present as of v1.2.0 — removal deferred (a no-op major-version cleanup, not yet scheduled); they're inert but accepted so old configs don't error.
 
 ## GitHub Action

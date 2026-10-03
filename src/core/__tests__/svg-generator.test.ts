@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { generateSvg, generateStaticSvg } from '../svg-generator.js';
 import { DEFAULT_CONFIG } from '../defaults.js';
 import { setStrict } from '../strict-mode.js';
+import { createBox } from '../box-generator.js';
 import type { Sequence, TerminalConfig } from '../../types.js';
 
 function makeConfig(overrides: Partial<TerminalConfig> = {}): TerminalConfig {
@@ -12,6 +13,30 @@ const basicSequences: Sequence[] = [
   { type: 'command', content: 'echo hello', typingDuration: 500 },
   { type: 'output', content: 'hello' },
 ];
+
+describe('box layout across render modes', () => {
+  it('shares continuous border geometry between animated and static output', () => {
+    const box = createBox({ width: 20, lines: ['[[fg:cyan]]hello[[/fg]]'] });
+    const animated = generateSvg([{ type: 'output', content: box }], makeConfig());
+    const staticSvg = generateStaticSvg(box.split('\n'), makeConfig());
+    const paths = (svg: string) => [...svg.matchAll(/<path fill="none"[^>]*>/g)].map(match => match[0]);
+    expect(paths(animated)).toHaveLength(3);
+    expect(paths(animated)).toEqual(paths(staticSvg));
+    expect(staticSvg).toContain('translate(0, 25.2)');
+    expect(animated).toContain('translate(0, 25.2)');
+    expect(animated).toContain('class="fade-in"');
+    expect(staticSvg).toContain('hello');
+  });
+
+  it('does not inject indentation into whitespace-preserving text nodes', () => {
+    const line = '  intentionally indented  ';
+    const animated = generateSvg([{ type: 'output', content: line }], makeConfig());
+    const staticSvg = generateStaticSvg([line], makeConfig());
+    for (const svg of [animated, staticSvg]) {
+      expect(svg).toMatch(/<text class="tt"[^>]*> {2}intentionally indented {2}<\/text>/);
+    }
+  });
+});
 
 describe('generateSvg', () => {
   it('produces valid SVG with role and aria-label', () => {

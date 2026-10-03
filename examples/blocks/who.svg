@@ -100,27 +100,19 @@ sanity    ?       last seen Friday   (checked out of reality)</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        dev       pts/0   today 09:14
-      </text>
+      <text class="tt" fill="#e4e4e4">dev       pts/0   today 09:14</text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">debugger  pts/1   today 09:14   </tspan><tspan fill="#e4e4e4" opacity="0.6">(the ghost in the machine)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">debugger  pts/1   today 09:14   </tspan><tspan fill="#e4e4e4" opacity="0.6">(the ghost in the machine)</tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">coffee    pts/2   today 03:47   </tspan><tspan fill="#e4e4e4" opacity="0.6">(stimulant.exe is running)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">coffee    pts/2   today 03:47   </tspan><tspan fill="#e4e4e4" opacity="0.6">(stimulant.exe is running)</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">sanity    ?       last seen Friday   </tspan><tspan fill="#e4e4e4" opacity="0.6">(checked out of reality)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">sanity    ?       last seen Friday   </tspan><tspan fill="#e4e4e4" opacity="0.6">(checked out of reality)</tspan></text>
     </g>
       </g>
     </g>

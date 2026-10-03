@@ -106,69 +106,47 @@ Editor:    neovim
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">user@terminal</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">user@terminal</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">─────────────</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">─────────────</tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">OS</tspan><tspan fill="#e4e4e4">:        TerminalOS v1.0</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">OS</tspan><tspan fill="#e4e4e4">:        TerminalOS v1.0</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">Shell</tspan><tspan fill="#e4e4e4">:     bash 5.2</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">Shell</tspan><tspan fill="#e4e4e4">:     bash 5.2</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">Uptime</tspan><tspan fill="#e4e4e4">:    a long time</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">Uptime</tspan><tspan fill="#e4e4e4">:    a long time</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">Role</tspan><tspan fill="#e4e4e4">:      Developer</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">Role</tspan><tspan fill="#e4e4e4">:      Developer</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">Location</tspan><tspan fill="#e4e4e4">:  localhost</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">Location</tspan><tspan fill="#e4e4e4">:  localhost</tspan></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">Languages</tspan><tspan fill="#e4e4e4">: TypeScript, Python, Go</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">Languages</tspan><tspan fill="#e4e4e4">: TypeScript, Python, Go</tspan></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">Editor</tspan><tspan fill="#e4e4e4">:    neovim</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">Editor</tspan><tspan fill="#e4e4e4">:    neovim</tspan></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 2000ms">
-      <text class="tt">
-        <tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ff5555">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#50fa7b">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#f1fa8c">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#729fcf">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ff79c6">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#8be9fd">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffffff">●</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#ffb86c">●</tspan></text>
     </g>
       </g>
     </g>

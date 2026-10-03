@@ -107,42 +107,12 @@ Editor:    neovim
       <animate attributeName="x" values="17;17;25;33;41;49;57;65;73;81;89;97;105;113" keyTimes="0.0000;0.0769;0.1538;0.2308;0.3077;0.3846;0.4615;0.5385;0.6154;0.6923;0.7692;0.8462;0.9231;1.0000" calcMode="discrete" begin="0ms" dur="500ms" fill="freeze"/>
     </rect>
     </g>
-
-    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms">
-      <text class="tt" fill="#d8dee9">
-        ╔════════════════════════════════════════════════════════════════════════════╗
-      </text>
-    </g>
-
-    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms">
-      <text class="tt" fill="#d8dee9">
-        ║                                                                            ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms">
-      <text class="tt" fill="#d8dee9">
-        ║ DEV TERMINAL v2026.05                                                      ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms">
-      <text class="tt" fill="#d8dee9">
-        ║ Theme preview                                                              ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms">
-      <text class="tt" fill="#d8dee9">
-        ║                                                                            ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms">
-      <text class="tt" fill="#d8dee9">
-        ╚════════════════════════════════════════════════════════════════════════════╝
-      </text>
-    </g>
+<g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms"><path fill="none" stroke="#d8dee9" stroke-width="0.91" d="M3.08 7.7V-6.02Q3.08 -6.02 3.08 -6.02H652.12Q652.12 -6.02 652.12 -6.02V7.7M5.32 7.7V-3.78Q5.32 -3.78 5.32 -3.78H649.88Q649.88 -3.78 649.88 -3.78V7.7"/></g>
+<g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms"><path fill="none" stroke="#d8dee9" stroke-width="0.91" d="M3.08 -17.5V7.7M652.12 -17.5V7.7M5.32 -17.5V7.7M649.88 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#d8dee9" textLength="655.2" lengthAdjust="spacingAndGlyphs">                                                                              </tspan></text></g>
+<g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms"><path fill="none" stroke="#d8dee9" stroke-width="0.91" d="M3.08 -17.5V7.7M652.12 -17.5V7.7M5.32 -17.5V7.7M649.88 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#d8dee9" textLength="655.2" lengthAdjust="spacingAndGlyphs">  DEV TERMINAL v2026.05                                                       </tspan></text></g>
+<g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms"><path fill="none" stroke="#d8dee9" stroke-width="0.91" d="M3.08 -17.5V7.7M652.12 -17.5V7.7M5.32 -17.5V7.7M649.88 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#d8dee9" textLength="655.2" lengthAdjust="spacingAndGlyphs">  Theme preview                                                               </tspan></text></g>
+<g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms"><path fill="none" stroke="#d8dee9" stroke-width="0.91" d="M3.08 -17.5V7.7M652.12 -17.5V7.7M5.32 -17.5V7.7M649.88 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#d8dee9" textLength="655.2" lengthAdjust="spacingAndGlyphs">                                                                              </tspan></text></g>
+<g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms"><path fill="none" stroke="#d8dee9" stroke-width="0.91" d="M3.08 -17.5V-3.78Q3.08 -3.78 3.08 -3.78H652.12Q652.12 -3.78 652.12 -3.78V-17.5M5.32 -17.5V-6.02Q5.32 -6.02 5.32 -6.02H649.88Q649.88 -6.02 649.88 -6.02V-17.5"/></g>
 
     <g transform="translate(0, 176.4)">
       <defs><clipPath id="cmdrev-7"><rect x="17" y="-14" width="288" height="28"><set attributeName="width" to="0" begin="0s" end="2100ms"/><animate attributeName="width" values="0;8;16;24;32;40;48;56;64;72;80;88;96;104;112;120;128;136;144;152;160;168;176;184;192;200;208;216;224;232;240;248;256;264;272;280;288" keyTimes="0.0000;0.0278;0.0556;0.0833;0.1111;0.1389;0.1667;0.1944;0.2222;0.2500;0.2778;0.3056;0.3333;0.3611;0.3889;0.4167;0.4444;0.4722;0.5000;0.5278;0.5556;0.5833;0.6111;0.6389;0.6667;0.6944;0.7222;0.7500;0.7778;0.8056;0.8333;0.8611;0.8889;0.9167;0.9444;0.9722;1.0000" calcMode="discrete" begin="2100ms" dur="1200ms" fill="freeze"/></rect></clipPath></defs>
@@ -158,69 +128,47 @@ Editor:    neovim
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 3600ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">dev@svg-terminal</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">dev@svg-terminal</tspan></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 3650ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">────────────────</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">────────────────</tspan></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 3700ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">OS</tspan><tspan fill="#d8dee9">:        TerminalOS v1.0</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">OS</tspan><tspan fill="#d8dee9">:        TerminalOS v1.0</tspan></text>
     </g>
 
     <g transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 3750ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">Shell</tspan><tspan fill="#d8dee9">:     bash 5.2</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">Shell</tspan><tspan fill="#d8dee9">:     bash 5.2</tspan></text>
     </g>
 
     <g transform="translate(0, 302.4)" class="fade-in" style="animation-delay: 3800ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">Uptime</tspan><tspan fill="#d8dee9">:    a long time</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">Uptime</tspan><tspan fill="#d8dee9">:    a long time</tspan></text>
     </g>
 
     <g transform="translate(0, 327.6)" class="fade-in" style="animation-delay: 3850ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">Role</tspan><tspan fill="#d8dee9">:      Author</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">Role</tspan><tspan fill="#d8dee9">:      Author</tspan></text>
     </g>
 
     <g transform="translate(0, 352.8)" class="fade-in" style="animation-delay: 3900ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">Location</tspan><tspan fill="#d8dee9">:  localhost</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">Location</tspan><tspan fill="#d8dee9">:  localhost</tspan></text>
     </g>
 
     <g transform="translate(0, 378)" class="fade-in" style="animation-delay: 3950ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">Languages</tspan><tspan fill="#d8dee9">: TypeScript</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">Languages</tspan><tspan fill="#d8dee9">: TypeScript</tspan></text>
     </g>
 
     <g transform="translate(0, 403.2)" class="fade-in" style="animation-delay: 4000ms">
-      <text class="tt">
-        <tspan fill="#88c0d0">Editor</tspan><tspan fill="#d8dee9">:    neovim</tspan>
-      </text>
+      <text class="tt"><tspan fill="#88c0d0">Editor</tspan><tspan fill="#d8dee9">:    neovim</tspan></text>
     </g>
 
     <g transform="translate(0, 428.4)" class="fade-in" style="animation-delay: 4050ms">
-      <text class="tt" fill="#d8dee9">
-        
-      </text>
+      <text class="tt" fill="#d8dee9"></text>
     </g>
 
     <g transform="translate(0, 453.6)" class="fade-in" style="animation-delay: 4100ms">
-      <text class="tt">
-        <tspan fill="#d08a91">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#a3be8c">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#ebcb8b">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#5e81ac">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#b48ead">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#88c0d0">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#eceff4">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#d08770">●</tspan>
-      </text>
+      <text class="tt"><tspan fill="#d08a91">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#a3be8c">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#ebcb8b">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#5e81ac">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#b48ead">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#88c0d0">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#eceff4">●</tspan><tspan fill="#d8dee9"> </tspan><tspan fill="#d08770">●</tspan></text>
     </g>
       </g>
     </g>

@@ -104,51 +104,35 @@ __________________
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-         __________________
-      </text>
+      <text class="tt" fill="#e4e4e4"> __________________</text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        &lt; moo. I am a cow. &gt;
-      </text>
+      <text class="tt" fill="#e4e4e4">&lt; moo. I am a cow. &gt;</text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt" fill="#e4e4e4">
-         ------------------
-      </text>
+      <text class="tt" fill="#e4e4e4"> ------------------</text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-                \   ^__^
-      </text>
+      <text class="tt" fill="#e4e4e4">        \   ^__^</text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt" fill="#e4e4e4">
-                 \  (oo)\_______
-      </text>
+      <text class="tt" fill="#e4e4e4">         \  (oo)\_______</text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt" fill="#e4e4e4">
-                    (__)\       )\/\
-      </text>
+      <text class="tt" fill="#e4e4e4">            (__)\       )\/\</text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt" fill="#e4e4e4">
-                        ||----w |
-      </text>
+      <text class="tt" fill="#e4e4e4">                ||----w |</text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt" fill="#e4e4e4">
-                        ||     ||
-      </text>
+      <text class="tt" fill="#e4e4e4">                ||     ||</text>
     </g>
       </g>
     </g>

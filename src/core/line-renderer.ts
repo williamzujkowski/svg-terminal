@@ -5,6 +5,7 @@
 
 import type { AnimationConfig, AnimationFrame, ChromeConfig, StyledSpan, TerminalTextConfig, ThemeColors } from '../types.js';
 import { buildColorMap, hasMarkup, parseMarkup, resolveColor } from './markup-parser.js';
+import { renderBoxRow } from './box-renderer.js';
 import { escapeXml, getTextWidth, roundCoord } from './xml.js';
 import { CHAR_WIDTH_RATIO, CURSOR_Y_OFFSET_RATIO, DEFAULT_ANIMATION, DEFAULT_CHROME } from './defaults.js';
 
@@ -307,7 +308,10 @@ function generateOutputLine(
   chrome: ChromeConfig,
   pinWidth: boolean,
   fontSize: number,
+  lineHeight: number,
 ): string {
+  const box = renderBoxRow(content, colorMap, color, fontSize, lineHeight, chrome.dimOpacity);
+  if (box !== undefined) return `<g transform="translate(0, ${y})"${fadeInStyle(startTime)}>${box}</g>`;
   const styled = hasMarkup(content);
   const textContent = styled
     ? generateStyledText(parseMarkup(content, colorMap, color), color, chrome.dimOpacity)
@@ -323,9 +327,7 @@ function generateOutputLine(
 
   return `
     <g transform="translate(0, ${y})"${fadeInStyle(startTime)}>
-      <text class="tt"${textFill}${pin}>
-        ${textContent}
-      </text>
+      <text class="tt"${textFill}${pin}>${textContent}</text>
     </g>`;
 }
 
@@ -387,6 +389,7 @@ export function generateAllLines(
             chromeConfig,
             frame.pinWidth ?? false,
             terminal.fontSize,
+            lineHeight,
           ),
         );
       }

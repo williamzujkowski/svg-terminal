@@ -95,36 +95,11 @@ The function of good software is to make the complex appear t...</desc>
       <animate attributeName="x" values="109;109;117;125;133;141;149;157" keyTimes="0.0000;0.1429;0.2857;0.4286;0.5714;0.7143;0.8571;1.0000" calcMode="discrete" begin="0ms" dur="1200ms" fill="freeze"/>
     </rect>
     </g>
-
-    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        ╭───────────────────────────────────────────────────────────────────╮
-      </text>
-    </g>
-
-    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        │                                                                   │
-      </text>
-    </g>
-
-    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt" fill="#e4e4e4">
-        │  The function of good software is to make the complex appear t... │
-      </text>
-    </g>
-
-    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-        │                                                                   │
-      </text>
-    </g>
-
-    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt" fill="#e4e4e4">
-        ╰───────────────────────────────────────────────────────────────────╯
-      </text>
-    </g>
+<g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 7.7V-0.7Q4.2 -4.9 8.4 -4.9H571.2Q575.4 -4.9 575.4 -0.7V7.7"/></g>
+<g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">   The function of good software is to make the complex appear t...  </tspan></text></g>
+<g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V7.7M575.4 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M4.2 -17.5V-9.1Q4.2 -4.9 8.4 -4.9H571.2Q575.4 -4.9 575.4 -9.1V-17.5"/></g>
       </g>
     </g>
     

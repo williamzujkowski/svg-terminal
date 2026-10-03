@@ -96,42 +96,12 @@ Location: Brooklyn</desc>
       <animate attributeName="x" values="109;109;117;125;133;141;149;157;165;173;181;189;197;205;213;221;229;237;245;253;261;269" keyTimes="0.0000;0.0476;0.0952;0.1429;0.1905;0.2381;0.2857;0.3333;0.3810;0.4286;0.4762;0.5238;0.5714;0.6190;0.6667;0.7143;0.7619;0.8095;0.8571;0.9048;0.9524;1.0000" calcMode="discrete" begin="0ms" dur="500ms" fill="freeze"/>
     </rect>
     </g>
-
-    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms">
-      <text class="tt" fill="#e4e4e4">
-        ╔═══════════════════════════════════════════════════════════════════╗
-      </text>
-    </g>
-
-    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">║ </tspan><tspan fill="#f1fa8c">Weather data unavailable</tspan><tspan fill="#e4e4e4">                                          ║</tspan>
-      </text>
-    </g>
-
-    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ Location: Brooklyn                                                ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms">
-      <text class="tt" fill="#e4e4e4">
-        ╚═══════════════════════════════════════════════════════════════════╝
-      </text>
-    </g>
+<g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 7.7V-6.02Q3.08 -6.02 3.08 -6.02H576.52Q576.52 -6.02 576.52 -6.02V7.7M5.32 7.7V-3.78Q5.32 -3.78 5.32 -3.78H574.28Q574.28 -3.78 574.28 -3.78V7.7"/></g>
+<g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="16.8" lengthAdjust="spacingAndGlyphs">  </tspan><tspan x="16.8" fill="#f1fa8c" textLength="201.6" lengthAdjust="spacingAndGlyphs">Weather data unavailable</tspan><tspan x="218.4" fill="#e4e4e4" textLength="361.2" lengthAdjust="spacingAndGlyphs">                                           </tspan></text></g>
+<g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  Location: Brooklyn                                                 </tspan></text></g>
+<g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V-3.78Q3.08 -3.78 3.08 -3.78H576.52Q576.52 -3.78 576.52 -3.78V-17.5M5.32 -17.5V-6.02Q5.32 -6.02 5.32 -6.02H574.28Q574.28 -6.02 574.28 -6.02V-17.5"/></g>
       </g>
     </g>
     

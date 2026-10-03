@@ -106,63 +106,43 @@ Plan:
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        Login:     dev
-      </text>
+      <text class="tt" fill="#e4e4e4">Login:     dev</text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        Directory: /home/dev
-      </text>
+      <text class="tt" fill="#e4e4e4">Directory: /home/dev</text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt" fill="#e4e4e4">
-        Shell:     /bin/bash (and vim, and screaming)
-      </text>
+      <text class="tt" fill="#e4e4e4">Shell:     /bin/bash (and vim, and screaming)</text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-        Last login: 2 minutes ago, from keyboard
-      </text>
+      <text class="tt" fill="#e4e4e4">Last login: 2 minutes ago, from keyboard</text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">New mail:  </tspan><tspan fill="#ff5555">842</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#e4e4e4" opacity="0.6">(unread since 2019)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">New mail:  </tspan><tspan fill="#ff5555">842</tspan><tspan fill="#e4e4e4"> </tspan><tspan fill="#e4e4e4" opacity="0.6">(unread since 2019)</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt" fill="#e4e4e4">
-        Plan:
-      </text>
+      <text class="tt" fill="#e4e4e4">Plan:</text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt" fill="#e4e4e4">
-          • too many tabs open
-      </text>
+      <text class="tt" fill="#e4e4e4">  • too many tabs open</text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt" fill="#e4e4e4">
-          • coffee dependency: critical
-      </text>
+      <text class="tt" fill="#e4e4e4">  • coffee dependency: critical</text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt" fill="#e4e4e4">
-          • debugger of broken dreams
-      </text>
+      <text class="tt" fill="#e4e4e4">  • debugger of broken dreams</text>
     </g>
       </g>
     </g>

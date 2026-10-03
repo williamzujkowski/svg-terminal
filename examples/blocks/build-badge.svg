@@ -102,39 +102,27 @@
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> tests      243 passing</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> tests      243 passing</tspan></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> lint      </tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> lint      </tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">⚠</tspan><tspan fill="#e4e4e4"> coverage   82%</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#f1fa8c">⚠</tspan><tspan fill="#e4e4e4"> coverage   82%</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> build     </tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  </tspan><tspan fill="#50fa7b">✓</tspan><tspan fill="#e4e4e4"> build     </tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
       </g>
     </g>

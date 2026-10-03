@@ -108,75 +108,51 @@ login: _</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 2100ms">
-      <text class="tt" fill="#e4e4e4">
-        CONNECT 9600/ARQ/V.32
-      </text>
+      <text class="tt" fill="#e4e4e4">CONNECT 9600/ARQ/V.32</text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 2150ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 2200ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">   _______ _    _ ____  ____  _____</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">   _______ _    _ ____  ____  _____</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 2250ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">  |__   __| |  | |  _ \|  _ \/ ____|</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">  |__   __| |  | |  _ \|  _ \/ ____|</tspan></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 2300ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">     | |  | |  | | |_) | |_) | (___</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">     | |  | |  | | |_) | |_) | (___</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 2350ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">     | |  | |__| |  __/|  _ &lt; \___ \</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">     | |  | |__| |  __/|  _ &lt; \___ \</tspan></text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 2400ms">
-      <text class="tt">
-        <tspan fill="#8be9fd">     |_|   \____/|_|   |_| \_\____/</tspan>
-      </text>
+      <text class="tt"><tspan fill="#8be9fd">     |_|   \____/|_|   |_| \_\____/</tspan></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 2450ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 2500ms">
-      <text class="tt">
-        <tspan fill="#f1fa8c">Welcome to TWA-BBS, 9600 baud.</tspan>
-      </text>
+      <text class="tt"><tspan fill="#f1fa8c">Welcome to TWA-BBS, 9600 baud.</tspan></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 2550ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">No new mail. 1 user online.</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">No new mail. 1 user online.</tspan></text>
     </g>
 
     <g transform="translate(0, 277.2)" class="fade-in" style="animation-delay: 2600ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 302.4)" class="fade-in" style="animation-delay: 2650ms">
-      <text class="tt">
-        <tspan fill="#50fa7b">login:</tspan><tspan fill="#e4e4e4"> _</tspan>
-      </text>
+      <text class="tt"><tspan fill="#50fa7b">login:</tspan><tspan fill="#e4e4e4"> _</tspan></text>
     </g>
       </g>
     </g>

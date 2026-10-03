@@ -1,0 +1,63 @@
+# Compact README hero: the same six blocks as demo.yml, laid out in 360px.
+# Short commands, a two-line subtitle, and shorter bars keep the text readable
+# on phones. Regenerate both animated and static SVGs with `npm run demo`.
+theme: dracula
+
+window:
+  width: 360
+  title: "svg-terminal — demo"
+  autoHeight: true
+  maxHeight: 1100
+
+terminal:
+  prompt: "$ "
+  fontSize: 14
+  lineHeight: 1.5
+
+effects:
+  textGlow: false
+  shadow: true
+  scanlines: false
+
+blocks:
+  - block: motd
+    config:
+      title: "SVG-TERMINAL"
+      subtitle: "Animated SVGs for your README."
+      lines:
+        - "Declarative YAML in."
+
+  - block: neofetch
+    config:
+      command: "neofetch"
+      username: dev
+      hostname: svg-terminal
+      role: Library Author
+      languages: TypeScript, SVG, SMIL
+      editor: vim
+
+  - block: github-languages
+    config:
+      # No username: deterministic fallback, matching the desktop demo.
+      command: "gh api users/octocat/repos"
+      top: 5
+      barWidth: 12
+      fallback:
+        - { name: TypeScript, percent: 42 }
+        - { name: Rust,       percent: 24 }
+        - { name: Python,     percent: 18 }
+        - { name: Go,         percent: 11 }
+        - { name: Lua,        percent:  5 }
+
+  - block: ascii-clock
+    config:
+      label: "uptime"
+      format: 24h
+
+  - block: heartbeat
+    config:
+      label: "built with care"
+
+  - block: palette-swatch
+    config:
+      label: "theme:"

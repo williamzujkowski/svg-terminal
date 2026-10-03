@@ -97,54 +97,14 @@ honey that was still edible.</desc>
       <animate attributeName="x" values="109;109;117;125;133;141;149;157;165;173;181;189;197;205;213;221;229;237;245;253;261;269;277;285;293;301;309;317;325;333;341;349;357;365;373;381;389;397;405;413;421;429;437;445;453;461;469;477;485;493;501;509;517;525;533;541;549;557;565;573" keyTimes="0.0000;0.0169;0.0339;0.0508;0.0678;0.0847;0.1017;0.1186;0.1356;0.1525;0.1695;0.1864;0.2034;0.2203;0.2373;0.2542;0.2712;0.2881;0.3051;0.3220;0.3390;0.3559;0.3729;0.3898;0.4068;0.4237;0.4407;0.4576;0.4746;0.4915;0.5085;0.5254;0.5424;0.5593;0.5763;0.5932;0.6102;0.6271;0.6441;0.6610;0.6780;0.6949;0.7119;0.7288;0.7458;0.7627;0.7797;0.7966;0.8136;0.8305;0.8475;0.8644;0.8814;0.8983;0.9153;0.9322;0.9492;0.9661;0.9831;1.0000" calcMode="discrete" begin="0ms" dur="500ms" fill="freeze"/>
     </rect>
     </g>
-
-    <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms">
-      <text class="tt" fill="#e4e4e4">
-        ╔═══════════════════════════════════════════════════════════════════╗
-      </text>
-    </g>
-
-    <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">║ </tspan><tspan fill="#f1fa8c">DID YOU KNOW?</tspan><tspan fill="#e4e4e4">                                                     ║</tspan>
-      </text>
-    </g>
-
-    <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ Honey never spoils. Archaeologists have found 3000-year-old       ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms">
-      <text class="tt" fill="#e4e4e4">
-        ║ honey that was still edible.                                      ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1100ms">
-      <text class="tt" fill="#e4e4e4">
-        ║                                                                   ║
-      </text>
-    </g>
-
-    <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1150ms">
-      <text class="tt" fill="#e4e4e4">
-        ╚═══════════════════════════════════════════════════════════════════╝
-      </text>
-    </g>
+<g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 800ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 7.7V-6.02Q3.08 -6.02 3.08 -6.02H576.52Q576.52 -6.02 576.52 -6.02V7.7M5.32 7.7V-3.78Q5.32 -3.78 5.32 -3.78H574.28Q574.28 -3.78 574.28 -3.78V7.7"/></g>
+<g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 850ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 900ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="16.8" lengthAdjust="spacingAndGlyphs">  </tspan><tspan x="16.8" fill="#f1fa8c" textLength="109.2" lengthAdjust="spacingAndGlyphs">DID YOU KNOW?</tspan><tspan x="126" fill="#e4e4e4" textLength="453.6" lengthAdjust="spacingAndGlyphs">                                                      </tspan></text></g>
+<g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 950ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1000ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  Honey never spoils. Archaeologists have found 3000-year-old        </tspan></text></g>
+<g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1050ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">  honey that was still edible.                                       </tspan></text></g>
+<g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1100ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V7.7M576.52 -17.5V7.7M5.32 -17.5V7.7M574.28 -17.5V7.7"/><text class="tt"><tspan x="0" fill="#e4e4e4" textLength="579.6" lengthAdjust="spacingAndGlyphs">                                                                     </tspan></text></g>
+<g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1150ms"><path fill="none" stroke="#e4e4e4" stroke-width="0.91" d="M3.08 -17.5V-3.78Q3.08 -3.78 3.08 -3.78H576.52Q576.52 -3.78 576.52 -3.78V-17.5M5.32 -17.5V-6.02Q5.32 -6.02 5.32 -6.02H574.28Q574.28 -6.02 574.28 -6.02V-17.5"/></g>
       </g>
     </g>
     

@@ -106,63 +106,43 @@ Hint: update your résumé before the next standup.</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt">
-        <tspan fill="#ff5555">rm: WARNING: recursively removing root filesystem</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ff5555">rm: WARNING: recursively removing root filesystem</tspan></text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt" fill="#e4e4e4">
-          removed /etc                ✓
-      </text>
+      <text class="tt" fill="#e4e4e4">  removed /etc                ✓</text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-          removed /usr/bin            ✓
-      </text>
+      <text class="tt" fill="#e4e4e4">  removed /usr/bin            ✓</text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  removed /home               ✓  </tspan><tspan fill="#e4e4e4" opacity="0.6">(you are still reading this how)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  removed /home               ✓  </tspan><tspan fill="#e4e4e4" opacity="0.6">(you are still reading this how)</tspan></text>
     </g>
 
     <g transform="translate(0, 151.2)" class="fade-in" style="animation-delay: 1750ms">
-      <text class="tt" fill="#e4e4e4">
-          removed /var/log            ✓
-      </text>
+      <text class="tt" fill="#e4e4e4">  removed /var/log            ✓</text>
     </g>
 
     <g transform="translate(0, 176.4)" class="fade-in" style="animation-delay: 1800ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">  removed </tspan><tspan fill="#f1fa8c">/dev/sanity</tspan><tspan fill="#e4e4e4">      ✓  </tspan><tspan fill="#e4e4e4" opacity="0.6">(no such file)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">  removed </tspan><tspan fill="#f1fa8c">/dev/sanity</tspan><tspan fill="#e4e4e4">      ✓  </tspan><tspan fill="#e4e4e4" opacity="0.6">(no such file)</tspan></text>
     </g>
 
     <g transform="translate(0, 201.6)" class="fade-in" style="animation-delay: 1850ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 226.8)" class="fade-in" style="animation-delay: 1900ms">
-      <text class="tt">
-        <tspan fill="#ff5555">System integrity: 0%</tspan>
-      </text>
+      <text class="tt"><tspan fill="#ff5555">System integrity: 0%</tspan></text>
     </g>
 
     <g transform="translate(0, 252)" class="fade-in" style="animation-delay: 1950ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">  Hint: update your résumé before the next standup.</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">  Hint: update your résumé before the next standup.</tspan></text>
     </g>
       </g>
     </g>

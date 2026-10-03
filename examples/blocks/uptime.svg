@@ -101,33 +101,23 @@ System health: STABLE</desc>
     </g>
 
     <g transform="translate(0, 25.2)" class="fade-in" style="animation-delay: 1500ms">
-      <text class="tt" fill="#e4e4e4">
-         13:37:00  up 632 days,  3:14,  1 user,  load average: 0.42, 0.37, 0.31
-      </text>
+      <text class="tt" fill="#e4e4e4"> 13:37:00  up 632 days,  3:14,  1 user,  load average: 0.42, 0.37, 0.31</text>
     </g>
 
     <g transform="translate(0, 50.4)" class="fade-in" style="animation-delay: 1550ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 75.6)" class="fade-in" style="animation-delay: 1600ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4" opacity="0.6">(last reboot: that one incident — don&apos;t touch it)</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4" opacity="0.6">(last reboot: that one incident — don&apos;t touch it)</tspan></text>
     </g>
 
     <g transform="translate(0, 100.8)" class="fade-in" style="animation-delay: 1650ms">
-      <text class="tt" fill="#e4e4e4">
-        
-      </text>
+      <text class="tt" fill="#e4e4e4"></text>
     </g>
 
     <g transform="translate(0, 126)" class="fade-in" style="animation-delay: 1700ms">
-      <text class="tt">
-        <tspan fill="#e4e4e4">System health: </tspan><tspan fill="#50fa7b">STABLE</tspan>
-      </text>
+      <text class="tt"><tspan fill="#e4e4e4">System health: </tspan><tspan fill="#50fa7b">STABLE</tspan></text>
     </g>
       </g>
     </g>
