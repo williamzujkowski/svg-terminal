@@ -81,3 +81,34 @@ describe('OKLCH WCAG-AAA themes (#100, v1.2.0)', () => {
     }
   });
 });
+
+describe('Retro & Videogame themes (v1.4.0)', () => {
+  const RETRO_THEMES = ['c64', 'synthwave', 'midnight-arcade', 'gameboy', 'pipboy'] as const;
+
+  for (const name of RETRO_THEMES) {
+    it(`registers ${name} with all 25 color slots and valid button hexes`, () => {
+      const theme = getTheme(name);
+      expect(theme).toBeDefined();
+      for (const slot of SLOTS) {
+        expect(theme!.colors[slot], `${name}.${slot}`).toMatch(HEX);
+      }
+      for (const btn of ['close', 'minimize', 'maximize'] as const) {
+        expect(theme!.buttons[btn]).toMatch(HEX);
+      }
+    });
+  }
+
+  it('midnight-arcade, synthwave, and gameboy default scanlines to false', () => {
+    for (const name of ['midnight-arcade', 'synthwave', 'gameboy']) {
+      const cfg = mergeConfig({ theme: name, blocks: [{ block: 'vim-exit' }] });
+      expect(cfg.effects.scanlines).toBe(false);
+    }
+  });
+
+  it('c64 and pipboy default vignette to true', () => {
+    for (const name of ['c64', 'pipboy']) {
+      const cfg = mergeConfig({ theme: name, blocks: [{ block: 'vim-exit' }] });
+      expect(cfg.effects.vignette).toBe(true);
+    }
+  });
+});

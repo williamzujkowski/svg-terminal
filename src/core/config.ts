@@ -191,7 +191,7 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
 
   // CRT-aesthetic themes default to vignette ON (mimics a real CRT's
   // center-hot phosphor falloff). Users opt out via `effects.vignette: false`.
-  const isCrt = theme.name === 'amber' || theme.name === 'green-phosphor' || theme.name === 'cyberpunk';
+  const isCrt = theme.name === 'amber' || theme.name === 'green-phosphor' || theme.name === 'cyberpunk' || theme.name === 'pipboy' || theme.name === 'c64';
   const userVignetteSet = userConfig.effects?.vignette !== undefined;
 
   // The OKLCH WCAG-AAA additions (v1.2.0) are designed to read crisp + modern,
@@ -200,6 +200,7 @@ export function mergeConfig(userConfig: UserConfig): TerminalConfig {
   const MODERN_THEMES = new Set([
     'modus-vivendi', 'oxocarbon', 'rose-pine', 'everforest',
     'kanagawa', 'flexoki', 'github-light', 'dayfox',
+    'midnight-arcade', 'synthwave', 'gameboy',
   ]);
   const isModern = MODERN_THEMES.has(theme.name);
   const userScanlinesSet = userConfig.effects?.scanlines !== undefined;

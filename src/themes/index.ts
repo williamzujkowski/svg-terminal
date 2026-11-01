@@ -21,6 +21,12 @@ import { kanagawa } from './kanagawa.js';
 import { flexoki } from './flexoki.js';
 import { githubLight } from './github-light.js';
 import { dayfox } from './dayfox.js';
+// Classic terminal & retro gaming additions
+import { c64 } from './c64.js';
+import { synthwave } from './synthwave.js';
+import { midnightArcade } from './midnight-arcade.js';
+import { gameboy } from './gameboy.js';
+import { pipboy } from './pipboy.js';
 
 /** Built-in theme registry. */
 export const themes: Record<string, Theme> = {
@@ -45,6 +51,12 @@ export const themes: Record<string, Theme> = {
   flexoki,
   'github-light': githubLight,
   dayfox,
+  // Retro & videogame additions
+  c64,
+  synthwave,
+  'midnight-arcade': midnightArcade,
+  gameboy,
+  pipboy,
 };
 
 /** User-registered themes; shadow built-ins when names collide. */

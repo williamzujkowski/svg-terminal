@@ -36,13 +36,13 @@ Or as a GitHub Action — refresh your profile README on a schedule:
     commit: true
 ```
 
-See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (48 blocks, one preview each), and the [20-theme gallery](#themes).
+See the full [GitHub Action](#github-action) section below, the [block catalog](./examples/blocks/) (52 blocks, one preview each), and the [25-theme gallery](#themes).
 
 ### What's in the box
 
 - **Declarative YAML config** — write blocks, pick a theme, run the CLI
-- **48 built-in blocks** — across identity, retro / fake-system, status, ASCII art, single- and multi-line animation, and humor categories. Browse the [block catalog](./examples/blocks/) for previews of each
-- **20 built-in themes** — 12 classics (dracula, nord, monokai, the amber/green-phosphor/cyberpunk CRT trio, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast) plus 8 sharp, modern, **WCAG-AAA** OKLCH additions (modus-vivendi, oxocarbon, rose-pine, everforest, kanagawa, flexoki, github-light, dayfox)
+- **52 built-in blocks** — across identity, retro / fake-system, gaming & arcade, status, ASCII art, single- and multi-line animation, and humor categories. Browse the [block catalog](./examples/blocks/) for previews of each
+- **25 built-in themes** — 12 classics (dracula, nord, monokai, the amber/green-phosphor/cyberpunk CRT trio, solarized-dark, win95, catppuccin, tokyo-night, gruvbox, high-contrast), 8 modern **WCAG-AAA** OKLCH additions (modus-vivendi, oxocarbon, rose-pine, everforest, kanagawa, flexoki, github-light, dayfox), and 5 retro & gaming palettes (c64, synthwave, midnight-arcade, gameboy, pipboy)
 - **Frame animation** — `BlockResult.animation = { frames, fps, loop }` powers the 10 animated blocks (spinners, clock, dice, progress bar, etc.). Frames may be single- **or multi-line** as of #69 (`jumping-jack` is the reference multi-line block)
 - **Dynamic-block cache** — the 5 cacheable blocks (weather, github-stats, github-languages, quote, fun-fact) write to `.svg-terminal-cache.json`. Pair with `--frozen-cache` for offline CI builds
 - **Reduced-motion respected** — `@media (prefers-reduced-motion)` clamps the CSS fade-ins AND (since v0.17) the frame cycle. SMIL-driven typing reveal, cursor walk, and scroll-on-overflow remain animated; pair with `--static` for full stillness

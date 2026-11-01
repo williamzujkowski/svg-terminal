@@ -1,6 +1,6 @@
 # Block catalog
 
-48 built-in blocks. One SVG per block; click a thumbnail to view full size.
+52 built-in blocks. One SVG per block; click a thumbnail to view full size.
 
 Regenerate: `npm run demo` (auto-built from `listBlocks()` so a new block gets a catalog row for free).
 
@@ -54,5 +54,9 @@ Regenerate: `npm run demo` (auto-built from `listBlocks()` so a new block gets a
 | `ascii-calendar` | Current-month calendar grid with today highlighted | <img src="./ascii-calendar.svg" alt="ascii-calendar preview" width="320"/> |
 | `toc` | Auto-generates a markdown anchor-link table of contents | <img src="./toc.svg" alt="toc preview" width="320"/> |
 | `jumping-jack` | A multi-line stick figure doing jumping jacks | <img src="./jumping-jack.svg" alt="jumping-jack preview" width="320"/> |
+| `konami-code` | Classic Konami cheat code (↑ ↑ ↓ ↓ ← → ← → B A) sequence | <img src="./konami-code.svg" alt="konami-code preview" width="320"/> |
+| `retro-arcade` | Classic 8-bit arcade screen with animated Pac-Man corridor | <img src="./retro-arcade.svg" alt="retro-arcade preview" width="320"/> |
+| `rpg-battle` | Classic 16-bit turn-based RPG boss battle HUD | <img src="./rpg-battle.svg" alt="rpg-battle preview" width="320"/> |
+| `text-adventure` | Classic 1980s text adventure game (Zork / Infocom style) | <img src="./text-adventure.svg" alt="text-adventure preview" width="320"/> |
 
 `*` = cacheable block (participates in the on-disk dynamic-block cache).

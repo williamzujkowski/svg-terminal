@@ -51,6 +51,10 @@ import { semverBumpBlock } from './semver-bump.js';
 import { asciiCalendarBlock } from './ascii-calendar.js';
 import { tocBlock } from './toc.js';
 import { jumpingJackBlock } from './jumping-jack.js';
+import { konamiCodeBlock } from './konami-code.js';
+import { retroArcadeBlock } from './retro-arcade.js';
+import { rpgBattleBlock } from './rpg-battle.js';
+import { textAdventureBlock } from './text-adventure.js';
 
 /** Register all built-in blocks. */
 export function registerBuiltinBlocks(): void {
@@ -103,6 +107,10 @@ export function registerBuiltinBlocks(): void {
     asciiCalendarBlock,
     tocBlock,
     jumpingJackBlock,
+    konamiCodeBlock,
+    retroArcadeBlock,
+    rpgBattleBlock,
+    textAdventureBlock,
   ]);
 }
 
@@ -155,3 +163,7 @@ export { semverBumpBlock } from './semver-bump.js';
 export { asciiCalendarBlock } from './ascii-calendar.js';
 export { tocBlock } from './toc.js';
 export { jumpingJackBlock } from './jumping-jack.js';
+export { konamiCodeBlock } from './konami-code.js';
+export { retroArcadeBlock } from './retro-arcade.js';
+export { rpgBattleBlock } from './rpg-battle.js';
+export { textAdventureBlock } from './text-adventure.js';

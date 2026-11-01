@@ -43,6 +43,12 @@ const THEMES = [
   'flexoki',
   'github-light',
   'dayfox',
+  // Retro & videogame additions (v1.4.0)
+  'c64',
+  'synthwave',
+  'midnight-arcade',
+  'gameboy',
+  'pipboy',
 ];
 
 async function writeSvg(svg, relPath) {
@@ -81,7 +87,11 @@ async function buildGallery() {
     // The OKLCH modern themes are meant to read crisp + sharp — preview them
     // with their default-off scanlines (the template forces scanlines on for
     // the classics' richer look). Drop shadow too for a clean modern card.
-    const MODERN = new Set(['modus-vivendi', 'oxocarbon', 'rose-pine', 'everforest', 'kanagawa', 'flexoki', 'github-light', 'dayfox']);
+    const MODERN = new Set([
+      'modus-vivendi', 'oxocarbon', 'rose-pine', 'everforest',
+      'kanagawa', 'flexoki', 'github-light', 'dayfox',
+      'midnight-arcade', 'synthwave', 'gameboy',
+    ]);
     const cfg = {
       ...tplConfig,
       theme,

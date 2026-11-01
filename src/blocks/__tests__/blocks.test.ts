@@ -561,3 +561,69 @@ describe('visual blocks', () => {
     expect(result.lines.some(l => l.includes('< hi'))).toBe(true);
   });
 });
+
+describe('retro & videogame blocks', () => {
+  it('konami-code renders cheat sequence and 30 lives by default', async () => {
+    const block = getBlock('konami-code')!;
+    const result = await block.render(context, {});
+    expect(result.command).toBe('./inject-cheat.sh');
+    expect(result.lines.some(l => l.includes('30 LIVES GRANTED'))).toBe(true);
+    expect(result.lines.some(l => l.includes('UNTOUCHABLE'))).toBe(true);
+    expect(result.lines.some(l => l.includes('SPREAD GUN'))).toBe(true);
+  });
+
+  it('konami-code supports custom reward and lives', async () => {
+    const block = getBlock('konami-code')!;
+    const result = await block.render(context, {
+      command: 'cheat --god',
+      reward: 'COFFEE OVERFLOW',
+      status: 'INVINCIBLE',
+      lives: 10,
+    });
+    expect(result.command).toBe('cheat --god');
+    expect(result.lines.some(l => l.includes('COFFEE OVERFLOW'))).toBe(true);
+    expect(result.lines.some(l => l.includes('(10/10)'))).toBe(true);
+  });
+
+  it('retro-arcade renders 4-frame animated Pac-Man corridor', async () => {
+    const block = getBlock('retro-arcade')!;
+    const result = await block.render(context, {});
+    expect(result.command).toBe('arcade --game pacman');
+    expect(result.animation).toBeDefined();
+    expect(result.animation!.frames.length).toBe(4);
+    expect(result.animation!.fps).toBe(4);
+    expect(result.lines).toEqual(result.animation!.frames[0]);
+    expect(result.lines[0]).toContain('HIGH SCORE');
+  });
+
+  it('rpg-battle renders boss battle HUD with HP gauges and battle log', async () => {
+    const block = getBlock('rpg-battle')!;
+    const result = await block.render(context, {});
+    expect(result.command).toBe('battle --boss cyber-dragon');
+    expect(result.lines.some(l => l.includes('BOSS BATTLE'))).toBe(true);
+    expect(result.lines.some(l => l.includes('CYBER-DRAGON'))).toBe(true);
+    expect(result.lines.some(l => l.includes('DEFENSIVE AEGIS'))).toBe(true);
+    expect(result.lines.some(l => l.includes('[⚔️ ATTACK]'))).toBe(true);
+  });
+
+  it('rpg-battle respects custom boss and party members', async () => {
+    const block = getBlock('rpg-battle')!;
+    const result = await block.render(context, {
+      bossName: 'GLITCH-OVERLORD',
+      bossHp: 500,
+      bossMaxHp: 1000,
+      party: [{ name: 'SRE', hp: 999, maxHp: 999, mp: 50, maxMp: 50, status: 'ALERT' }],
+    });
+    expect(result.lines.some(l => l.includes('GLITCH-OVERLORD'))).toBe(true);
+    expect(result.lines.some(l => l.includes('SRE'))).toBe(true);
+  });
+
+  it('text-adventure renders Zork-style interactive fiction screen', async () => {
+    const block = getBlock('text-adventure')!;
+    const result = await block.render(context, {});
+    expect(result.command).toBe('zork');
+    expect(result.lines.some(l => l.includes('West of House'))).toBe(true);
+    expect(result.lines.some(l => l.includes('WELCOME TO ZORK'))).toBe(true);
+    expect(result.lines.some(l => l.includes('EXITS: NORTH | EAST | SOUTHWEST'))).toBe(true);
+  });
+});
