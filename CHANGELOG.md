@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.4.0 — 2026-11-01 — retro videogame blocks and 5 OKLCH themes
+
+- Add 4 retro gaming terminal blocks:
+  - `konami-code`: 8-bit keypad cheat-code entry sequence with 30-lives unlock celebration.
+  - `retro-arcade`: Attract-mode high-score cabinet table with glowing initials and scores.
+  - `rpg-battle`: Turn-based ASCII dungeon boss battle with dynamic HP/MP meters and status pills.
+  - `text-adventure`: Classic interactive-fiction parser block with room descriptions and inventory.
+- Add 5 perceptual OKLCH retro themes:
+  - `c64`: Classic Commodore 64 indigo/lime palette.
+  - `synthwave`: Outrun neon magenta and electric cyan.
+  - `midnight-arcade`: Deep midnight navy with neon fuchsia highlights.
+  - `gameboy`: Retro DMG 4-shade olive green LCD palette.
+  - `pipboy`: Monochrome retro-future phosphor emerald.
+- Expand built-in theme collection from 20 to 25 themes, with full contrast validation.
+- Bump Action pin to `svg-terminal@1.4.0`.
+
+528 tests passing; clean static and animated SVG byte stability across all examples.
+
 ## v1.3.1 — 2026-10-03 — continuous box borders and mobile README layouts
 
 - Render complete terminal box borders as SVG strokes so they remain continuous across line spacing and font fallbacks, including on phones.
